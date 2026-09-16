@@ -1,0 +1,151 @@
+Mã: P-UX-01
+Ngày dùng: 16-9-2026
+Công cụ AI: Claude Code (Anthropic), mô hình Opus 5, chạy trong VS Code
+Người gửi: thành viên nhóm
+Tác vụ hỗ trợ: cải thiện UX/UI sản phẩm web HÀNH TRÌNH TƯ TƯỞNG
+
+Câu lệnh nguyên văn, chép lại không sửa, không rút gọn:
+
+--------------------------------------------------------------------------------
+Hãy trực tiếp cải thiện UX/UI website “HÀNH TRÌNH TƯ TƯỞNG” trong repository này.
+
+MỤC TIÊU
+Giúp sinh viên cảm thấy tò mò, muốn khám phá và hiểu môn Tư tưởng Hồ Chí Minh. Trải nghiệm cần có nhịp kể chuyện, tương tác có ý nghĩa và những khoảnh khắc nhận ra “à, mình hiểu rồi”.
+
+Đánh giá thành công theo khả năng dẫn dắt người học và giúp họ hiểu mối liên hệ giữa các chặng. Hiệu quả thực tế phải được kiểm tra với người dùng thật, không tự khẳng định từ cảm nhận của AI.
+
+1. BẮT BUỘC SỬ DỤNG UI-UX-PRO-MAX
+
+- Invoke skill ui-ux-pro-max bằng cơ chế skill của Claude Code nếu có.
+- Đọc hoàn toàn `.claude/skills/ui-ux-pro-max/SKILL.md`.
+- Nếu đường dẫn thiếu, tìm skill thật trong repository. Nếu không tìm được, báo rõ trở ngại; không tuyên bố đã sử dụng.
+- Áp dụng workflow và query contract của skill: tra cứu đúng vấn đề, kiểm tra độ phù hợp của kết quả với website giáo dục tiếng Việt.
+- Với hướng thiết kế toàn sản phẩm, chạy tra cứu --design-system. Với vấn đề cụ thể, chạy --domain ux/style/typography/color thích hợp.
+- Dùng script search.py nằm trong thư mục skill thực tế. Không tự đoán đường dẫn.
+- Ghi lại lệnh, kết quả liên quan và quyết định áp dụng hoặc loại bỏ.
+- Không coi kết quả của skill là nguồn học thuật hay bằng chứng người dùng.
+
+Không được chỉ viết “đã dùng ui-ux-pro-max” rồi thiết kế theo cảm tính. Báo cáo cuối phải có bảng:
+Vấn đề → kết quả/rule của skill → thay đổi thực hiện → cách kiểm tra.
+
+2. KHÁM PHÁ TRƯỚC KHI SỬA
+
+Đọc hoàn toàn AGENTS.md, CLAUDE.md và
+HCM202_PROJECT_CONTEXT_v3.0_FORENSIC_FINAL.md.
+Đọc ba PDF bắt buộc và kiểm tra SHA-256 theo AGENTS.md.
+
+Sau đó inspect repository, trạng thái version control, dossier, template,
+web/package.json, web/src/, web/e2e/ và
+design-system/hanh-trinh-tu-tuong/MASTER.md.
+
+Đưa ra Repository + Compliance Audit ngắn trước khi sửa:
+- Kiến trúc và trải nghiệm hiện tại.
+- Những điểm gây khô khan, khó hiểu hoặc khó thao tác, kèm vị trí cụ thể.
+- Các kiểm soát liên quan: CM-002–CM-010, CM-015, CM-022–CM-024,
+  CM-043–CM-045, CM-058–CM-060.
+- Nguồn, bằng chứng hoặc phê duyệt còn thiếu.
+
+Website hiện dùng Vite, TypeScript và CSS. Giữ kiến trúc đang hoạt động; chọn giải pháp phù hợp sau khi kiểm tra, không chuyển framework chỉ để làm giao diện.
+
+3. THIẾT KẾ TRẢI NGHIỆM HỌC
+
+Ưu tiên các thay đổi sau khi audit:
+
+A. Màn mở đầu
+- Mở bằng một câu hỏi gợi tò mò gắn với Central Question hiện có.
+- Giúp người mới hiểu mình sẽ khám phá gì và bắt đầu ở đâu.
+- Có một hành động chính rõ ràng.
+- Giữ nguyên trạng thái phê duyệt của Central Question; không tự coi bản nháp là đã duyệt.
+
+B. Tổng quan hành trình
+- Cho thấy năm chặng liên hệ với nhau như thế nào.
+- Hiển thị vị trí hiện tại, chặng tiếp theo và đường quay lại.
+- Giữ nguyên năm tiêu đề học thuật tiếng Việt và các kiểm soát niên đại.
+
+C. Từng chặng
+Tạo nhịp:
+Câu hỏi dẫn nhập → bối cảnh → người học suy nghĩ/thao tác →
+giải thích chuyển biến → bằng chứng → cầu nối sang chặng tiếp theo.
+
+- Chia nội dung theo lớp: ý chính dễ nắm trước, phân tích và nguồn mở rộng sau.
+- Giữ đủ lập luận; không cắt ngắn trích dẫn làm sai ý nghĩa.
+- Mỗi màn có một trọng tâm và bước tiếp theo rõ ràng.
+- Câu chữ hướng dẫn tự nhiên, thân thiện và tôn trọng người học.
+
+D. Tương tác giúp hiểu
+- Cải thiện các hoạt động đối sánh, nối kết và tổng hợp đang có.
+- Mỗi hoạt động phải có mục tiêu học tập, hướng dẫn dễ hiểu và phản hồi giải thích “vì sao”.
+- Cho phép thử lại, quay lại và sửa lựa chọn.
+- Nếu dùng kéo thả, có phương án bấm/chọn và bàn phím tương đương.
+- Chỉ dùng câu hỏi, đáp án và lời giải có căn cứ học thuật đã được xác thực.
+- Không thêm tương tác chỉ để tăng số lần bấm.
+
+4. HƯỚNG THỊ GIÁC
+
+Xây dựng một hành trình khám phá đương đại, giàu nhịp điệu và có bản sắc:
+- Phân cấp chữ rõ, phông hỗ trợ dấu tiếng Việt tốt.
+- Khoảng trắng thoáng, đoạn văn dễ đọc.
+- Màu nhấn có chức năng: dẫn đường, nhấn bước ngoặt, phản hồi thao tác.
+- Sơ đồ liên hệ và bố cục giúp giải thích nội dung.
+- Motion thể hiện thay đổi trạng thái hoặc kết nối ý tưởng; không cản đọc hay thao tác.
+- Giữ trải nghiệm đầy đủ khi bật prefers-reduced-motion.
+- Kiểm tra light/dark mode nếu sản phẩm có cả hai.
+
+Tránh các đoạn văn dài liên tục, thẻ giống nhau lặp khắp trang,
+CTA mơ hồ, hiệu ứng cuộn ép người dùng và trang trí không giúp hiểu bài.
+
+Đọc design system hiện có trước khi điều chỉnh. Không chạy --force
+để ghi đè tài liệu thiết kế. Ghi rõ thay đổi token và lý do.
+
+5. GIỚI HẠN HỌC THUẬT VÀ BẰNG CHỨNG
+
+Tuân thủ Academic First, One Central Argument, Evidence Visible,
+Interaction Matters, Revision Trace và
+“Khai báo - Kiểm chứng - Không sao chép”.
+
+- Mọi lựa chọn UX/UI là PROJECT DECISION, không gán thành yêu cầu PDF.
+- Không bịa lịch sử, trích dẫn, nguồn, trang, hình ảnh tư liệu hoặc dữ liệu hiện tại.
+- Không dùng AI tạo/mô phỏng/biến dạng chân dung Bác Hồ hoặc lãnh tụ.
+- Không nhập vai nhân vật lịch sử để tạo lời nói hay lựa chọn giả.
+- Giữ NEED VERIFICATION và NOT YET EVIDENCED ở những mục chưa xác thực.
+- Có thể tổ chức thông tin nguồn bằng disclosure/drawer dễ mở, nhưng không che trạng thái chưa xác thực.
+- Không tự giải quyết DOCUMENT CONFLICT hoặc đặt phiên bản cuối thay giảng viên.
+- Không bịa khảo sát, feedback, screenshot, kết quả kiểm thử hay revision evidence.
+
+Ghi mọi prompt đã sử dụng vào Prompt Log với đủ trường theo AGENTS.md.
+Phần đối chiếu chưa thực hiện phải được ghi trung thực.
+
+6. THỰC HIỆN VÀ KIỂM TRA
+
+Làm theo Explore → Plan → Implement → Verify.
+
+Sau audit, chọn hướng thiết kế có lý do và trực tiếp triển khai các thay đổi
+có thể đảo ngược trong phạm vi UX/UI. Bảo toàn công việc hiện có.
+Chỉ hỏi khi có trở ngại thực sự hoặc quyết định cần phán quyết con người.
+
+Kiểm tra:
+- Luồng mở đầu → hành trình → một chặng → tương tác → tổng hợp.
+- Mobile, tablet, desktop; chữ không bị cắt, không tràn ngang.
+- Bàn phím, focus, đóng drawer/modal, trạng thái lựa chọn.
+- Contrast, zoom chữ, reduced motion.
+- Build và các kiểm thử hiện có phù hợp với phần sửa.
+- Bản offline và chế độ trình bày nếu bị ảnh hưởng.
+
+Chụp ảnh các màn đã kiểm tra nếu công cụ cho phép.
+Tách rõ kiểm thử kỹ thuật với thử nghiệm người dùng thật.
+
+Chuẩn bị một kế hoạch test người dùng ngắn, nhãn TEMPLATE - NOT EVIDENCE:
+người mới bắt đầu được không, hiểu thao tác không, giải thích được mối liên hệ
+giữa các chặng không, và đoạn nào khiến họ muốn dừng.
+Để trống kết quả; không tự đặt số người hay ngưỡng thành công thành yêu cầu môn học.
+
+BÁO CÁO CUỐI
+- Thay đổi chính và mục tiêu học tập được hỗ trợ.
+- Bảng chứng minh áp dụng ui-ux-pro-max.
+- File đã sửa và kiểm tra thực sự đã chạy.
+- Rủi ro, nguồn và bằng chứng còn thiếu.
+
+Chỉ báo cáo kết quả UX/UI trong phạm vi đã kiểm tra.
+Giữ trạng thái chung:
+REQUIRES HUMAN VERIFICATION AND REAL PROJECT EVIDENCE.
+--------------------------------------------------------------------------------

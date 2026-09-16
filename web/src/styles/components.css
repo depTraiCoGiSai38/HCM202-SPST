@@ -1,0 +1,735 @@
+/* Editorial components: openings, passages, turning points, apparatus. */
+
+/* ---- Small shared pieces ------------------------------------------------ */
+
+.kicker {
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/*
+ * Status chips carry full provenance labels such as
+ * "PROJECT DECISION - NEED AUDIENCE/LECTURER VALIDATION". They must wrap rather
+ * than push the page wider, so the label is never truncated or abbreviated.
+ */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  padding: 0.1rem 0.45rem;
+  border: var(--hairline) solid currentcolor;
+  border-radius: var(--radius-s);
+  font-family: var(--font-marker);
+  font-size: 0.625rem;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+
+.chip--verify {
+  color: var(--verify);
+  background-color: var(--verify-wash);
+}
+
+.chip--conflict {
+  color: var(--son);
+  background-color: var(--son-wash);
+}
+
+.chip--source {
+  color: var(--cham);
+  background-color: var(--cham-wash);
+}
+
+.chip--project {
+  color: var(--ink-faint);
+}
+
+.rule {
+  border: 0;
+  border-block-start: var(--hairline) solid var(--rule);
+  margin-block: var(--space-l);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  min-block-size: var(--target-min);
+  padding: 0.55rem 1rem;
+  border: var(--hairline) solid var(--rule-strong);
+  border-radius: var(--radius-m);
+  background-color: var(--paper-raised);
+  color: var(--ink);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.btn:hover {
+  border-color: var(--cham);
+  color: var(--cham);
+}
+
+.btn--primary {
+  background-color: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.btn--primary:hover {
+  background-color: var(--cham);
+  border-color: var(--cham);
+  color: #fff;
+}
+
+.btn--ghost {
+  border-color: transparent;
+  background: none;
+}
+
+.btn--icon {
+  min-inline-size: var(--target-min);
+  padding-inline: 0.5rem;
+}
+
+.btn[aria-pressed='true'] {
+  border-color: var(--son);
+  color: var(--son);
+  background-color: var(--son-wash);
+}
+
+/* ---- Opening / hero ----------------------------------------------------- */
+
+.opening {
+  padding-block: var(--space-xl) var(--space-l);
+  max-inline-size: 54rem;
+}
+
+.opening__section-heading {
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  margin-block-end: var(--space-m);
+  padding-block-end: var(--space-2xs);
+  border-block-end: var(--hairline) solid var(--rule);
+}
+
+/*
+ * Display size with room for stacked Vietnamese tone marks. The extra leading
+ * is not decorative: at 0.95 the marks on Ì and Ở are clipped.
+ */
+.opening__title {
+  font-family: var(--font-apparatus);
+  font-size: var(--step-6);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.06;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.opening__subtitle {
+  font-size: var(--step-1);
+  color: var(--ink-soft);
+  font-style: italic;
+  margin-block-start: var(--space-2xs);
+  max-inline-size: 30ch;
+}
+
+.question-card {
+  margin-block-start: var(--space-xl);
+  padding: var(--space-m);
+  padding-inline-start: var(--space-m);
+  border-inline-start: 3px solid var(--son);
+  background-color: var(--paper-raised);
+  box-shadow: var(--shadow-card);
+}
+
+@media (min-width: 48rem) {
+  .question-card {
+    padding: var(--space-l);
+    padding-inline-start: var(--space-l);
+  }
+}
+
+.question-card__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  flex-wrap: wrap;
+  margin-block-end: var(--space-s);
+}
+
+.question-card__text {
+  font-size: var(--step-2);
+  line-height: 1.42;
+  text-wrap: pretty;
+}
+
+.question-card__note {
+  margin-block-start: var(--space-s);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  color: var(--ink-faint);
+  max-inline-size: 60ch;
+}
+
+/* ---- Stage page --------------------------------------------------------- */
+
+.stage-head {
+  padding-block: var(--space-l) var(--space-m);
+  border-block-end: 2px solid var(--ink);
+  margin-block-end: var(--space-l);
+}
+
+.stage-head__row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-s);
+  flex-wrap: wrap;
+  margin-block-end: var(--space-s);
+}
+
+.stage-head__ordinal {
+  font-family: var(--font-marker);
+  font-size: var(--step-5);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--son);
+  letter-spacing: -0.04em;
+}
+
+.stage-head__period {
+  font-family: var(--font-apparatus);
+  font-size: var(--step-1);
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+/*
+ * The full exact heading. It is always rendered complete, never truncated and
+ * never replaced by a short label.
+ */
+.stage-head__heading {
+  font-size: var(--step-3);
+  font-weight: 600;
+  max-inline-size: 34ch;
+  text-wrap: balance;
+}
+
+.stage-head__meta {
+  display: flex;
+  gap: var(--space-2xs);
+  flex-wrap: wrap;
+  margin-block-start: var(--space-s);
+}
+
+.stage-opening {
+  font-size: var(--step-1);
+  line-height: 1.55;
+  color: var(--ink);
+  max-inline-size: 58ch;
+  padding-inline-start: var(--space-s);
+  border-inline-start: 2px solid var(--rule-strong);
+  font-style: italic;
+}
+
+.layer {
+  margin-block-start: var(--space-xl);
+}
+
+.layer__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2xs);
+  flex-wrap: wrap;
+  margin-block-end: var(--space-2xs);
+  padding-block-end: var(--space-3xs);
+  border-block-end: var(--hairline) solid var(--rule);
+}
+
+.layer__title {
+  font-family: var(--font-apparatus);
+  font-size: var(--step-0);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.layer__hint {
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  color: var(--ink-faint);
+}
+
+.passages {
+  display: grid;
+  gap: var(--space-s);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.passage {
+  display: grid;
+  gap: var(--space-3xs);
+}
+
+.passage__text {
+  max-inline-size: var(--measure);
+}
+
+.passage__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  flex-wrap: wrap;
+  font-family: var(--font-marker);
+  font-size: var(--step--2);
+  color: var(--ink-faint);
+}
+
+.passage__at {
+  color: var(--cham);
+}
+
+.passage--evaluative .passage__text {
+  border-inline-start: 2px solid var(--verify);
+  padding-inline-start: var(--space-2xs);
+  margin-inline-start: calc(var(--space-2xs) * -1);
+}
+
+.caution {
+  display: flex;
+  gap: var(--space-2xs);
+  padding: var(--space-2xs) var(--space-xs);
+  background-color: var(--verify-wash);
+  border-inline-start: 2px solid var(--verify);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+  max-inline-size: var(--measure);
+}
+
+.caution > .marker {
+  flex-shrink: 0;
+  white-space: nowrap;
+  color: var(--verify);
+  font-weight: 700;
+}
+
+.caution--conflict > .marker {
+  color: var(--son);
+}
+
+.caution--conflict {
+  background-color: var(--son-wash);
+  border-inline-start-color: var(--son);
+}
+
+/* ---- Turning point ------------------------------------------------------ */
+
+.turning {
+  margin-block-start: var(--space-m);
+  border: var(--hairline) solid var(--rule-strong);
+  background-color: var(--paper-raised);
+  box-shadow: var(--shadow-card);
+}
+
+.turning__trigger {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-s);
+  inline-size: 100%;
+  min-block-size: var(--target-min);
+  padding: var(--space-s);
+  text-align: start;
+}
+
+.turning__marker {
+  font-family: var(--font-marker);
+  font-size: var(--step-0);
+  font-weight: 700;
+  color: var(--son);
+  white-space: nowrap;
+}
+
+.turning__title {
+  font-family: var(--font-apparatus);
+  font-size: var(--step-0);
+  font-weight: 600;
+  min-inline-size: 0;
+}
+
+.turning__sign {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  display: grid;
+  place-items: center;
+  border: var(--hairline) solid var(--rule-strong);
+  border-radius: 50%;
+  color: var(--ink-faint);
+  flex-shrink: 0;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.turning__trigger[aria-expanded='true'] .turning__sign {
+  transform: rotate(45deg);
+  color: var(--son);
+  border-color: var(--son);
+}
+
+.turning__panel {
+  padding: 0 var(--space-s) var(--space-s);
+  border-block-start: var(--hairline) solid var(--rule);
+}
+
+.turning__panel[hidden] {
+  display: none;
+}
+
+.shift {
+  display: grid;
+  gap: var(--space-s);
+  margin-block: var(--space-s);
+}
+
+@media (min-width: 40rem) {
+  .shift {
+    grid-template-columns: 1fr auto 1fr;
+    align-items: stretch;
+    gap: var(--space-s);
+  }
+}
+
+.shift__side {
+  display: grid;
+  gap: var(--space-3xs);
+  align-content: start;
+  padding: var(--space-xs);
+  background-color: var(--paper);
+  border: var(--hairline) solid var(--rule);
+}
+
+.shift__label {
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.shift__side--after .shift__label {
+  color: var(--son);
+}
+
+.shift__arrow {
+  display: grid;
+  place-items: center;
+  color: var(--son);
+}
+
+@media (max-width: 39.999rem) {
+  .shift__arrow {
+    transform: rotate(90deg);
+  }
+}
+
+.shift__named {
+  padding: var(--space-xs);
+  background-color: var(--cham-wash);
+  border-inline-start: 3px solid var(--cham);
+  font-size: var(--step-0);
+}
+
+.shift__named-label {
+  display: block;
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cham);
+  margin-block-end: var(--space-3xs);
+}
+
+/* ---- Quotation ---------------------------------------------------------- */
+
+.quote {
+  margin-block: var(--space-m);
+  padding-inline-start: var(--space-m);
+  border-inline-start: 3px solid var(--rule-strong);
+  max-inline-size: var(--measure);
+}
+
+.quote__text {
+  font-size: var(--step-1);
+  line-height: 1.5;
+  font-style: italic;
+  text-wrap: pretty;
+}
+
+.quote__attr {
+  display: block;
+  margin-block-start: var(--space-2xs);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  font-style: normal;
+  color: var(--ink-faint);
+}
+
+/* ---- Source apparatus --------------------------------------------------- */
+
+/*
+ * The margin apparatus belongs to the wide layout only. Below 80rem the same
+ * sources are shown by the drawer under the block, so exactly one of the two is
+ * ever present.
+ */
+.margin-note {
+  display: none;
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+  border-block-start: 2px solid var(--cham);
+  padding-block-start: var(--space-2xs);
+}
+
+@media (min-width: 80rem) {
+  .margin-note {
+    display: block;
+    position: sticky;
+    inset-block-start: 8rem;
+    max-block-size: calc(100svh - 10rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+.margin-note__title {
+  font-size: var(--step--2);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cham);
+  margin-block-end: var(--space-2xs);
+}
+
+.source-list {
+  display: grid;
+  gap: var(--space-s);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.source {
+  display: grid;
+  gap: var(--space-3xs);
+  padding-block-end: var(--space-s);
+  border-block-end: var(--hairline) dashed var(--rule);
+}
+
+.source:last-child {
+  border-block-end: none;
+  padding-block-end: 0;
+}
+
+.source__id {
+  font-family: var(--font-marker);
+  font-size: var(--step--2);
+  color: var(--son);
+  font-weight: 700;
+}
+
+.source__printed {
+  font-family: var(--font-marker);
+  font-size: var(--step--2);
+  line-height: 1.5;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+.source__at,
+.source__attached {
+  font-size: var(--step--2);
+  color: var(--ink-faint);
+}
+
+.source__caution {
+  font-size: var(--step--2);
+  color: var(--verify);
+}
+
+/* Narrow screens: the apparatus collapses under the block it belongs to. */
+.source-drawer {
+  margin-block-start: var(--space-m);
+  border: var(--hairline) solid var(--rule);
+  background-color: var(--paper-raised);
+}
+
+.source-drawer > summary {
+  min-block-size: var(--target-min);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding: var(--space-2xs) var(--space-s);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.source-drawer > summary::-webkit-details-marker {
+  display: none;
+}
+
+.source-drawer > summary::after {
+  content: '+';
+  margin-inline-start: auto;
+  font-family: var(--font-marker);
+  color: var(--ink-faint);
+}
+
+.source-drawer[open] > summary::after {
+  content: '\2013';
+}
+
+.source-drawer__body {
+  padding: 0 var(--space-s) var(--space-s);
+}
+
+@media (min-width: 80rem) {
+  .source-drawer {
+    display: none;
+  }
+}
+
+/* ---- Generic content cards ---------------------------------------------- */
+
+.card {
+  padding: var(--space-m);
+  background-color: var(--paper-raised);
+  border: var(--hairline) solid var(--rule);
+  box-shadow: var(--shadow-card);
+}
+
+.card__title {
+  font-family: var(--font-apparatus);
+  font-size: var(--step-0);
+  font-weight: 700;
+  margin-block-end: var(--space-2xs);
+}
+
+.stack {
+  display: grid;
+  gap: var(--space-s);
+}
+
+/*
+ * Grid items default to min-width:auto, so a wide item - a data table with its
+ * own minimum width, say - sets a floor under the whole page rather than
+ * scrolling inside its own box. The same guard the shell and the app apply to
+ * their own children.
+ */
+.stack > * {
+  min-inline-size: 0;
+}
+
+.stack--l {
+  gap: var(--space-l);
+}
+
+.page-head {
+  padding-block: var(--space-l) var(--space-m);
+  border-block-end: 2px solid var(--ink);
+  margin-block-end: var(--space-l);
+  max-inline-size: 60rem;
+}
+
+.page-head__title {
+  font-size: var(--step-4);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-block: var(--space-2xs);
+}
+
+.page-head__lede {
+  font-size: var(--step-1);
+  color: var(--ink-soft);
+  max-inline-size: 58ch;
+}
+
+/* ---- Prev/next stage pager ---------------------------------------------- */
+
+.pager {
+  display: grid;
+  gap: var(--space-s);
+  margin-block-start: var(--space-2xl);
+  padding-block-start: var(--space-m);
+  border-block-start: 2px solid var(--ink);
+}
+
+@media (min-width: 40rem) {
+  .pager {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.pager__link {
+  text-decoration: none;
+  display: grid;
+  gap: var(--space-3xs);
+  padding: var(--space-s);
+  border: var(--hairline) solid var(--rule);
+  background-color: var(--paper-raised);
+  color: var(--ink);
+  text-decoration: none;
+  min-block-size: var(--target-min);
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.pager__link:hover {
+  border-color: var(--cham);
+  color: var(--ink);
+}
+
+.pager__dir {
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.pager__label {
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  font-weight: 600;
+}
+
+.pager__link--next {
+  text-align: end;
+}
+
+@media (max-width: 39.999rem) {
+  .pager__link--next {
+    text-align: start;
+  }
+}

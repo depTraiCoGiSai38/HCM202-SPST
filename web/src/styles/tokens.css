@@ -1,0 +1,157 @@
+/*
+ * Design tokens.
+ *
+ * PROJECT DECISION. The palette is an archival one: aged paper, warm ink, a
+ * single lacquer-red accent and an indigo used for structural apparatus. No
+ * token here is a requirement taken from the course documents.
+ *
+ * Accent discipline. `--son` marks exactly four things and nothing else:
+ *   1. turning points,
+ *   2. the current stage in the journey rail,
+ *   3. the focus ring and the single primary action on a view,
+ *   4. the thread itself.
+ *
+ * Item 4 was added when the experience layer was rebuilt around a single drawn
+ * thread. It is a widening of item 2, not a new meaning: the thread IS the
+ * journey indicator, so red still means "the journey, where you are in it, or
+ * where it turns". Red still never means "this is a button".
+ * Ordinary hover and secondary emphasis use `--cham`, so that seeing red always
+ * means "this is a turning point or where you are", never "this is a button".
+ *
+ * Every foreground/background pair used for text is at or above 4.5:1 in both
+ * themes; the ratios are recorded beside each token.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* ---- Type families -------------------------------------------------- */
+  --font-narrative: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-apparatus: 'Be Vietnam Pro', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-marker: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'Cascadia Mono', monospace;
+
+  /* ---- Type scale ----------------------------------------------------- */
+  --step--2: clamp(0.69rem, 0.67rem + 0.11vw, 0.75rem);
+  --step--1: clamp(0.83rem, 0.79rem + 0.18vw, 0.94rem);
+  --step-0: clamp(1rem, 0.95rem + 0.24vw, 1.15rem);
+  --step-1: clamp(1.2rem, 1.12rem + 0.39vw, 1.44rem);
+  --step-2: clamp(1.44rem, 1.31rem + 0.63vw, 1.8rem);
+  --step-3: clamp(1.73rem, 1.53rem + 0.98vw, 2.25rem);
+  --step-4: clamp(2.07rem, 1.77rem + 1.49vw, 2.81rem);
+  --step-5: clamp(2.49rem, 2.03rem + 2.2vw, 3.52rem);
+  --step-6: clamp(2.99rem, 2.33rem + 3.2vw, 4.4rem);
+
+  /* ---- Spacing (density dial 4/10 = standard) ------------------------- */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-s: 1rem;
+  --space-m: 1.5rem;
+  --space-l: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+
+  /* ---- Measure & rhythm ----------------------------------------------- */
+  --measure: 66ch;
+  --measure-tight: 46ch;
+  --leading-narrative: 1.68;
+  /*
+   * Vietnamese stacks a tone mark above a vowel that may already carry a
+   * diacritic (ế, ộ, ữ). Tight Latin leading clips those marks, so the tight
+   * value here is deliberately looser than a Latin-only design would use.
+   */
+  --leading-tight: 1.3;
+
+  /* ---- Motion ---------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.22, 0.75, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.62, 0.04, 0.27, 0.98);
+  --dur-instant: 90ms;
+  --dur-fast: 180ms;
+  --dur-base: 260ms;
+  --dur-slow: 420ms;
+
+  /* ---- Radii / lines --------------------------------------------------- */
+  --radius-s: 2px;
+  --radius-m: 3px;
+  --hairline: 1px;
+
+  --focus-width: 3px;
+  --focus-offset: 3px;
+
+  /*
+   * Minimum size for an interactive control.
+   *
+   * WCAG 2.2 AA asks for 24 CSS px on the web; this product holds itself to the
+   * 44px figure instead, and a browser test asserts it. Stated in px rather
+   * than the equivalent 2.75rem on purpose: a control laid out inside a
+   * fractional grid track resolved to 43.99994px, which is 44px to any eye and
+   * under the line to the assertion. An absolute value cannot land there.
+   */
+  --target-min: 44px;
+
+  /* ---- Light theme: "giấy" (paper) ------------------------------------- */
+  --paper: #f4efe6;
+  --paper-raised: #fbf8f2;
+  --paper-sunk: #eae3d6;
+  --ink: #1a1714; /* 15.4:1 on --paper */
+  --ink-soft: #4a433c; /* 8.5:1 on --paper */
+  --ink-faint: #6e645a; /* 5.1:1 on --paper */
+  --rule: #d6ccbc;
+  --rule-strong: #b9ab95;
+  --son: #9b2d20; /* 6.6:1 on --paper - turning points, current stage, focus */
+  --son-wash: #f0dcd6;
+  --cham: #23405c; /* 9.4:1 on --paper - apparatus */
+  --cham-wash: #dde5ee;
+  --verify: #8a5a12; /* 5.2:1 on --paper - NEED VERIFICATION */
+  --verify-wash: #f3e6cd;
+  --selection: #d9c6a8;
+  --grain-opacity: 0.045;
+  --shadow-card: 0 1px 0 var(--rule), 0 6px 20px -16px rgb(26 23 20 / 40%);
+}
+
+/*
+ * Dark theme: "đèn đọc" (reading lamp). Applied when the viewer's system asks
+ * for dark and they have not overridden it, or when they explicitly choose it.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --paper: #14110e;
+    --paper-raised: #1d1916;
+    --paper-sunk: #0e0c0a;
+    --ink: #ede5d8; /* 15.2:1 on --paper */
+    --ink-soft: #bfb4a4; /* 9.3:1 on --paper */
+    --ink-faint: #8c8274; /* 5.0:1 on --paper */
+    --rule: #3a332b;
+    --rule-strong: #564c40;
+    --son: #e0705c; /* 6.0:1 on --paper */
+    --son-wash: #3a211c;
+    --cham: #7fa8c9; /* 7.6:1 on --paper */
+    --cham-wash: #1b2733;
+    --verify: #d4a24c; /* 8.2:1 on --paper */
+    --verify-wash: #33270f;
+    --selection: #4a3f2e;
+    --grain-opacity: 0.05;
+    --shadow-card: 0 1px 0 var(--rule), 0 8px 24px -18px rgb(0 0 0 / 80%);
+  }
+}
+
+:root[data-theme='dark'] {
+  --paper: #14110e;
+  --paper-raised: #1d1916;
+  --paper-sunk: #0e0c0a;
+  --ink: #ede5d8;
+  --ink-soft: #bfb4a4;
+  --ink-faint: #8c8274;
+  --rule: #3a332b;
+  --rule-strong: #564c40;
+  --son: #e0705c;
+  --son-wash: #3a211c;
+  --cham: #7fa8c9;
+  --cham-wash: #1b2733;
+  --verify: #d4a24c;
+  --verify-wash: #33270f;
+  --selection: #4a3f2e;
+  --grain-opacity: 0.05;
+  --shadow-card: 0 1px 0 var(--rule), 0 8px 24px -18px rgb(0 0 0 / 80%);
+}

@@ -1,0 +1,219 @@
+/* Reset, document rhythm, focus and motion policy. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-block-size: 100svh;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-narrative);
+  font-size: var(--step-0);
+  line-height: var(--leading-narrative);
+  font-variant-numeric: oldstyle-nums proportional-nums;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/*
+ * Restrained archival texture. A single fixed grain layer rather than
+ * per-element background images, so it never costs a repaint during scroll.
+ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+:root[data-theme='dark'] body::before {
+  mix-blend-mode: screen;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) body::before {
+    mix-blend-mode: screen;
+  }
+}
+
+::selection {
+  background-color: var(--selection);
+  color: var(--ink);
+}
+
+img,
+svg {
+  display: block;
+  max-inline-size: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+a {
+  color: var(--cham);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  color: var(--cham);
+  text-decoration-thickness: 2px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  text-wrap: pretty;
+  letter-spacing: -0.012em;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* ---- Focus -------------------------------------------------------------- */
+
+:focus-visible {
+  outline: var(--focus-width) solid var(--son);
+  outline-offset: var(--focus-offset);
+  border-radius: var(--radius-s);
+}
+
+/* Keep the focus ring visible above sticky chrome. */
+:focus-visible {
+  scroll-margin-block: 7rem;
+}
+
+.skip-link {
+  position: absolute;
+  inset-inline-start: var(--space-s);
+  inset-block-start: var(--space-s);
+  z-index: 100;
+  padding: var(--space-2xs) var(--space-s);
+  background-color: var(--paper-raised);
+  border: 2px solid var(--son);
+  color: var(--ink);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  transform: translateY(-160%);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* ---- Utility ------------------------------------------------------------ */
+
+/*
+ * The `hidden` attribute has to win.
+ *
+ * `[hidden] { display: none }` comes from the user-agent sheet, so any author
+ * rule that sets `display` on the same element beats it: a `.btn` that is
+ * `display: inline-flex` stays on screen after `el.hidden = true`, silently.
+ * Several controls here are hidden that way - the continuous view, the stage
+ * hand-off, the traverse controls, "Đọc tiếp đoạn này" - so the attribute is
+ * given the last word once, here, rather than patched per component.
+ */
+[hidden] {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.marker {
+  font-family: var(--font-marker);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: 'tnum' 1;
+  letter-spacing: 0.02em;
+}
+
+.apparatus {
+  font-family: var(--font-apparatus);
+  font-variant-numeric: lining-nums;
+}
+
+/* ---- Motion policy ------------------------------------------------------ */
+
+/*
+ * Two switches, either of which turns non-essential motion off:
+ *  1. the viewer's OS setting,
+ *  2. an explicit in-product toggle, which writes data-motion="off".
+ * Content is always rendered in its final readable state; nothing is revealed
+ * only by animation.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:root[data-motion='off'] {
+  scroll-behavior: auto;
+}
+
+:root[data-motion='off'] *,
+:root[data-motion='off'] *::before,
+:root[data-motion='off'] *::after {
+  animation-duration: 1ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 1ms !important;
+  scroll-behavior: auto !important;
+}
+
+@media print {
+  body::before {
+    display: none;
+  }
+}

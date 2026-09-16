@@ -1,0 +1,112 @@
+Mã: P-IMG-01
+Ngày dùng: 17-9-2026
+Công cụ AI: Claude Code (Anthropic), mô hình Opus 5, chạy trong VS Code
+Người gửi: thành viên nhóm
+Tác vụ hỗ trợ: kể chuyện bằng ảnh tư liệu và hoạt ảnh có ý nghĩa
+
+Câu lệnh nguyên văn, chép lại không sửa, không rút gọn:
+
+--------------------------------------------------------------------------------
+Tiếp tục cải thiện “HÀNH TRÌNH TƯ TƯỞNG” theo hướng kể chuyện bằng
+ảnh tư liệu và hoạt ảnh có ý nghĩa.
+
+MỤC TIÊU
+Tạo trải nghiệm có hình ảnh Bác Hồ, giàu cảm xúc và có bản sắc lịch sử,
+giúp sinh viên tò mò khám phá môn học. Giữ những cải thiện UX đã có.
+
+1. ĐỌC VÀ AUDIT
+Tuân thủ quy trình đọc nguồn, kiểm tra hash và audit của AGENTS.md,
+CLAUDE.md và HCM202_PROJECT_CONTEXT_v3.0_FORENSIC_FINAL.md.
+
+Đọc báo cáo hai lần cải thiện trước, kiểm tra code, design system
+và tài nguyên ảnh hiện có trước khi sửa.
+
+2. BẮT BUỘC DÙNG UI-UX-PRO-MAX
+Invoke skill ui-ux-pro-max, đọc hoàn toàn SKILL.md và dùng script thật.
+Tra cứu về storytelling, phân cấp hình ảnh và motion theo query contract.
+Chỉ áp dụng kết quả phù hợp với website giáo dục.
+Ghi rõ kết quả CLI, hướng dẫn chung và quyết định thiết kế của nhóm.
+
+3. ẢNH TƯ LIỆU BÁC HỒ
+- Ưu tiên ảnh sẵn có với nguồn đã kiểm tra.
+- Nếu cần tìm ảnh, tìm trên trang của cơ quan lưu trữ, bảo tàng
+  hoặc cơ quan chính thức; mở trang gốc để kiểm tra.
+- Ghi nguồn, URL trang gốc, chú thích, điều kiện sử dụng nếu có,
+  và trạng thái kiểm chứng trong hồ sơ.
+- Không đoán ngày, địa điểm, sự kiện hoặc người trong ảnh.
+- Không gắn ảnh vào một chặng cụ thể nếu chưa xác thực sự liên quan.
+- Không coi ảnh tìm được qua công cụ tìm kiếm là đã xác thực.
+- Nếu thiếu nguồn hoặc quyền sử dụng, giữ mục đó bị chặn trong bản nháp;
+  tiếp tục triển khai các phần giao diện độc lập.
+
+Giữ nguyên hình ảnh nhân vật:
+Không tạo ảnh Bác Hồ bằng AI, face-swap, tô màu/phục dựng bằng AI,
+lip-sync, làm chớp mắt, chuyển động khuôn mặt hoặc cơ thể.
+Không tạo giọng nói hay lời nói giả.
+
+4. HƯỚNG SÁNG TẠO
+
+A. Màn mở đầu
+Tạo bố cục biên tập với một ảnh tư liệu có nguồn, câu hỏi trung tâm,
+tên sản phẩm và hành động bắt đầu rõ ràng.
+Ảnh có vai trò dẫn nhập, không lấn át việc đọc hoặc nút thao tác.
+
+B. Các chặng
+Chọn ảnh/tư liệu thực sự liên quan đến nội dung đã xác thực.
+Kết hợp ảnh, chú thích và một ý chính thành điểm dừng khám phá.
+Cho phép mở ảnh lớn và xem nguồn bằng thao tác rõ ràng.
+
+C. Hoạt ảnh
+Tạo chuyển động ở các lớp giao diện:
+- Đường nối giữa năm chặng hiện dần khi điều hướng.
+- Khung ảnh và chú thích xuất hiện nhẹ, giữ ảnh gốc bất động.
+- Tư liệu mở rộng khi người học yêu cầu xem.
+- Sơ đồ trước/sau làm rõ mối liên hệ đã có căn cứ.
+- Điểm nhấn tiến trình phản hồi sau thao tác.
+
+Mỗi hoạt ảnh phải giải thích được:
+“Nó giúp người học nhận ra điều gì?”
+
+Không autoplay âm thanh, scroll hijacking hoặc bắt chờ hoạt ảnh.
+Không phủ hiệu ứng lên mặt nhân vật hay cắt ảnh làm sai bối cảnh.
+Khi prefers-reduced-motion bật, nội dung hiện đầy đủ và dùng được ngay.
+
+5. TRIỂN KHAI
+Sau audit, chọn một hướng thị giác nhất quán và trực tiếp triển khai
+các thay đổi có thể đảo ngược. Giữ Vite + TypeScript + CSS,
+luồng đọc liền mạch, điều hướng, tương tác và bản offline.
+
+Dùng tài nguyên cục bộ khi điều kiện sử dụng cho phép.
+Tối ưu ảnh, giữ tỷ lệ, khai báo kích thước để tránh nhảy bố cục.
+Ảnh có alt phù hợp; nguồn và chú thích dễ đọc trên mobile.
+Không thêm thư viện lớn chỉ để tạo hiệu ứng.
+
+6. BẰNG CHỨNG VÀ KIỂM TRA
+Mọi lựa chọn hình ảnh/motion là PROJECT DECISION.
+Mọi chú thích lịch sử phải theo protocol kiểm chứng học thuật.
+Không bịa nguồn, feedback, kết quả test hoặc revision evidence.
+Ghi mọi prompt đã dùng với đủ trường bắt buộc.
+
+Kiểm tra mobile/tablet/desktop, bàn phím, focus, contrast,
+reduced motion, tốc độ tải và bản offline.
+Chụp ảnh hoặc ghi hình những trạng thái thực sự đã kiểm tra.
+
+BÁO CÁO CUỐI
+- Ảnh nào được dùng, nguồn và trạng thái xác thực.
+- Hoạt ảnh nào được thêm và mục tiêu học tập.
+- Cách áp dụng ui-ux-pro-max.
+- File đã sửa, kiểm tra thực sự đã chạy.
+- Mục còn thiếu nguồn, quyền sử dụng hoặc bằng chứng người học.
+
+Không tự kết luận sản phẩm hấp dẫn hơn khi chưa có test người thật.
+Giữ trạng thái:
+REQUIRES HUMAN VERIFICATION AND REAL PROJECT EVIDENCE.
+--------------------------------------------------------------------------------
+
+GHI CHÚ VỀ KẾT QUẢ (thêm sau khi thực hiện, không thuộc câu lệnh gốc):
+
+Không ảnh nào được đưa vào sản phẩm. Ba nguồn đã mở và kiểm ngày 17-9-2026;
+cả ba không đủ điều kiện sử dụng lại. Theo đúng chỉ dẫn ở mục 3
+("Nếu thiếu nguồn hoặc quyền sử dụng, giữ mục đó bị chặn trong bản nháp;
+tiếp tục triển khai các phần giao diện độc lập"), sáu vị trí ảnh được dựng
+đầy đủ và để ở trạng thái bị chặn, còn phần hoạt ảnh được triển khai trọn vẹn.

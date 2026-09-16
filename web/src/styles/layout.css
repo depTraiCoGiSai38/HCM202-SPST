@@ -1,0 +1,602 @@
+/*
+ * App shell and the persistent five-stage journey indicator.
+ *
+ * The rail is the structural idea of the product: it draws the C2 period
+ * boundaries as they are actually printed, with late 1920 and early 1941
+ * rendered as shared, overlapping boundaries rather than clean cuts.
+ */
+
+.app {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-block-size: 100svh;
+  grid-template-rows: auto 1fr auto;
+}
+
+/*
+ * Grid items default to min-width:auto, which is their min-content width. The
+ * masthead title is `white-space: nowrap`, so its min-content is the whole
+ * title - and that set a floor under the width of the entire page. At normal
+ * text sizes the floor sat below the viewport and nothing showed; at 200% text
+ * it did not, and every route grew a horizontal scrollbar. The same guard the
+ * shell already applies to its own children.
+ */
+.app > * {
+  min-inline-size: 0;
+}
+
+/* ---- Masthead ----------------------------------------------------------- */
+
+.masthead {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  flex-wrap: wrap;
+  padding: var(--space-2xs) var(--space-s);
+  background-color: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-block-end: var(--hairline) solid var(--rule);
+}
+
+.masthead__brand {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2xs);
+  margin-inline-end: auto;
+  min-inline-size: 0;
+  /* Absorbs the shrink before the tools do, so the title ellipsises rather
+     than the controls being pushed off the side. */
+  flex: 1 1 auto;
+}
+
+.masthead__title {
+  flex: 0 1 auto;
+  min-inline-size: 0;
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*
+ * The subtitle is secondary identity, not navigation. Below the tablet
+ * breakpoint the title alone carries the masthead and the subtitle steps aside
+ * rather than truncating or widening the page.
+ */
+.masthead__sub {
+  display: none;
+  min-inline-size: 0;
+  font-size: var(--step--2);
+  color: var(--ink-faint);
+  font-family: var(--font-apparatus);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 48rem) {
+  .masthead__sub {
+    display: block;
+  }
+}
+
+/*
+ * The tools wrap rather than overflow.
+ *
+ * With `flex-shrink: 0` and no wrapping, the three controls kept their full
+ * width at every text size: at 200% text on a phone that pushed them past the
+ * right edge and gave the whole document a horizontal scrollbar. They now wrap
+ * onto a second line instead, which costs nothing at normal sizes because there
+ * is room, and keeps every control reachable when there is not.
+ */
+.masthead__tools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-3xs);
+  flex: 0 1 auto;
+  min-inline-size: 0;
+}
+
+/* ---- Main shell --------------------------------------------------------- */
+
+.shell {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+/*
+ * Grid items default to min-width:auto, which lets a horizontally scrolling
+ * child push the whole page wider instead of scrolling inside itself.
+ */
+.shell > * {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+@media (min-width: 64rem) {
+  .shell {
+    grid-template-columns: 15rem minmax(0, 1fr);
+    gap: var(--space-l);
+    padding-inline: var(--space-m);
+  }
+}
+
+@media (min-width: 90rem) {
+  .shell {
+    grid-template-columns: 17rem minmax(0, 1fr);
+    gap: var(--space-xl);
+  }
+}
+
+.main {
+  min-inline-size: 0;
+  padding-block: var(--space-l) var(--space-3xl);
+  padding-inline: var(--space-s);
+}
+
+@media (min-width: 64rem) {
+  .main {
+    padding-inline: 0;
+  }
+}
+
+/* ---- Journey rail: wide screens (vertical) ------------------------------ */
+
+.rail {
+  position: sticky;
+  inset-block-start: 3.25rem;
+  z-index: 30;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+.rail__heading {
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-block-end: var(--space-2xs);
+}
+
+.rail__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+/*
+ * Positioned in both layouts so the visually-hidden full heading inside each
+ * link resolves against its own item rather than against the page.
+ */
+.rail__item {
+  position: relative;
+}
+
+.rail__progress {
+  display: none;
+}
+
+@media (min-width: 64rem) {
+  .rail {
+    padding-block: var(--space-l);
+    max-block-size: calc(100svh - 4rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .rail__list {
+    display: grid;
+    gap: 0;
+  }
+
+  .rail__item {
+    position: relative;
+    padding-inline-start: var(--space-m);
+  }
+
+  /* The spine. */
+  .rail__item::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0.3125rem;
+    inset-block: 0;
+    inline-size: var(--hairline);
+    background-color: var(--rule);
+  }
+
+  .rail__item:first-child::before {
+    inset-block-start: 1.1rem;
+  }
+
+  .rail__item:last-child::before {
+    inset-block-end: calc(100% - 1.1rem);
+  }
+
+  .rail__link {
+    display: grid;
+    gap: 2px;
+    inline-size: 100%;
+    text-decoration: none;
+    text-align: start;
+    padding-block: var(--space-2xs);
+    padding-inline-end: var(--space-2xs);
+    color: var(--ink-soft);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+
+  .rail__link:hover {
+    color: var(--ink);
+  }
+
+  /* The node. */
+  .rail__link::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 1rem;
+    inline-size: 0.6875rem;
+    block-size: 0.6875rem;
+    border-radius: 50%;
+    border: 1.5px solid var(--rule-strong);
+    background-color: var(--paper);
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+
+  .rail__item[data-visited='true'] .rail__link::before {
+    background-color: var(--rule-strong);
+  }
+
+  .rail__item[aria-current='step'] .rail__link::before {
+    background-color: var(--son);
+    border-color: var(--son);
+    transform: scale(1.22);
+  }
+
+  .rail__item[aria-current='step'] .rail__link {
+    color: var(--ink);
+  }
+}
+
+.rail__ordinal {
+  font-family: var(--font-marker);
+  font-size: var(--step--2);
+  color: var(--ink-faint);
+  letter-spacing: 0.08em;
+}
+
+.rail__item[aria-current='step'] .rail__ordinal {
+  color: var(--son);
+}
+
+.rail__period {
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  font-weight: 500;
+  line-height: 1.32;
+}
+
+/*
+ * Shared-boundary marker. Two consecutive headings use the same boundary, so
+ * the rail shows an overlap band instead of a cut. See C2-R01/R02/R03.
+ */
+.rail__boundary {
+  position: relative;
+  padding-inline-start: var(--space-m);
+  margin-block: -2px;
+}
+
+.rail__boundary::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0.3125rem;
+  inset-block: 0;
+  inline-size: var(--hairline);
+  background-color: var(--rule);
+}
+
+.rail__boundary-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  font-family: var(--font-marker);
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+  color: var(--verify);
+  padding-block: 1px;
+}
+
+.rail__boundary-mark::before {
+  content: '';
+  inline-size: 0.6875rem;
+  block-size: 0;
+  border-block-start: 2px dotted var(--verify);
+  margin-inline-start: -1.375rem;
+  margin-inline-end: 0.6875rem;
+}
+
+/* ---- Rail: what comes after the five stages ----------------------------- */
+
+/*
+ * The comparison, the joining activity and the verification register had no
+ * link anywhere in the product: they were reachable only by typing the address.
+ * They live here, subordinate to the five stages, which remain the spine.
+ */
+/*
+ * A rule between the five stages and the four destinations, so that with the
+ * heading collapsed on a stage screen, or hidden on a phone, the destinations
+ * still cannot read as stages six to nine.
+ */
+.rail__after {
+  margin-block-start: var(--space-s);
+  padding-block-start: var(--space-2xs);
+  border-block-start: var(--hairline) solid var(--rule);
+}
+
+.rail__aside-heading {
+  margin: 0 0 var(--space-2xs);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.rail__aside {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-inline-size: 0;
+}
+
+
+.rail__aside-link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--target-min);
+  padding: var(--space-3xs) var(--space-2xs);
+  border: var(--hairline) solid transparent;
+  border-radius: var(--radius-m);
+  color: var(--ink-soft);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  text-decoration: none;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.rail__aside-link:hover {
+  color: var(--cham);
+  border-color: var(--rule);
+}
+
+/* Current destination, marked by weight and a rule as well as by colour. */
+.rail__aside-link[aria-current='page'] {
+  color: var(--ink);
+  font-weight: 600;
+  border-color: var(--son);
+  background-color: var(--son-wash);
+}
+
+.rail__aside-item[data-kind='register'] .rail__aside-label {
+  color: var(--verify);
+}
+
+@media (min-width: 64rem) {
+  .rail__aside {
+    display: grid;
+    gap: 0;
+  }
+
+  .rail__aside-link {
+    inline-size: 100%;
+  }
+}
+
+/* ---- Journey rail: narrow screens (horizontal strip) -------------------- */
+
+@media (max-width: 63.999rem) {
+  /*
+   * On a phone the rail is a strip, not a column. Pinned, it cost about a fifth
+   * of the viewport for the whole of a stage - and that was before the four
+   * destinations joined it. It scrolls with the page instead: the masthead
+   * stays pinned, and where the viewer is inside a stage is carried by the
+   * stage header, the phase bar and the counter, which are all on screen.
+   */
+  .rail {
+    position: static;
+    background-color: color-mix(in srgb, var(--paper) 94%, transparent);
+    border-block-end: var(--hairline) solid var(--rule);
+    padding-block: var(--space-2xs);
+  }
+
+  .rail__heading {
+    padding-inline: var(--space-s);
+  }
+
+  .rail__list {
+    display: flex;
+    gap: var(--space-3xs);
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    padding-inline: var(--space-s);
+    padding-block-end: var(--space-3xs);
+    scrollbar-width: thin;
+  }
+
+  .rail__item {
+    scroll-snap-align: start;
+    flex: 0 0 auto;
+  }
+
+  .rail__link {
+    display: grid;
+    gap: 2px;
+    text-decoration: none;
+    min-block-size: var(--target-min);
+    min-inline-size: var(--target-min);
+    padding: var(--space-3xs) var(--space-2xs);
+    border: var(--hairline) solid var(--rule);
+    border-radius: var(--radius-m);
+    background-color: var(--paper-raised);
+    color: var(--ink-soft);
+    text-align: start;
+    max-inline-size: 11rem;
+  }
+
+  .rail__item[aria-current='step'] .rail__link {
+    border-color: var(--son);
+    background-color: var(--son-wash);
+    color: var(--ink);
+  }
+
+  .rail__period {
+    font-size: var(--step--2);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .rail__boundary {
+    flex: 0 0 auto;
+    align-self: center;
+    padding: 0;
+  }
+
+  .rail__boundary::before {
+    display: none;
+  }
+
+  .rail__boundary-mark::before {
+    inline-size: 1rem;
+    margin: 0 0.25rem 0 0;
+  }
+
+  /*
+   * On a narrow screen the rail is a sticky strip, so it has a height budget.
+   * The four destinations join the same scrolling row rather than adding a
+   * second one, and their heading becomes a divider rather than a line of type.
+   */
+  .rail__aside-heading {
+    display: none;
+  }
+
+  .rail__aside {
+    display: flex;
+    gap: var(--space-3xs);
+    overflow-x: auto;
+    padding-inline: var(--space-s);
+    padding-block-start: var(--space-3xs);
+    scrollbar-width: thin;
+  }
+
+  .rail__aside-item {
+    flex: 0 0 auto;
+  }
+
+  .rail__aside-link {
+    min-block-size: var(--target-min);
+    border-color: var(--rule);
+    background-color: var(--paper-raised);
+    font-size: var(--step--2);
+  }
+
+  .rail__after {
+    margin-block-start: var(--space-2xs);
+    padding-block-start: 0;
+  }
+
+  .rail__progress {
+    display: block;
+    block-size: 2px;
+    background-color: var(--rule);
+    margin-inline: var(--space-s);
+    margin-block-start: var(--space-3xs);
+  }
+
+  .rail__progress-fill {
+    block-size: 100%;
+    background-color: var(--son);
+    transition: inline-size var(--dur-base) var(--ease-out);
+  }
+}
+
+/* ---- Editorial grid: narrative + source margin -------------------------- */
+
+/*
+ * Narrative column plus a source margin, like a critical edition. The flow is a
+ * single grid item so the margin note sits beside the whole article rather than
+ * falling to the last row.
+ */
+.reading {
+  display: grid;
+  gap: var(--space-m);
+}
+
+.reading__flow {
+  display: grid;
+  gap: var(--space-m);
+  min-inline-size: 0;
+  max-inline-size: var(--measure);
+}
+
+@media (min-width: 80rem) {
+  .reading {
+    grid-template-columns: minmax(0, var(--measure)) minmax(min(15rem, 100%), 21rem);
+    column-gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .reading__flow {
+    max-inline-size: none;
+  }
+}
+
+/* ---- Footer ------------------------------------------------------------- */
+
+.colophon {
+  border-block-start: var(--hairline) solid var(--rule);
+  padding: var(--space-l) var(--space-s) var(--space-xl);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  color: var(--ink-faint);
+}
+
+.colophon__inner {
+  max-inline-size: 72rem;
+  margin-inline: auto;
+  display: grid;
+  gap: var(--space-s);
+}
+
+@media (min-width: 48rem) {
+  .colophon__inner {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-l);
+  }
+}

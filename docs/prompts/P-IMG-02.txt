@@ -1,0 +1,137 @@
+Mã: P-IMG-02
+Ngày dùng: 17-9-2026
+Công cụ AI: Claude Code (Anthropic), mô hình Opus 5, chạy trong VS Code
+Người gửi: thành viên nhóm
+Tác vụ hỗ trợ: tìm và tích hợp ảnh tư liệu cho màn mở đầu
+
+Câu lệnh nguyên văn, chép lại không sửa, không rút gọn:
+
+--------------------------------------------------------------------------------
+Tiếp tục tìm và tích hợp ảnh tư liệu Bác Hồ cho “HÀNH TRÌNH TƯ TƯỞNG”.
+
+Lần trước đã dựng hệ thống ảnh và hoạt ảnh nhưng chưa có ảnh thật.
+Hãy tập trung tìm một ảnh phù hợp cho màn mở đầu và tích hợp nếu đủ căn cứ.
+Không cần lấp đủ sáu vị trí ảnh.
+
+1. ĐỌC VÀ KIỂM TRA
+Tuân thủ AGENTS.md, CLAUDE.md và context kiểm soát của dự án.
+Thực hiện việc đọc nguồn, kiểm tra hash và audit bắt buộc trước khi sửa.
+
+Đọc báo cáo ảnh trước, data/figures.ts, components/figure.ts,
+sổ nguồn ảnh, Prompt Log, bản offline và các kiểm thử liên quan.
+Giữ kiến trúc và công việc hiện có.
+
+2. SỬA CÁCH ĐÁNH GIÁ NGUỒN
+
+Tách riêng ba câu hỏi:
+A. Ảnh có đúng là Bác Hồ và có nguồn gốc đáng tin không?
+B. Ngày, địa điểm, sự kiện của ảnh đã xác thực đến đâu?
+C. Điều kiện sử dụng cho phép những hành động nào:
+   tải về, đóng gói offline, hiển thị công khai, chỉnh kích thước?
+
+“Không thấy điều khoản cho phép dùng lại” không đồng nghĩa
+“nguồn cấm dùng lại”. Ghi trạng thái chưa xác lập điều kiện sử dụng
+nếu chưa đủ bằng chứng.
+
+Không gộp ngày ảnh chưa rõ với kết luận về bản quyền.
+Không tự suy ra ảnh được dùng tự do vì cũ, phục vụ giáo dục,
+được đăng trên trang chính thức hoặc đã ghi nguồn.
+
+3. TÌM MỘT ẢNH KHẢ THI
+
+Ưu tiên cơ quan lưu trữ, bảo tàng và cơ quan chính thức.
+Có thể xem kho có giấy phép rõ ràng như Wikimedia Commons
+để tìm ứng viên và truy nguồn; đây là phương án tìm kiếm,
+không tự thay thế yêu cầu xác thực học thuật của dự án.
+
+Với mỗi ứng viên:
+- Mở trang ảnh và trang nguồn gốc được dẫn.
+- Đọc điều khoản/giấy phép liên quan, không dựa vào search snippet.
+- Ghi URL chính xác, tác giả nếu xác định, nguồn gốc, chú thích,
+  giấy phép hoặc căn cứ sử dụng và những điểm chưa rõ.
+- Nếu có nhận định public domain, kiểm tra căn cứ được trang nêu;
+  không coi nhãn đó là đã được xác lập độc lập.
+- Không đoán năm công bố, tác giả hoặc thời hạn bảo hộ.
+
+Đánh giá một nhóm nhỏ ứng viên có triển vọng.
+Không lặp lại việc mở trang chủ rồi kết luận cả kho không dùng được.
+Dừng khi tìm được một ứng viên đủ căn cứ hoặc xác định rõ trở ngại.
+
+4. CHÚ THÍCH TRUNG THỰC
+
+Màn mở đầu không bắt buộc ảnh phải minh họa một sự kiện cụ thể.
+Có thể dùng ảnh chân dung làm hình dẫn nhập nếu đã xác thực
+nhân vật và điều kiện sử dụng phù hợp.
+
+Chỉ viết ngày, địa điểm hoặc sự kiện khi có căn cứ.
+Nếu dữ kiện ấy chưa rõ, không đưa vào chú thích.
+Không gắn ảnh với một chặng lịch sử chỉ vì trông phù hợp.
+
+Không bịa URL, trích dẫn, approval, quyền sử dụng hay lịch sử ảnh.
+Giữ NEED VERIFICATION ở những dữ kiện chưa xác thực.
+
+5. TÍCH HỢP NẾU ĐỦ CĂN CỨ
+
+Nếu nguồn gốc và điều kiện sử dụng phù hợp đã được xác lập:
+- Tải ảnh bằng phương thức được cho phép.
+- Giữ bản gốc và hồ sơ nguồn.
+- Tạo bản tối ưu kích thước/định dạng nếu điều kiện sử dụng cho phép.
+- Tích hợp một ảnh vào FS-open bằng hệ thống FIGURES hiện có.
+- Hiển thị chú thích, credit, nguồn và giấy phép theo yêu cầu thực tế.
+- Kiểm tra Xem lớn, bàn phím, focus, mobile và bản offline.
+
+Invoke ui-ux-pro-max, đọc SKILL.md và áp dụng hướng dẫn phù hợp
+cho bố cục ảnh, tỷ lệ, alt text và motion.
+Phân biệt kết quả CLI, hướng dẫn chung và PROJECT DECISION.
+
+Giữ chân dung bất động. Chỉ chuyển động khung ảnh/chú thích
+và các lớp giao diện.
+Không dùng AI tạo, phục dựng, tô màu, làm Bác nói, chớp mắt,
+chuyển động khuôn mặt/cơ thể hoặc tạo giọng nói giả.
+Tôn trọng prefers-reduced-motion.
+
+6. NẾU CHƯA TÌM ĐƯỢC ẢNH ĐỦ CĂN CỨ
+
+Không tự mở khóa ảnh.
+Báo cáo rõ ứng viên tốt nhất, bằng chứng đã tìm được
+và đúng thông tin còn thiếu để quyết định.
+
+Chuẩn bị một bản nháp xin phép ngắn với:
+ảnh cụ thể, mục đích giáo dục, nơi hiển thị, việc đóng gói offline
+và chỉnh kích thước dự kiến.
+Nhãn TEMPLATE - NOT EVIDENCE.
+Không gửi email/tin nhắn khi chưa được người dùng cho phép.
+Không tự ghi giảng viên hoặc cơ quan đã chấp thuận.
+
+Tiếp tục các việc độc lập có thể làm mà không cần quyền sử dụng,
+nhưng không tạo thêm vị trí ảnh trống chỉ để báo cáo tiến độ.
+
+7. KIỂM TRA VÀ BÁO CÁO
+
+Ghi mọi prompt đã dùng với đủ trường bắt buộc.
+Ghi kết quả tìm nguồn trung thực, giữ lịch sử đính chính.
+
+Chạy kiểm tra phù hợp với thay đổi:
+build, kiểm thử hệ thống ảnh, bàn phím, reduced motion,
+bố cục responsive và bản offline.
+Chỉ báo cáo những kiểm tra thực sự đã chạy.
+
+Báo cáo cuối:
+- Đã đưa ảnh thật vào sản phẩm hay chưa.
+- Ảnh được chọn/ứng viên tốt nhất và link trang nguồn chính xác.
+- Căn cứ nhận diện, chú thích và điều kiện sử dụng, tách riêng.
+- File đã sửa và kiểm tra đã chạy.
+- Trở ngại cần người thật giải quyết, nếu có.
+
+Không kết luận hấp dẫn hơn khi chưa có thử nghiệm người học thật.
+Giữ trạng thái chung:
+REQUIRES HUMAN VERIFICATION AND REAL PROJECT EVIDENCE.
+--------------------------------------------------------------------------------
+
+GHI CHÚ VỀ KẾT QUẢ (thêm sau khi thực hiện, không thuộc câu lệnh gốc):
+
+Đã tích hợp một ảnh thật vào ô FS-open: ảnh báo chí trên kính ảnh, Agence Meurisse,
+do Bibliothèque nationale de France giữ (ký hiệu EI-13 (2702), số hiệu Meurisse 94447),
+bản ghi BnF ghi dc:rights "domaine public". Điều kiện sử dụng của Gallica đã đọc
+trực tiếp từ trang của Gallica. Ảnh không được gắn vào chặng nào.
+Năm ô ảnh còn lại vẫn trống; bản nháp thư xin phép đã soạn nhưng CHƯA GỬI.

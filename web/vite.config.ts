@@ -1,0 +1,15 @@
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  base: './',
+  build: {
+    target: 'es2022',
+    outDir: 'dist',
+    assetsInlineLimit: 0,
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    include: ['src/**/*.test.ts'],
+  },
+});

@@ -1,0 +1,741 @@
+/*
+ * The three activity screens, in the same language as the traverse.
+ *
+ * Same governing rule as experience.css: any visual variable carrying academic
+ * or quantitative meaning maps to controlled data. Here that means segment
+ * positions come from railStart/railEnd and nothing else; no screen computes,
+ * highlights or scores a difference between two pieces of content.
+ */
+
+.duo,
+.join,
+.weave {
+  display: grid;
+  gap: var(--space-m);
+  padding-block-end: var(--space-2xl);
+}
+
+.duo__note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2xs) var(--space-s);
+  margin: var(--space-s) 0 0;
+  max-inline-size: 78ch;
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  color: var(--ink-faint);
+}
+
+/*
+ * What an activity is for, said before it starts.
+ *
+ * Each activity used to open with its provenance note, which is true and
+ * necessary and no help at all to someone who does not yet know what they are
+ * being asked to do. Goal and method come first now; the provenance note keeps
+ * its place directly underneath.
+ */
+.brief {
+  display: grid;
+  gap: var(--space-2xs);
+  max-inline-size: 78ch;
+  margin-block-start: var(--space-s);
+  padding-inline-start: var(--space-m);
+  border-inline-start: 2px solid var(--cham);
+}
+
+.brief__row {
+  display: grid;
+  gap: 0 var(--space-s);
+  margin: 0;
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  line-height: 1.5;
+}
+
+@media (min-width: 40rem) {
+  .brief__row {
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    align-items: baseline;
+  }
+}
+
+.brief__label {
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cham);
+}
+
+.brief__text {
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.duo__axes-label {
+  margin: 0;
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ---- Comparison: two places on the same thread -------------------------- */
+
+.duo__axes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+}
+
+.duo__axis {
+  min-block-size: var(--target-min);
+  padding: 0.4rem 0.85rem;
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-m);
+  background: none;
+  color: var(--ink-soft);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  text-align: start;
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.duo__axis:hover {
+  border-color: var(--cham);
+  color: var(--cham);
+}
+
+.duo__axis[aria-pressed='true'] {
+  border-color: var(--son);
+  color: var(--ink);
+  background-color: var(--son-wash);
+}
+
+.duo__pickers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s) var(--space-xl);
+}
+
+.duo__picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2xs);
+}
+
+.duo__picker-label {
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.duo__pick {
+  inline-size: 2.75rem;
+  min-block-size: var(--target-min);
+  border: var(--hairline) solid var(--rule);
+  border-radius: 50%;
+  background: none;
+  color: var(--ink-soft);
+  font-family: var(--font-marker);
+  font-size: var(--step-0);
+  cursor: pointer;
+}
+
+.duo__pick[aria-pressed='true'] {
+  border-color: var(--son);
+  background-color: var(--son);
+  color: var(--paper);
+}
+
+.duo__question {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-s);
+  margin: 0;
+  font-size: var(--step-2);
+  line-height: var(--leading-tight);
+  text-wrap: pretty;
+}
+
+.duo__q-mark {
+  font-family: var(--font-marker);
+  color: var(--son);
+}
+
+.duo__thread {
+  display: block;
+  inline-size: 100%;
+  block-size: 6rem;
+  margin-block: var(--space-m);
+  overflow: visible;
+}
+
+.duo__rule {
+  stroke: var(--rule);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.duo__seg {
+  stroke: var(--son);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.duo__cap {
+  fill: var(--paper);
+  stroke: var(--son);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.duo__seg-n {
+  fill: var(--son);
+  font-family: var(--font-marker);
+  font-size: 15px;
+}
+
+.duo__pair {
+  display: grid;
+  gap: var(--space-m);
+}
+
+@media (min-width: 52rem) {
+  .duo__pair {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+  }
+}
+
+.duo__side {
+  padding-block-start: var(--space-xs);
+  border-block-start: 2px solid var(--son);
+}
+
+.duo__side-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2xs);
+  margin: 0 0 var(--space-xs);
+}
+
+.duo__ord {
+  font-family: var(--font-marker);
+  font-size: var(--step-1);
+  color: var(--son);
+}
+
+.duo__period {
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.duo__answer {
+  margin: 0;
+  font-size: var(--step-0);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.duo__side-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-s);
+  margin-block-start: var(--space-s);
+}
+
+.duo__read-block {
+  display: grid;
+  gap: var(--space-2xs);
+  justify-items: start;
+  padding-block-start: var(--space-m);
+  border-block-start: var(--hairline) solid var(--rule);
+}
+
+.duo__read {
+  margin: 0;
+  max-inline-size: 72ch;
+  font-size: var(--step-0);
+  color: var(--ink-soft);
+}
+
+/* ---- Connect: two ends becoming one thread ------------------------------ */
+
+.join__stages-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-s) var(--space-m);
+}
+
+/* Wraps rather than overflows: at 200% text five tabs no longer fit a phone. */
+.join__stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+}
+
+.join__stage {
+  display: grid;
+  justify-items: center;
+  gap: 0.1rem;
+  min-inline-size: 3.25rem;
+  min-block-size: var(--target-min);
+  padding: 0.3rem 0.5rem;
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-m);
+  background: none;
+  cursor: pointer;
+}
+
+.join__stage[aria-pressed='true'] {
+  border-color: var(--son);
+  background-color: var(--son-wash);
+}
+
+.join__stage-n {
+  font-family: var(--font-marker);
+  font-size: var(--step-0);
+  color: var(--son);
+}
+
+.join__stage-count {
+  font-family: var(--font-apparatus);
+  font-size: 0.625rem;
+  color: var(--ink-faint);
+}
+
+.join__heading {
+  margin: 0;
+  font-family: var(--font-apparatus);
+  font-size: var(--step-0);
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.join__status {
+  margin: 0;
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  color: var(--ink-faint);
+}
+
+.join__board {
+  display: grid;
+  gap: var(--space-m);
+}
+
+.join__row {
+  display: grid;
+  gap: var(--space-2xs);
+  align-items: stretch;
+}
+
+@media (min-width: 52rem) {
+  .join__row {
+    grid-template-columns: 1fr 4rem 1fr;
+    align-items: stretch;
+  }
+
+  .join__seam {
+    align-self: center;
+  }
+
+  .join__found {
+    grid-column: 1 / -1;
+  }
+}
+
+.join__end {
+  min-block-size: var(--target-min);
+  padding: var(--space-xs) var(--space-s);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-m);
+  background-color: transparent;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--step--1);
+  line-height: 1.5;
+  text-align: start;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.join__end:hover:not(:disabled) {
+  border-color: var(--cham);
+}
+
+.join__end[aria-pressed='true'] {
+  border-color: var(--son);
+  background-color: var(--son-wash);
+}
+
+.join__end:disabled {
+  cursor: default;
+  border-color: var(--son);
+  opacity: 1;
+}
+
+.join__end-label {
+  display: block;
+  margin-block-end: 0.15rem;
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.join__end-text {
+  display: block;
+}
+
+/*
+ * Slack thread while the two ends are apart; one taut line once they are
+ * joined. This is the whole feedback mechanism - there is no score anywhere.
+ */
+.join__seam {
+  display: block;
+  block-size: 3px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(
+    to right,
+    var(--rule-strong) 0 5px,
+    transparent 5px 10px
+  );
+  transition: background var(--dur-base) var(--ease-out);
+}
+
+.join__row[data-state='joined'] .join__seam {
+  background: var(--son);
+}
+
+.join__row[data-state='missed'] .join__seam {
+  background: repeating-linear-gradient(
+    to right,
+    var(--verify) 0 5px,
+    transparent 5px 10px
+  );
+}
+
+.join__row[data-state='missed'] .join__end[data-side='recognition'] {
+  border-color: var(--verify);
+}
+
+.join__found {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-s);
+  margin: 0;
+}
+
+.join__found-mark {
+  font-family: var(--font-marker);
+  color: var(--son);
+}
+
+/* ---- Synthesis: rebuilding the thread ----------------------------------- */
+
+.weave__thread {
+  display: block;
+  inline-size: 100%;
+  block-size: 5rem;
+  overflow: visible;
+}
+
+.weave__rule {
+  stroke: var(--rule);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.weave__seg {
+  stroke: var(--rule-strong);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 3 5;
+  vector-effect: non-scaling-stroke;
+  transition:
+    stroke var(--dur-base) var(--ease-out),
+    stroke-width var(--dur-base) var(--ease-out);
+}
+
+.weave__seg[data-state='right'] {
+  stroke: var(--son);
+  stroke-width: 3.5;
+  stroke-dasharray: none;
+}
+
+.weave__seg[data-state='wrong'] {
+  stroke: var(--verify);
+  stroke-width: 3;
+  stroke-dasharray: 2 4;
+}
+
+.weave__seg-n {
+  fill: var(--ink-faint);
+  font-family: var(--font-marker);
+  font-size: 14px;
+}
+
+.weave__thread[data-joined='true'] .weave__seg-n {
+  fill: var(--son);
+}
+
+.weave__slots {
+  display: grid;
+  gap: var(--space-2xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.weave__slot-btn {
+  inline-size: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-s);
+  min-block-size: var(--target-min);
+  padding: var(--space-2xs) var(--space-s);
+  border: 0;
+  border-inline-start: 3px solid var(--rule-strong);
+  background: none;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--step--1);
+  line-height: 1.45;
+  text-align: start;
+  cursor: pointer;
+}
+
+.weave__slot[data-state='empty'] .weave__slot-btn {
+  border-inline-start-style: dashed;
+}
+
+.weave__slot[data-state='right'] .weave__slot-btn {
+  border-inline-start-color: var(--son);
+}
+
+.weave__slot[data-state='wrong'] .weave__slot-btn {
+  border-inline-start-color: var(--verify);
+}
+
+.weave__slot-n {
+  flex: none;
+  font-family: var(--font-marker);
+  color: var(--son);
+}
+
+.weave__slot-text--empty {
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+.weave__bank {
+  display: grid;
+  gap: var(--space-2xs);
+  padding-block-start: var(--space-s);
+  border-block-start: var(--hairline) solid var(--rule);
+}
+
+.weave__piece {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-s);
+  min-block-size: var(--target-min);
+  padding: var(--space-2xs) var(--space-s);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-m);
+  background: none;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--step--1);
+  line-height: 1.45;
+  text-align: start;
+  cursor: pointer;
+}
+
+.weave__piece:hover {
+  border-color: var(--cham);
+}
+
+.weave__piece[aria-pressed='true'] {
+  border-color: var(--son);
+  background-color: var(--son-wash);
+}
+
+.weave__piece-line {
+  flex: none;
+  inline-size: 1.75rem;
+  block-size: 2px;
+  background-color: var(--son);
+}
+
+.weave__bank-empty {
+  margin: 0;
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  color: var(--ink-faint);
+}
+
+.weave__done {
+  display: grid;
+  gap: var(--space-2xs);
+  justify-items: start;
+  padding-block-start: var(--space-m);
+  border-block-start: 2px solid var(--son);
+}
+
+.weave__question {
+  margin: 0 0 var(--space-s);
+  max-inline-size: 64ch;
+  font-size: var(--step-1);
+  line-height: 1.4;
+}
+
+.weave__message {
+  margin: 0;
+  max-inline-size: 72ch;
+  padding-inline-start: var(--space-m);
+  border-inline-start: 3px solid var(--son);
+  font-size: var(--step-1);
+  line-height: 1.4;
+}
+
+/* ---- Verification appendix: a way in, and one focused conflict ---------- */
+
+/*
+ * The register itself is deliberately left alone. Its tables hold detail that
+ * an infographic would lose, and detail is the point of an appendix. What is
+ * added here is orientation: a contents list, and one conflict lifted out
+ * where the Showcase needs to reach it in a single look.
+ */
+.toc {
+  display: grid;
+  gap: var(--space-2xs);
+  padding: var(--space-s) var(--space-m);
+  border-inline-start: 2px solid var(--rule-strong);
+}
+
+.toc__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs) var(--space-m);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc__link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--target-min);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-soft);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  text-align: start;
+  text-decoration: underline;
+  text-decoration-color: var(--rule-strong);
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.toc__link:hover {
+  color: var(--cham);
+}
+
+.focus {
+  display: grid;
+  gap: var(--space-2xs);
+  padding: var(--space-m);
+  background-color: var(--paper-raised);
+  border-inline-start: 3px solid var(--verify);
+}
+
+.focus__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2xs) var(--space-s);
+  margin: 0;
+}
+
+.focus__id {
+  font-family: var(--font-marker);
+  font-size: var(--step-0);
+  color: var(--son);
+}
+
+.focus__tag {
+  padding: 0.1rem 0.45rem;
+  border: var(--hairline) solid var(--verify);
+  border-radius: var(--radius-s);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  font-weight: 600;
+  color: var(--verify);
+}
+
+.focus__title {
+  margin: 0;
+  font-size: var(--step-1);
+  font-weight: 400;
+  line-height: var(--leading-tight);
+}
+
+.focus__issue {
+  margin: 0;
+  max-inline-size: 72ch;
+  font-size: var(--step-0);
+}
+
+.focus__handling {
+  display: grid;
+  gap: 0.15rem;
+  margin: var(--space-2xs) 0 0;
+  max-inline-size: 72ch;
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+
+.focus__handling-label {
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* The audit code belongs here: this screen IS the compliance layer. */
+.focus__code {
+  margin: 0;
+  font-family: var(--font-marker);
+  font-size: 0.6875rem;
+  color: var(--verify);
+}
+
+/* Landing on a section must not put it under the sticky masthead. */
+.toc ~ section[id] {
+  scroll-margin-block-start: 5rem;
+}

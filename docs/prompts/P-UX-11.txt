@@ -1,0 +1,166 @@
+Mã: P-UX-11
+Ngày dùng: 17-9-2026
+Công cụ AI: Claude Code (Anthropic), mô hình Opus 5, chạy trong VS Code
+Người gửi: thành viên nhóm
+Tác vụ hỗ trợ: tiếp tục cải thiện độ hấp dẫn của sản phẩm web HÀNH TRÌNH TƯ TƯỞNG
+
+Câu lệnh nguyên văn, chép lại không sửa, không rút gọn:
+
+--------------------------------------------------------------------------------
+Tiếp tục cải thiện độ hấp dẫn của “HÀNH TRÌNH TƯ TƯỞNG”.
+Hãy trực tiếp triển khai trong repository sau khi audit, không chỉ đưa ra đề xuất.
+
+MỤC TIÊU
+Giúp người học muốn bắt đầu, muốn khám phá chặng tiếp theo và nhận ra
+mối liên hệ giữa các giai đoạn hình thành, phát triển tư tưởng Hồ Chí Minh.
+
+Giữ các cải thiện hiện có: điều hướng hoạt động, thanh các phần,
+Đọc liền mạch, phản hồi tương tác và hỗ trợ tiếp tục hành trình.
+
+Không tự kết luận “hấp dẫn hơn” từ việc thêm hiệu ứng.
+Mọi nhận định về hiệu quả với sinh viên là giả thuyết đến khi có test thật.
+
+1. ĐỌC NGỮ CẢNH VÀ AUDIT
+
+Tuân thủ đầy đủ AGENTS.md, CLAUDE.md và
+HCM202_PROJECT_CONTEXT_v3.0_FORENSIC_FINAL.md.
+Thực hiện đọc PDF và kiểm tra hash theo yêu cầu dự án.
+
+Đọc báo cáo, design system, Prompt Log và design-decision records
+của lần cải thiện UX trước. Kiểm tra code thực tế để xác nhận
+những thay đổi được báo cáo đã tồn tại.
+
+Chạy website và xem luồng người học mới:
+Mở đầu → Tổng quan → Một chặng → Nối kết/Đối sánh → Tổng hợp.
+
+Trước khi sửa, báo cáo ngắn:
+- Ba điểm còn làm trải nghiệm thiếu sức hút, kèm màn hình/component cụ thể.
+- Các yếu tố đang làm tốt cần giữ.
+- Kiểm soát liên quan và các nguồn/bằng chứng còn thiếu.
+- Phân biệt lỗi quan sát được với giả thuyết về hành vi người học.
+
+2. BẮT BUỘC DÙNG UI-UX-PRO-MAX THỰC CHẤT
+
+Invoke ui-ux-pro-max qua cơ chế skill của Claude Code nếu có.
+Đọc hoàn toàn `.claude/skills/ui-ux-pro-max/SKILL.md`.
+Dùng script thật trong thư mục skill.
+
+Tra cứu theo vấn đề đã quan sát:
+- Hướng thị giác toàn sản phẩm: --design-system.
+- Điều hướng, phản hồi, phân lớp nội dung, motion: --domain ux.
+- Phân cấp chữ, màu hoặc phong cách: domain tương ứng.
+
+Mỗi query chỉ có một mục đích chính.
+Kiểm tra nội dung kết quả, không suy luận rằng kết quả đúng
+chỉ vì script đã chạy thành công.
+
+Lần trước có các kết quả không khớp câu hỏi, ví dụ query reduced motion
+được viện dẫn cho contrast. Không lặp lại cách gán căn cứ này.
+
+Nếu kết quả lệch, thử lại một lần với query hẹp hơn.
+Nếu vẫn lệch, loại bỏ và ghi rõ “không tìm được kết quả phù hợp”.
+Phân biệt hướng dẫn chung của skill với kết quả CLI thực sự.
+
+3. TẠO MỘT LUỒNG KHÁM PHÁ CÓ NHỊP
+
+Dựa trên nội dung đã xác thực, thiết kế và triển khai một đoạn trải nghiệm
+tiêu biểu từ màn mở đầu đến một chặng phù hợp, rồi áp dụng nguyên tắc
+cho các màn liên quan.
+
+A. Khơi tò mò
+- Người mới thấy ngay câu hỏi mình sẽ khám phá và hành động để bắt đầu.
+- Câu hỏi gợi mở gắn với Central Question hiện có.
+- Giữ trạng thái phê duyệt; không thay Central Question đã duyệt
+  hoặc tự coi bản nháp là được duyệt.
+- Nhãn nút cụ thể, câu chữ tiếng Việt tự nhiên, không khẩu hiệu chung chung.
+
+B. Cho người học suy nghĩ trước khi xem giải thích
+- Tận dụng câu hỏi dẫn nhập và tương tác đang có.
+- Có thể cho chọn nhận định hoặc đối sánh trước khi mở phần giải thích,
+  nếu đáp án có nguồn đã xác thực.
+- Luôn có lựa chọn đọc trực tiếp; không bắt trả lời để mở nội dung.
+- Không nhập vai lãnh tụ hoặc tạo lựa chọn lịch sử giả định.
+
+C. Tạo khoảnh khắc “à, mình hiểu rồi”
+- Sau thao tác, thể hiện rõ ý nào vừa được làm sáng tỏ.
+- Phản hồi giải thích mối liên hệ, kèm căn cứ dễ mở.
+- Dùng bố cục trước/sau, sơ đồ hoặc điểm nhấn thị giác khi giúp hiểu bài.
+- Không chỉ đổi màu đúng/sai, phát điểm hoặc hiện lời khen chung chung.
+- Nếu nguồn chưa xác thực, giữ trạng thái NEED VERIFICATION;
+  không cung cấp lời giải học thuật mới như sự thật.
+
+D. Dẫn sang chặng tiếp theo
+- Kết thúc chặng bằng điều vừa hiểu và câu hỏi nối tiếp có căn cứ.
+- Chặng tiếp theo phải có lý do để khám phá, không chỉ nút “Tiếp”.
+- Giữ nguyên năm tiêu đề, thuật ngữ, trình tự và các căng thẳng niên đại.
+
+4. TĂNG SỨC HÚT THỊ GIÁC CÓ CHỦ ĐÍCH
+
+Đọc MASTER.md và token hiện có trước khi điều chỉnh.
+Xây dựng bản sắc nhất quán cho hành trình:
+- Phân cấp chữ rõ, dấu tiếng Việt đẹp và dễ đọc.
+- Nhịp bố cục thay đổi theo vai trò: câu hỏi, bối cảnh, bằng chứng,
+  tương tác, tổng kết; tránh mọi phần đều thành thẻ giống nhau.
+- Màu nhấn giúp định hướng và nhận ra chuyển biến.
+- SVG/sơ đồ thể hiện các mối liên hệ đã có căn cứ.
+- Motion ngắn, phản hồi ngay, thể hiện nguyên nhân và kết quả.
+- Nội dung vẫn đầy đủ khi tắt motion.
+
+Không thêm autoplay, scroll hijacking, confetti, streak, leaderboard,
+âm thanh tự phát hoặc hiệu ứng làm chậm thao tác.
+Không dùng AI tạo/mô phỏng/biến dạng chân dung Bác Hồ hoặc lãnh tụ.
+Không bịa ảnh tư liệu, địa điểm, lời nói hay tình huống lịch sử.
+
+Giữ Vite + TypeScript + CSS và chức năng offline.
+Không chuyển framework hoặc thêm thư viện lớn chỉ vì hiệu ứng.
+
+5. GIỮ NGUỒN VÀ BẰNG CHỨNG TRUNG THỰC
+
+Academic First, One Central Argument, Evidence Visible,
+Interaction Matters và Revision Trace tiếp tục kiểm soát mọi thay đổi.
+
+- Lựa chọn thiết kế là PROJECT DECISION.
+- Căn cứ skill là hướng dẫn thiết kế, không phải bằng chứng người học.
+- Mọi nội dung học thuật mới hoặc diễn đạt lại phải được kiểm tra
+  theo protocol nguồn của AGENTS.md trước khi công bố.
+- Không bịa feedback, khảo sát, kết quả, approval hoặc revision history.
+- Không tự giải quyết DOCUMENT CONFLICT hay đặt phiên bản cuối.
+- Ghi mọi prompt đã dùng với đủ sáu trường bắt buộc.
+- Không ghi việc đối chiếu giáo trình là đã làm nếu chưa thực hiện.
+
+6. TRIỂN KHAI VÀ KIỂM TRA
+
+Sau audit, chọn các thay đổi có tác động rõ nhất và trực tiếp triển khai
+theo Explore → Plan → Implement → Verify.
+Bảo toàn công việc hiện có và các chức năng đã cải thiện.
+Chỉ hỏi khi có quyết định phụ thuộc phán quyết con người.
+
+Kiểm tra thực tế:
+- Hành động đầu tiên có rõ không; không có ngõ cụt.
+- Luồng đọc trực tiếp và luồng tương tác đều hoạt động.
+- Thử lại/quay lại không làm mất lựa chọn ngoài dự kiến.
+- Mobile, tablet, desktop; light/dark nếu có.
+- Bàn phím, focus, zoom chữ, contrast và reduced motion.
+- Build, test hiện có phù hợp, bản offline và chế độ trình bày.
+
+Chụp các trạng thái trước/sau nếu công cụ cho phép.
+Không gọi ảnh kỹ thuật là bằng chứng thử nghiệm người học.
+
+Chuẩn bị kế hoạch test ngắn, nhãn TEMPLATE - NOT EVIDENCE:
+- Người mới có tự bắt đầu được không?
+- Sau một chặng, họ giải thích được điều gì vừa thay đổi?
+- Họ có hiểu vì sao nên sang chặng tiếp theo không?
+- Đoạn nào khiến họ mất hứng hoặc bỏ qua?
+
+Để trống kết quả. Không đặt số người hoặc ngưỡng thành công
+thành yêu cầu của môn học.
+
+BÁO CÁO CUỐI
+1. Những thay đổi tạo sức hút và mục tiêu học tập tương ứng.
+2. Bảng: vấn đề → query/rule phù hợp → áp dụng → kiểm tra thực tế.
+3. File đã sửa, kiểm tra đã chạy và giới hạn.
+4. Giả thuyết nào còn cần người học thật xác nhận.
+
+Giữ trạng thái chung:
+REQUIRES HUMAN VERIFICATION AND REAL PROJECT EVIDENCE.
+--------------------------------------------------------------------------------

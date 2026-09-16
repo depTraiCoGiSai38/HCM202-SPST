@@ -1,0 +1,264 @@
+/*
+ * Presentation mode.
+ *
+ * PROJECT DECISION. A focused full-screen deck for the classroom Showcase.
+ * The slot length of 10-12 minutes comes from the Week 5 lifecycle entry; how
+ * the minutes are divided between beats is the group's own plan.
+ */
+
+.present {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  /* bar, beat progress, slide stage, footer nav */
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
+.present[hidden] {
+  display: none;
+}
+
+.present__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  flex-wrap: wrap;
+  padding: var(--space-2xs) var(--space-s);
+  border-block-end: var(--hairline) solid var(--rule);
+  background-color: var(--paper-sunk);
+}
+
+.present__label {
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--son);
+}
+
+.present__clock {
+  font-family: var(--font-marker);
+  font-size: var(--step-0);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  padding: 0.1rem 0.5rem;
+  border: var(--hairline) solid var(--rule-strong);
+  border-radius: var(--radius-s);
+}
+
+.present__clock[data-over='true'] {
+  color: var(--son);
+  border-color: var(--son);
+  background-color: var(--son-wash);
+}
+
+.present__budget {
+  font-family: var(--font-marker);
+  font-size: var(--step--2);
+  color: var(--ink-faint);
+}
+
+.present__tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  margin-inline-start: auto;
+}
+
+/* ---- Beat progress ------------------------------------------------------ */
+
+.present__beats {
+  display: flex;
+  gap: 3px;
+  padding: 0 var(--space-s) var(--space-2xs);
+  background-color: var(--paper-sunk);
+  list-style: none;
+  margin: 0;
+}
+
+.present__beat {
+  flex: 1 1 0;
+  block-size: 4px;
+  background-color: var(--rule);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.present__beat[data-state='done'] {
+  background-color: var(--rule-strong);
+}
+
+.present__beat[data-state='current'] {
+  background-color: var(--son);
+}
+
+/* ---- Slide -------------------------------------------------------------- */
+
+.present__stage {
+  overflow-y: auto;
+  padding: var(--space-l) var(--space-s);
+  display: grid;
+  align-content: start;
+  justify-items: center;
+}
+
+@media (min-width: 48rem) {
+  .present__stage {
+    padding: var(--space-2xl) var(--space-l);
+    align-content: center;
+  }
+}
+
+.slide {
+  inline-size: 100%;
+  max-inline-size: 60rem;
+  display: grid;
+  gap: var(--space-m);
+}
+
+.slide__kicker {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-s);
+  flex-wrap: wrap;
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.slide__index {
+  font-family: var(--font-marker);
+  color: var(--son);
+  font-weight: 700;
+}
+
+.slide__title {
+  font-size: var(--step-5);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  /* Room for stacked Vietnamese tone marks at display size. */
+  line-height: 1.14;
+  text-wrap: balance;
+  max-inline-size: 22ch;
+}
+
+.slide__body {
+  display: grid;
+  gap: var(--space-m);
+}
+
+/*
+ * One column.
+ *
+ * This was two columns - content on the left, speaker notes on the right -
+ * back when the notes were printed on the slide. The notes now live in their
+ * own panel, shut by default, so the second column held nothing and every beat
+ * was projecting at a little under half the available width.
+ */
+
+.slide__feature {
+  font-size: var(--step-2);
+  line-height: 1.42;
+  padding-inline-start: var(--space-s);
+  border-inline-start: 3px solid var(--son);
+}
+
+.slide__notes {
+  display: grid;
+  gap: var(--space-2xs);
+  list-style: none;
+  padding: var(--space-s);
+  margin: 0;
+  background-color: var(--paper-raised);
+  border: var(--hairline) solid var(--rule);
+}
+
+.slide__notes-title {
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.slide__note {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2xs);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.slide__note::before {
+  content: '';
+  inline-size: 0.4rem;
+  block-size: 0.4rem;
+  margin-block-start: 0.5em;
+  background-color: var(--son);
+  flex-shrink: 0;
+}
+
+.slide__minutes {
+  font-family: var(--font-marker);
+  font-size: var(--step--2);
+  color: var(--cham);
+}
+
+/* ---- Footer nav --------------------------------------------------------- */
+
+.present__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-2xs) var(--space-s);
+  border-block-start: var(--hairline) solid var(--rule);
+  background-color: var(--paper-sunk);
+}
+
+.present__hint {
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  color: var(--ink-faint);
+  margin-inline: auto;
+  text-align: center;
+}
+
+@media (max-width: 40rem) {
+  .present__hint {
+    display: none;
+  }
+}
+
+.present__nav {
+  display: flex;
+  gap: var(--space-2xs);
+}
+
+/* Slide transition, disabled by either reduced-motion switch. */
+.slide {
+  animation: slide-in var(--dur-base) var(--ease-out);
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+body[data-presenting='true'] {
+  overflow: hidden;
+}
