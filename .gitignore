@@ -1,0 +1,4 @@
+# Local reference material, kept on disk for the next Creative Product
+# Transformation session. It is deliberately NOT part of this product:
+# not built, not shipped, not committed.
+_reference/
