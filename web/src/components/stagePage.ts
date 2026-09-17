@@ -1,5 +1,5 @@
 import { auditRef, citeSource } from '../data/source';
-import { BOUNDARIES, EPILOGUE, QUOTATION_BY_ID, STAGES, STAGE_BY_ID } from '../data/stages';
+import { BOUNDARIES, QUOTATION_BY_ID, STAGES, STAGE_BY_ID } from '../data/stages';
 import { STAGE_ENTRY, STAGE_ENTRY_STATUS } from '../data/project';
 import { FIGURE_SLOTS } from '../data/figures';
 import { figureSlot, hasFigure } from './figure';
@@ -547,8 +547,6 @@ export function stagePage(id: StageId): HTMLElement {
       h('div', { class: 'walk__margin' }, gained.root),
     ),
   );
-
-  if (stage.id === 'ky-5') section.appendChild(epilogueLink());
 
   render();
   paintReading();
@@ -1522,15 +1520,6 @@ function boundaryView(lines: readonly string[]): HTMLElement {
     h('p', { class: 'station__kicker' }, h('span', { text: 'Ranh giới của chặng này' })),
     h('h2', { class: 'station__turn-title', text: 'Những gì trích đoạn không nói' }),
     list,
-  );
-}
-
-function epilogueLink(): HTMLElement {
-  return h(
-    'p',
-    { class: 'walk__epilogue' },
-    h('span', { text: `${EPILOGUE.label} — ` }),
-    h('span', { text: EPILOGUE.status }),
   );
 }
 

@@ -2703,13 +2703,6 @@
   margin-block-start: var(--space-m);
 }
 
-.walk__epilogue {
-  margin: 0;
-  font-family: var(--font-apparatus);
-  font-size: var(--step--1);
-  color: var(--verify);
-}
-
 /* ======================================================================
    5. Evidence magnifier
    ====================================================================== */
