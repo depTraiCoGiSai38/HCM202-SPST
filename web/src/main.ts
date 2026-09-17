@@ -29,7 +29,8 @@ import {
   markVisited,
   toggleMotion,
 } from './lib/state';
-import { createRail, setRailCompact, updateRail } from './components/rail';
+import { createJourneyBar, updateJourneyBar } from './components/journeybar';
+import { closeMenu, isMenuOpen, openMenu, syncMenu } from './components/menu';
 import { openingPage } from './components/openingPage';
 import { journeyPage } from './components/journeyPage';
 import { stagePage } from './components/stagePage';
@@ -50,7 +51,7 @@ app.classList.add('app');
 const appRoot: HTMLElement = app;
 
 const main = h('main', { class: 'main', id: 'noi-dung', tabIndex: -1 });
-const rail = createRail();
+const journeyBar = createJourneyBar();
 const presentation = createPresentation();
 
 const themeBtn = h('button', {
@@ -65,9 +66,9 @@ const motionBtn = h('button', {
 });
 const presentBtn = h(
   'button',
-  { class: 'btn', type: 'button' },
+  { class: 'btn', type: 'button', aria: { label: 'Mở chế độ trình bày' } },
   icon(ICONS.play),
-  h('span', { text: 'Trình bày' }),
+  h('span', { class: 'masthead__present-text', text: 'Trình bày' }),
 );
 
 function syncToolButtons(): void {
@@ -98,9 +99,30 @@ presentBtn.addEventListener('click', () => {
   presentation.open();
 });
 
+/*
+ * The one way to everything that is not the stage in front of you. It replaces
+ * a permanent four-destination list that was measured competing with the
+ * content on every route; see menu.ts for the numbers.
+ */
+const menuBtn = h(
+  'button',
+  {
+    class: 'masthead__menu',
+    type: 'button',
+    aria: { expanded: 'false', haspopup: 'dialog', label: 'Mở mục lục hành trình' },
+  },
+  icon(ICONS.menu),
+  h('span', { class: 'masthead__menu-text', text: 'Mục lục' }),
+);
+menuBtn.addEventListener('click', () => {
+  if (isMenuOpen()) closeMenu();
+  else openMenu(menuBtn);
+});
+
 const masthead = h(
   'header',
   { class: 'masthead' },
+  menuBtn,
   h(
     'a',
     { class: 'masthead__brand', href: '#/' },
@@ -108,6 +130,8 @@ const masthead = h(
     h('span', { class: 'masthead__sub', text: PRODUCT_SUBTITLE }),
   ),
   h('div', { class: 'masthead__tools' }, presentBtn, motionBtn, themeBtn),
+  // Where you are, said once, without being a second way to move.
+  journeyBar,
 );
 
 const colophon = h(
@@ -138,11 +162,33 @@ app.appendChild(
   h('a', { class: 'skip-link', href: '#noi-dung', text: 'Bỏ qua, tới nội dung chính' }),
 );
 app.appendChild(masthead);
-app.appendChild(h('div', { class: 'shell' }, rail, main));
+app.appendChild(h('div', { class: 'shell' }, main));
 app.appendChild(colophon);
 app.appendChild(presentation.root);
 
 syncToolButtons();
+
+/*
+ * How much sticky chrome sits above the content.
+ *
+ * The masthead is one row on a laptop, two on a phone, and taller again at 200%
+ * text, so the offset that keeps a focused control out from under it cannot be
+ * a constant. It is measured and published as `--chrome-h`, which base.css uses
+ * for `scroll-margin` on `:focus-visible`.
+ *
+ * Basis: `Sticky Navigation`, returned by `search.py "sticky header obscuring
+ * content offset" --domain ux` - a fixed navigation must not obscure content,
+ * and the content needs an offset equal to the navigation's height. WCAG 2.2 AA
+ * `focus-not-obscured` is the accessibility rule behind the same behaviour.
+ */
+function publishChromeHeight(): void {
+  const px = Math.round(masthead.getBoundingClientRect().height);
+  document.documentElement.style.setProperty('--chrome-h', `${String(px)}px`);
+}
+publishChromeHeight();
+if (typeof ResizeObserver === 'function') {
+  new ResizeObserver(publishChromeHeight).observe(masthead);
+}
 
 const TITLES: Record<string, string> = {
   opening: 'Câu hỏi trung tâm',
@@ -159,8 +205,6 @@ let firstRender = true;
 
 function render(route: Route): void {
   clear(main);
-  // The opening scene runs without the rail beside it; every other view keeps
-  // the five-stage rail present, as the journey indicator has to be.
   appRoot.dataset['route'] = route.name;
 
   let activeStage: StageId | null = null;
@@ -182,7 +226,9 @@ function render(route: Route): void {
       break;
     }
     case 'compare':
-      main.appendChild(comparePage());
+      main.appendChild(
+        comparePage({ left: route.params['left'], right: route.params['right'] }),
+      );
       break;
     case 'connect':
       main.appendChild(connectPage());
@@ -209,10 +255,9 @@ function render(route: Route): void {
       );
   }
 
-  updateRail(activeStage, location.hash || '#/');
-  // On a stage screen the signature interaction is the thread; the rail steps
-  // back to a progress indicator there and opens out again everywhere else.
-  setRailCompact(route.name === 'stage');
+  const here = location.hash || '#/';
+  updateJourneyBar(activeStage, route.name, here);
+  syncMenu(activeStage, here);
 
   const stage = activeStage ? STAGE_BY_ID.get(activeStage) : undefined;
   const label = stage ? `Chặng ${String(stage.ordinal)} · ${stage.headingPeriod}` : TITLES[route.name];

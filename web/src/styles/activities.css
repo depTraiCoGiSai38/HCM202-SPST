@@ -21,7 +21,10 @@
   align-items: baseline;
   gap: var(--space-2xs) var(--space-s);
   margin: var(--space-s) 0 0;
-  max-inline-size: 78ch;
+  /* Capped at the reading measure. At 78ch this provenance note was the widest
+     running text anywhere in the product - wider than the academic reading it
+     annotates, which is the wrong way round. */
+  max-inline-size: var(--measure);
   font-family: var(--font-apparatus);
   font-size: var(--step--1);
   color: var(--ink-faint);
@@ -38,7 +41,7 @@
 .brief {
   display: grid;
   gap: var(--space-2xs);
-  max-inline-size: 78ch;
+  max-inline-size: var(--measure);
   margin-block-start: var(--space-s);
   padding-inline-start: var(--space-m);
   border-inline-start: 2px solid var(--cham);
@@ -113,9 +116,9 @@
 }
 
 .duo__axis[aria-pressed='true'] {
-  border-color: var(--son);
+  border-color: var(--cham);
   color: var(--ink);
-  background-color: var(--son-wash);
+  background-color: var(--cham-wash);
 }
 
 .duo__pickers {
@@ -153,8 +156,8 @@
 }
 
 .duo__pick[aria-pressed='true'] {
-  border-color: var(--son);
-  background-color: var(--son);
+  border-color: var(--cham);
+  background-color: var(--cham);
   color: var(--paper);
 }
 
@@ -201,10 +204,13 @@
   vector-effect: non-scaling-stroke;
 }
 
+/* Segment numerals inside a diagram. They are sized in the SVG's own units, so
+   they stay in proportion to the drawing rather than to the page text; both
+   diagrams use the same value so the two read as one language. */
 .duo__seg-n {
   fill: var(--son);
   font-family: var(--font-marker);
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .duo__pair {
@@ -304,20 +310,14 @@
 }
 
 .join__stage[aria-pressed='true'] {
-  border-color: var(--son);
-  background-color: var(--son-wash);
+  border-color: var(--cham);
+  background-color: var(--cham-wash);
 }
 
 .join__stage-n {
   font-family: var(--font-marker);
   font-size: var(--step-0);
   color: var(--son);
-}
-
-.join__stage-count {
-  font-family: var(--font-apparatus);
-  font-size: 0.625rem;
-  color: var(--ink-faint);
 }
 
 .join__heading {
@@ -731,7 +731,7 @@
 .focus__code {
   margin: 0;
   font-family: var(--font-marker);
-  font-size: 0.6875rem;
+  font-size: var(--step--3);
   color: var(--verify);
 }
 

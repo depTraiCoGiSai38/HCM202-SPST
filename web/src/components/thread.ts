@@ -9,8 +9,8 @@ import { s, smoothPath, svgRoot } from '../lib/svg';
  * property of the data, so the drawing cannot assert more than the excerpt does:
  *
  *   horizontal extent of a segment -> stage.railStart .. stage.railEnd
- *   two segments at once           -> BOUNDARIES kind 'shared'
- *   frayed / dashed joint          -> BOUNDARIES kind 'blurred' (C2-R01)
+ *   a joint between two segments   -> BOUNDARIES kind 'exact', the two dates
+ *                                     the 2019 edition prints on either side
  *   a node on the segment          -> one entry in stage.turningPoints
  *   a tick under the segment       -> one entry in stage.markers
  *   inked vs unstitched segment    -> whether the viewer has opened that stage
@@ -97,7 +97,7 @@ export function journeyThread(opts: JourneyThreadOptions): SVGSVGElement {
       joints.appendChild(
         s('path', {
           class: 'thread__joint',
-          dataset: { kind: boundary?.kind ?? 'shared' },
+          dataset: { kind: boundary?.kind ?? 'exact' },
           attrs: { d: jointPath(stage, next), pathLength: 1 },
         }),
       );

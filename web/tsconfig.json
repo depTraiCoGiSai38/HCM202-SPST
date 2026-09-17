@@ -4,6 +4,9 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "moduleResolution": "bundler",
+    // The .mjs report tools run the data modules through node's type stripping,
+    // which needs the explicit extension on a value import. Safe with noEmit.
+    "allowImportingTsExtensions": true,
     "types": ["vite/client", "vitest/globals"],
     "strict": true,
     "noUnusedLocals": true,

@@ -17,6 +17,12 @@ const ROUTES: { pattern: RegExp; name: string; keys: string[] }[] = [
   { pattern: /^\/?$/, name: 'opening', keys: [] },
   { pattern: /^\/hanh-trinh$/, name: 'journey', keys: [] },
   { pattern: /^\/chang\/([a-z0-9-]+)$/, name: 'stage', keys: ['id'] },
+  /*
+   * The comparison screen can be addressed with a pair, so the journey can
+   * invite a learner to compare the two stages they have just walked and land
+   * on those two rather than on the defaults. Both forms are deep-linkable.
+   */
+  { pattern: /^\/doi-sanh\/([a-z0-9-]+)\/([a-z0-9-]+)$/, name: 'compare', keys: ['left', 'right'] },
   { pattern: /^\/doi-sanh$/, name: 'compare', keys: [] },
   { pattern: /^\/noi-ket$/, name: 'connect', keys: [] },
   { pattern: /^\/tong-hop$/, name: 'synthesis', keys: [] },

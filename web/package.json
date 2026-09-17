@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "HCM202 - Hanh trinh tu tuong: interactive study apparatus for the five periods in C2-02.pdf",
+  "description": "HCM202 - Hanh trinh tu tuong: interactive study apparatus for the five periods in Giao trinh Tu tuong Ho Chi Minh - 2019, tr. 28-35",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

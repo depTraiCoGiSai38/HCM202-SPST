@@ -10,7 +10,7 @@ import { expect, test } from '@playwright/test';
  */
 
 const HEADING_2 =
-  'Thời kỳ từ giữa năm 1911 đến cuối năm 1920: Dần dần hình thành tư tưởng cứu nước, giải phóng dân tộc Việt Nam theo con đường cách mạng vô sản';
+  'Thời kỳ từ ngày 6-6-1911 đến ngày 30-12-1920: Hình thành tư tưởng cứu nước, giải phóng dân tộc Việt Nam theo con đường cách mạng vô sản';
 
 test('comparison puts two answers at two places on the thread', async ({ page }) => {
   await page.goto('/#/doi-sanh');
@@ -102,11 +102,11 @@ test('synthesis rebuilds one continuous thread from five segments', async ({ pag
   await page.goto('/#/tong-hop');
 
   const ORDER = [
-    'trước ngày 5-6-1911',
-    'từ giữa năm 1911',
-    'từ cuối năm 1920',
-    'từ đầu năm 1930',
-    'từ đầu năm 1941',
+    'từ ngày 5-6-1911 trở về trước',
+    'từ ngày 6-6-1911',
+    'từ ngày 31-12-1920',
+    'từ ngày 4-2-1930',
+    'từ ngày 29-1-1941',
   ];
 
   for (const [position, key] of ORDER.entries()) {
@@ -141,7 +141,7 @@ test('synthesis rebuilds one continuous thread from five segments', async ({ pag
 
 test('synthesis carries each official heading verbatim', async ({ page }) => {
   await page.goto('/#/tong-hop');
-  await expect(page.locator('.weave__piece-text').filter({ hasText: 'từ giữa năm 1911' })).toHaveText(
+  await expect(page.locator('.weave__piece-text').filter({ hasText: 'từ ngày 6-6-1911' })).toHaveText(
     HEADING_2,
   );
 });
@@ -168,7 +168,7 @@ test('the verification appendix keeps its tables and gains a way in', async ({ p
 
   // The one document conflict, lifted out for the Showcase.
   const focus = page.locator('.focus');
-  await expect(focus.locator('.focus__id')).toHaveText('C2-R05');
+  await expect(focus.locator('.focus__id')).toHaveText('GT-R02');
   await expect(focus.locator('.focus__code')).toHaveText('DOCUMENT CONFLICT');
 
   // The tables underneath are untouched: ten locators, nine risks, and the

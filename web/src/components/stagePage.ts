@@ -1,7 +1,8 @@
+import { auditRef, citeSource } from '../data/source';
 import { BOUNDARIES, EPILOGUE, QUOTATION_BY_ID, STAGES, STAGE_BY_ID } from '../data/stages';
 import { STAGE_ENTRY, STAGE_ENTRY_STATUS } from '../data/project';
 import { FIGURE_SLOTS } from '../data/figures';
-import { figureSlot } from './figure';
+import { figureSlot, hasFigure } from './figure';
 import { LOCATOR_BY_ID, RISK_BY_ID } from '../data/locators';
 import type { Passage, Quotation, Stage, StageId, TurningPoint } from '../data/types';
 import { ICONS, clear, h, icon } from '../lib/dom';
@@ -15,8 +16,8 @@ import { stageThread } from './thread';
  *
  * The stage is broken into the units the excerpt itself supplies, in printed
  * order: each context passage, each development passage, each turning point at
- * the point where its last cited passage sits, each printed quotation, and
- * finally what the excerpt does not say. The viewer moves along the thread one
+ * the point where its last cited passage sits, each printed quotation beside
+ * the turning point that cites it, and finally what the excerpt does not say. The viewer moves along the thread one
  * unit at a time, so a single screen carries one idea instead of eight.
  *
  * Nothing is summarised, merged or shortened to make this fit. Every unit is
@@ -47,17 +48,51 @@ function buildStations(stage: Stage): Station[] {
     turnAfter.set(key, list);
   }
 
+  /*
+   * A quotation stands where the turning point that cites it stands.
+   *
+   * Every quotation used to be appended after all the passages and all the
+   * turning points, so a stage ended with a block of documents and the turning
+   * point that rested on them had gone by several screens earlier. In one stage
+   * the turn citing Q5 and Q6 arrived at stop 3 and those quotations at stops
+   * 14 and 15. A document read eleven screens away from the claim it supports
+   * is a document doing no work.
+   *
+   * Placing it with its turning point does not reorder the excerpt: the
+   * quotations carry no printed position of their own in the stored data, only
+   * the turning points' citations of them. A quotation that no turning point
+   * cites keeps its place after the development, in the stored order.
+   */
+  const quotedByTurn = new Set<string>();
+  for (const tp of stage.turningPoints) {
+    for (const qid of tp.quotationIds) {
+      if (stage.quotations.includes(qid)) quotedByTurn.add(qid);
+    }
+  }
+
+  const pushQuotes = (ids: readonly string[]): void => {
+    for (const qid of ids) {
+      const q = QUOTATION_BY_ID.get(qid);
+      if (q) stations.push({ kind: 'quote', id: qid, quotation: q });
+    }
+  };
+
+  const placed = new Set<string>();
   for (const p of ordered) {
     stations.push({ kind: 'passage', id: p.id, passage: p });
     for (const tp of turnAfter.get(p.id) ?? []) {
       stations.push({ kind: 'turn', id: tp.id, turn: tp });
+      // In the stage's own order, not the turning point's, so two turns citing
+      // the same list cannot reorder it.
+      const mine = stage.quotations.filter(
+        (qid) => tp.quotationIds.includes(qid) && !placed.has(qid),
+      );
+      mine.forEach((qid) => placed.add(qid));
+      pushQuotes(mine);
     }
   }
 
-  for (const qid of stage.quotations) {
-    const q = QUOTATION_BY_ID.get(qid);
-    if (q) stations.push({ kind: 'quote', id: qid, quotation: q });
-  }
+  pushQuotes(stage.quotations.filter((qid) => !placed.has(qid)));
 
   if (stage.boundaries.length > 0) {
     stations.push({ kind: 'boundary', id: `${stage.id}-bound`, lines: stage.boundaries });
@@ -180,6 +215,7 @@ export function stagePage(id: StageId): HTMLElement {
       if (st?.kind === 'turn') {
         mark.dataset['turn'] = turnPhase.get(st.turn.id) ?? 'before';
       }
+      if (phaseStarts.has(i) && i > 0) mark.dataset['phaseStart'] = 'true';
     }
 
     for (const hit of hits.querySelectorAll<HTMLButtonElement>('.walk__hit')) {
@@ -188,13 +224,8 @@ export function stagePage(id: StageId): HTMLElement {
       hit.tabIndex = i === index ? 0 : -1;
     }
 
-    for (const btn of map.querySelectorAll<HTMLButtonElement>('.walk__phase')) {
-      const pid = btn.dataset['phase'];
-      const phase = phases.find((p) => p.id === pid);
-      const here = phase ? phase.at.includes(index) : false;
-      btn.dataset['state'] = here ? 'here' : 'away';
-      btn.setAttribute('aria-current', here ? 'true' : 'false');
-    }
+    const nameEl = phaseNow.querySelector('.walk__phase-name');
+    if (nameEl) nameEl.textContent = phaseAt.get(index) ?? '';
 
     // Crossing a turning point is the only thing that fills the margin record,
     // and every crossing comes through here.
@@ -216,6 +247,8 @@ export function stagePage(id: StageId): HTMLElement {
           })
         : stationView(station, stage),
     );
+    const support = supportFor(station, stage);
+    if (support) panel.appendChild(support);
 
     counter.textContent = `${String(index + 1)} / ${String(stations.length)}`;
 
@@ -234,6 +267,8 @@ export function stagePage(id: StageId): HTMLElement {
     // The hand-off to the next stage belongs at the end of this one, not beside
     // its first passage.
     bridgeEl.hidden = index !== stations.length - 1;
+    // Reflection sits immediately before the hand-off, so it arrives with it.
+    if (reflectEl) reflectEl.hidden = bridgeEl.hidden;
     paintTrack();
 
     if (!motionSuppressed()) {
@@ -315,47 +350,66 @@ export function stagePage(id: StageId): HTMLElement {
           : stationView(st, stage);
       view.dataset['station'] = String(i);
       flowEl.appendChild(view);
+      const support = supportFor(st, stage);
+      if (support) flowEl.appendChild(support);
     });
   }
 
   /*
    * The stage seen as structure rather than as a count.
    *
-   * Each control names a phase of the stage and how many stops it holds, and
-   * moves the traverse to the first of them. In continuous reading it scrolls
-   * to the same station instead. This is the one place a viewer can see what is
-   * still ahead of them inside a stage.
+   * This used to be a row of buttons, one per phase, each naming the phase and
+   * how many stops it held. It worked, and it was the fifth navigation control
+   * on a screen that already had four: a sidebar, a stop track, a pager and the
+   * masthead. Five labelled tabs across the top of a stage amount to a table of
+   * contents for a chapter the viewer is standing inside.
+   *
+   * The phases are still named, but as a caption on the thread that changes as
+   * the traverse moves, and as a visible break on the thread where one phase
+   * gives way to the next. The structure is shown rather than offered as a
+   * menu. Moving within a stage is what the thread marks and Prev/Next do.
    */
-  const map = h('div', { class: 'walk__map', role: 'group', aria: { label: 'Các phần của chặng' } });
+  const phaseNow = h(
+    'p',
+    { class: 'walk__phase-now' },
+    h('span', { class: 'walk__phase-lead', text: 'Đang đọc', aria: { hidden: 'true' } }),
+    h('span', { class: 'walk__phase-name' }),
+  );
+
+  /**
+   * Station index -> what kind of reading this stop is.
+   *
+   * It used to also print `phần N / M`, numbering the phases in a fixed order.
+   * That was false for four of the five stages: the excerpt interleaves
+   * development passages with turning points, so walking a stage showed
+   * `phần 2 / 5`, then `phần 3 / 5`, then `phần 2 / 5` again. A number that
+   * goes backwards is not a position, it is a contradiction - and it was the
+   * only structural signal left after the phase tabs were removed.
+   *
+   * The name alone is always true. When the excerpt returns from a turning
+   * point to further development, the caption says so, because that is what
+   * the source does. Nothing here claims the parts run in a straight line.
+   */
+  const phaseAt = new Map<number, string>();
   for (const phase of phases) {
-    const first = phase.at[0] ?? 0;
-    const btn = h(
-      'button',
-      {
-        class: 'walk__phase',
-        type: 'button',
-        dataset: { phase: phase.id, state: 'away' },
-        aria: {
-          label: `${phase.label}: ${String(phase.at.length)} nhịp. Tới nhịp đầu tiên của phần này.`,
-        },
-      },
-      h('span', { class: 'walk__phase-label', text: phase.label }),
-      h('span', { class: 'walk__phase-n', text: String(phase.at.length) }),
-    );
-    btn.addEventListener('click', () => {
-      if (reading === 'flow') {
-        flowEl.querySelector(`[data-station="${String(first)}"]`)?.scrollIntoView({
-          block: 'start',
-          behavior: motionSuppressed() ? 'auto' : 'smooth',
-        });
-        return;
-      }
-      go(first);
-    });
-    map.appendChild(btn);
+    for (const at of phase.at) phaseAt.set(at, phase.label);
   }
 
-  const walk = h('div', { class: 'walk__track' }, track, hits);
+  /**
+   * Where the kind of reading actually changes from one stop to the next.
+   *
+   * Marked on the thread as a taller tick. Taken from consecutive stations
+   * rather than from the first appearance of each phase, so a stage that
+   * returns to development after a turning point gets a break at every real
+   * change instead of only at the first one.
+   */
+  const phaseStarts = new Set<number>();
+  stations.forEach((_, i) => {
+    if (i === 0) return;
+    if (phaseAt.get(i) !== phaseAt.get(i - 1)) phaseStarts.add(i);
+  });
+
+  const walk = h('div', { class: 'walk__track' }, phaseNow, track, hits);
 
   function paintReading(): void {
     const flow = reading === 'flow';
@@ -376,6 +430,7 @@ export function stagePage(id: StageId): HTMLElement {
     // In continuous reading the end of the stage is always on the page, so the
     // hand-off belongs there permanently rather than at one stop.
     bridgeEl.hidden = flow ? false : index !== stations.length - 1;
+    if (reflectEl) reflectEl.hidden = bridgeEl.hidden;
   }
 
   readBtn.addEventListener('click', () => {
@@ -447,20 +502,18 @@ export function stagePage(id: StageId): HTMLElement {
   }
 
   const bridgeEl = bridge(stage);
+  const reflectEl = reflect(stage);
 
+  // What is left of the old bar: the two offers about how to read, and nothing
+  // that is a second way to move. It sits at the end of the entrance rather
+  // than across the top of the stage.
   const bar = h(
     'div',
     { class: 'walk__bar' },
-    map,
     h('div', { class: 'walk__bar-acts' }, resumeBtn, readBtn),
   );
 
   const gained = clarified(stage, turnPhase);
-
-  // The documentary position for this stage. Blocked until a photograph has a
-  // source that can be opened and a usage condition that permits it.
-  const slot = FIGURE_SLOTS.find((s) => s.stageId === stage.id);
-  const figure = slot ? h('div', { class: 'walk__figure' }, figureSlot(slot.id, slot.role)) : null;
 
   /*
    * The reading column keeps its measure and the margin gets a job.
@@ -472,6 +525,16 @@ export function stagePage(id: StageId): HTMLElement {
    * points, blank until crossed, then holding the sentence that names what
    * changed. It is the argument of the stage, accumulating.
    */
+  /*
+   * No stage pager.
+   *
+   * There used to be a prev-stage / next-stage row at the foot of every stage.
+   * It was a third way to move on a screen that already had two: the marks and
+   * Prev/Next inside the stage, and the menu in the chrome - and its forward
+   * link duplicated the hand-off the bridge already offers, one screen earlier
+   * and without the reason to go. Going back to an earlier stage is what the
+   * menu is for.
+   */
   const section = h(
     'section',
     { class: 'walk' },
@@ -480,10 +543,9 @@ export function stagePage(id: StageId): HTMLElement {
     h(
       'div',
       { class: 'walk__body' },
-      h('div', { class: 'walk__column' }, walk, controls, panel, flowEl, bridgeEl),
-      h('div', { class: 'walk__margin' }, figure, gained.root),
+      h('div', { class: 'walk__column' }, walk, controls, panel, flowEl, reflectEl, bridgeEl),
+      h('div', { class: 'walk__margin' }, gained.root),
     ),
-    pager(stage),
   );
 
   if (stage.id === 'ky-5') section.appendChild(epilogueLink());
@@ -512,7 +574,6 @@ interface Clarified {
  */
 function clarified(stage: Stage, phases: Map<string, TurnPhase>): Clarified {
   const list = h('ol', { class: 'gained__list' });
-  const ordinalOf = STAGES.findIndex((s) => s.id === stage.id) + 1;
 
   for (const tp of stage.turningPoints) {
     list.appendChild(
@@ -535,12 +596,15 @@ function clarified(stage: Stage, phases: Map<string, TurnPhase>): Clarified {
     h('p', { class: 'gained__kicker', text: 'Đã làm rõ trong chặng này' }),
     list,
     count,
-    h(
-      'p',
-      { class: 'gained__where' },
-      h('span', { class: 'gained__where-n', text: `${String(ordinalOf)} / ${String(STAGES.length)}` }),
-      h('span', { text: 'chặng của hành trình' }),
-    ),
+    /*
+     * No `2 / 5` here.
+     *
+     * Where you are among the five stages was stated four times at once on one
+     * screen: the strip under the masthead, the chapter number at the entrance,
+     * the context bar past it, and this. The strip is the one that is always on
+     * screen, so it is the one that keeps the job. This margin is about what
+     * THIS stage has made clear, which is a different question.
+     */
   );
 
   const sync = (): void => {
@@ -592,10 +656,119 @@ function clarified(stage: Stage, phases: Map<string, TurnPhase>): Clarified {
  * A stage that simply stops leaves the reader to work out for themselves what
  * the next one has to do with it. Everything printed here is stored source
  * material: the claim half of the next stage's own official heading, and the
- * label the two headings share at their boundary. The one sentence that is the
- * group's - naming the joint as shared or as blurred - is what the boundary
- * record already says, and the registered risk travels with it.
+ * two dates the 2019 edition prints on either side of the joint. The one
+ * sentence that is the group's - naming the joint as two consecutive days - is
+ * what the boundary record already says, and any registered risk travels with it.
  */
+/**
+ * The beat before the hand-off: what to notice.
+ *
+ * The brief for this product asks every stage to guide a learner through eight
+ * moments, of which the seventh is REFLECTION - "what should the learner
+ * notice?" - and there was no such moment anywhere in a stage. This is it.
+ *
+ * Everything on it is already-stored, already-sourced text: the position the
+ * excerpt shows BEFORE the stage's first turning point, and the position it
+ * shows AFTER its last. Setting those two side by side is a layout decision,
+ * not a new claim, and each carries its own locator. The sentence that names
+ * the change is deliberately NOT printed here - that is the group's synthesis
+ * and it already appears in the margin record once the learner has crossed the
+ * turning point themselves. What is printed is the question.
+ *
+ * Nothing here is scored, and nothing here says the learner has understood.
+ */
+const REFLECT_ASK = 'Giữa hai vị trí trên, điều gì đã thay đổi — và trích đoạn đặt sự thay đổi ấy ở đâu?';
+
+/**
+ * Where the journey introduces the three activities.
+ *
+ * `PROJECT DECISION`. The brief names two of these points - after stage 2, an
+ * invitation to compare; after stage 5, an invitation to synthesise - and asks
+ * that the activities be introduced in the journey rather than sitting in a
+ * separate dashboard. The third is placed after stage 3, the first point at
+ * which the excerpt has laid down enough paired experience-and-awareness
+ * material for the exercise to have something to work on. All three remain
+ * reachable at any time from the menu.
+ */
+const INVITATIONS: Partial<Record<StageId, { lead: string; label: string; route: string }>> = {
+  'ky-2': {
+    lead: 'Bạn vừa đi qua hai chặng đầu tiên. Cùng một câu hỏi, đặt cho cả hai, sẽ cho thấy điều gì?',
+    label: 'Đối sánh hai chặng',
+    route: '#/doi-sanh/ky-1/ky-2',
+  },
+  'ky-3': {
+    lead: 'Ba chặng đã đi qua đều gắn một việc đã làm với một nhận thức. Thử ghép lại xem trích đoạn đặt chúng cạnh nhau ra sao.',
+    label: 'Nối trải nghiệm với nhận thức',
+    route: '#/noi-ket',
+  },
+  'ky-5': {
+    lead: 'Bây giờ hãy nhìn lại toàn bộ hành trình.',
+    label: 'Tổng hợp 5 chặng',
+    route: '#/tong-hop',
+  },
+};
+
+function reflect(stage: Stage): HTMLElement | null {
+  const turns = stage.turningPoints;
+  const first = turns[0];
+  const last = turns[turns.length - 1];
+  const invite = INVITATIONS[stage.id];
+
+  // A stage with no recorded turning point has no before/after to set against
+  // each other. Rather than invent a pairing, the beat carries only what the
+  // stage does have.
+  const root = h('aside', { class: 'reflect', hidden: true });
+  root.appendChild(h('p', { class: 'reflect__kicker', text: 'Suy ngẫm' }));
+
+  if (first && last) {
+    root.appendChild(
+      h(
+        'div',
+        { class: 'reflect__pair' },
+        h(
+          'div',
+          { class: 'reflect__side' },
+          h('p', { class: 'reflect__side-label', text: 'Trích đoạn mở chặng ở vị trí' }),
+          h('p', { class: 'reflect__side-text', text: first.before }),
+          h('p', { class: 'reflect__side-at', text: first.marker }),
+        ),
+        h('div', { class: 'reflect__arrow', aria: { hidden: 'true' } }, h('span', { text: '→' })),
+        h(
+          'div',
+          { class: 'reflect__side' },
+          h('p', { class: 'reflect__side-label', text: 'và khép chặng ở vị trí' }),
+          h('p', { class: 'reflect__side-text', text: last.after }),
+          h('p', { class: 'reflect__side-at', text: last.marker }),
+        ),
+      ),
+    );
+    root.appendChild(h('p', { class: 'reflect__ask', text: REFLECT_ASK }));
+  } else {
+    root.appendChild(
+      h('p', {
+        class: 'reflect__ask',
+        text: 'Trích đoạn không ghi bước ngoặt nào trong chặng này. Điều gì ở chặng này chuẩn bị cho chặng sau?',
+      }),
+    );
+  }
+
+  root.appendChild(
+    h('p', {
+      class: 'reflect__note',
+      text: 'Câu hỏi này không chấm điểm và không có ô trả lời. Sản phẩm không ghi nhận rằng bạn đã hiểu — chỉ ghi những gì bạn đã mở.',
+    }),
+  );
+
+  if (invite) {
+    root.appendChild(h('p', { class: 'reflect__invite-lead', text: invite.lead }));
+    root.appendChild(
+      h('a', { class: 'btn reflect__invite', href: invite.route }, h('span', { text: invite.label })),
+    );
+  }
+
+  return root;
+}
+
 function bridge(stage: Stage): HTMLElement {
   const i = STAGES.findIndex((s) => s.id === stage.id);
   const next = STAGES[i + 1];
@@ -625,13 +798,17 @@ function bridge(stage: Stage): HTMLElement {
         'p',
         { class: 'bridge__joint', dataset: { kind: boundary.kind } },
         h('span', {
-          text:
-            boundary.kind === 'blurred'
-              ? 'Hai tiêu đề liền nhau, ranh giới in mờ: '
-              : 'Hai tiêu đề liền nhau dùng chung một ranh giới: ',
+          text: 'Hai tiêu đề liền nhau, hai ngày kế tiếp: ',
         }),
         h('span', { class: 'bridge__joint-label', text: boundary.label }),
-        risk ? h('span', { class: 'station__flag', text: risk.id }) : null,
+        risk
+          ? h(
+              'span',
+              { class: 'station__flag' },
+              h('span', { text: risk.title }),
+              h('span', { class: 'visually-hidden', text: ` (${risk.id})` }),
+            )
+          : null,
       ),
     );
   }
@@ -698,15 +875,60 @@ interface Head {
  * out of the accessibility tree, so a screen reader still reads the official
  * wording at every stop, and never out of the evidence magnifier either.
  */
+/**
+ * The chapter opening of a stage.
+ *
+ * `CHẶNG 02 / 05`, then the printed period at display size, then the claim that
+ * the same printed heading makes about it.
+ *
+ * The large type is the period phrase exactly as the excerpt prints it, not a
+ * compressed numeric range. A range such as `1911 - 1920` would read as a
+ * WEAKER date claim than the 2019 source makes: that edition prints `từ ngày
+ * 6-6-1911 đến ngày 30-12-1920`, and flattening an exact day to a bare year
+ * throws away precision the source actually carries. The anchor is therefore
+ * large, but it is the source's own wording.
+ */
 function stageHead(stage: Stage): Head {
-  const heading = h('h1', { class: 'walk__heading', text: stage.heading });
+  const total = STAGES.length;
+  const pad = (n: number): string => (n < 10 ? `0${String(n)}` : String(n));
+
+  const chapter = h(
+    'p',
+    { class: 'walk__chapter' },
+    h('span', { class: 'walk__chapter-word', text: 'Chặng', aria: { hidden: 'true' } }),
+    h('span', { class: 'walk__chapter-n', text: pad(stage.ordinal), aria: { hidden: 'true' } }),
+    h('span', { class: 'walk__chapter-of', text: `/ ${pad(total)}`, aria: { hidden: 'true' } }),
+    h('span', {
+      class: 'visually-hidden',
+      text: `Chặng ${String(stage.ordinal)} trên ${String(total)}`,
+    }),
+  );
+
+  /*
+   * One printed heading, set in two movements.
+   *
+   * The two halves plus the colon between them concatenate back to the stored
+   * heading character for character - the unit test `period and claim parts
+   * recompose into the full heading` holds that invariant for all five - so the
+   * element's text IS the exact heading. Nothing is duplicated into a hidden copy, and the split is
+   * typographic only. The colon is carried in a visually hidden span because a
+   * line break already does the work of separating the two halves for the eye.
+   */
+  const heading = h(
+    'h1',
+    { class: 'walk__heading' },
+    h('span', { class: 'walk__heading-period', text: stage.headingPeriod }),
+    h('span', { class: 'visually-hidden', text: ': ' }),
+    h('span', { class: 'walk__heading-claim', text: stage.headingClaim }),
+  );
 
   // The exact heading is still in the accessibility tree at every stop, so this
   // bar would otherwise be read out twice. It is decoration for the eye only.
   const context = h(
     'p',
     { class: 'walk__context', aria: { hidden: 'true' } },
-    h('span', { class: 'walk__context-ord', text: `Chặng ${String(stage.ordinal)}` }),
+    // No ordinal: the strip under the masthead already says which of the five
+    // stages this is, on every screen. What this bar adds is the period.
     h('span', { class: 'walk__context-period', text: stage.headingPeriod }),
   );
 
@@ -749,10 +971,42 @@ function stageHead(stage: Stage): Head {
           },
           { label: 'Dựa trên', value: entry.basis, tone: 'plain' },
           { label: 'Tiêu đề chính thức, nguyên văn', value: stage.heading, tone: 'plain' },
-          { label: 'Vị trí trong trích đoạn', value: readLocator(stage.at), tone: 'locator' },
+          { label: 'Nguồn', value: citeSource(stage.at), tone: 'locator' },
         ],
       },
       'Câu hỏi này của ai?',
+    ),
+  );
+
+  /*
+   * The documentary position for this stage.
+   *
+   * The brief for this redesign asks every stage to open on an authentic
+   * photograph of Hồ Chí Minh. One photograph has cleared both its provenance
+   * and its usage condition so far, and it is at the opening; for a stage with
+   * nothing cleared, the slot states that in place of a picture rather than
+   * borrowing an unrelated one to fill the space. See figures.ts.
+   */
+  const slot = FIGURE_SLOTS.find((f) => f.stageId === stage.id && f.kind === 'primary');
+
+  /*
+   * What anchors the stage when no photograph can. The excerpt prints time
+   * markers under each stage heading; set large, in the marker face, they are
+   * the visual weight the entrance needs and they are the source's own words at
+   * the source's own precision - `25 đến 30-12-1920`, not `1920`.
+   *
+   * The first marker is dropped when it merely restates the period already set
+   * in the heading above it.
+   */
+  const shown = stage.markers.filter((m) => !stage.headingPeriod.includes(m));
+  const dates = h(
+    'div',
+    { class: 'walk__dates' },
+    h('p', { class: 'walk__dates-label', text: 'Mốc thời gian in trong chặng' }),
+    h(
+      'ol',
+      { class: 'walk__dates-list' },
+      ...shown.map((m) => h('li', { class: 'walk__date', text: m })),
     ),
   );
 
@@ -760,22 +1014,33 @@ function stageHead(stage: Stage): Head {
     'header',
     { class: 'walk__head', dataset: { mode: 'full', expanded: 'false' } },
     h(
-      'p',
-      { class: 'walk__kicker' },
-      h('span', { class: 'walk__ord', text: String(stage.ordinal) }),
-      h('span', { text: `Chặng ${String(stage.ordinal)} trong năm chặng` }),
+      'div',
+      { class: 'walk__head-main' },
+      chapter,
+      heading,
+      context,
+      ask,
+      // The optional guess stands beside the question rather than inside it: it
+      // is an offer about the question, not part of what the question says.
+      predictPanel(stage),
+      h(
+        'div',
+        { class: 'walk__apparatus' },
+        expandBtn,
+        lensTrigger(stageEvidence(stage), 'Nguồn và trạng thái'),
+      ),
     ),
-    heading,
-    context,
-    ask,
-    // The optional guess stands beside the question rather than inside it: it
-    // is an offer about the question, not part of what the question says.
-    predictPanel(stage),
     h(
       'div',
-      { class: 'walk__apparatus' },
-      expandBtn,
-      lensTrigger(stageEvidence(stage), 'Nguồn và trạng thái'),
+      { class: 'walk__head-side' },
+      // On a wide screen the date anchor comes first and the documentary
+      // position sits under it. On a phone the two swap, by `order`, because
+      // the brief sets the mobile reading order as portrait, then date, then
+      // hook - see the narrow-screen block in experience.css.
+      shown.length > 0 ? dates : null,
+      // The primary anchor only. A supporting figure now renders beside the
+      // station it supports, not here - and only when it is actually filled.
+      slot ? h('div', { class: 'walk__portrait' }, figureSlot(slot.id, slot.role)) : null,
     ),
   );
 
@@ -802,8 +1067,8 @@ function stageHead(stage: Stage): Head {
 function stageEvidence(stage: Stage): { title: string; items: EvidenceItem[] } {
   const items: EvidenceItem[] = [
     { label: 'Tiêu đề chính thức, nguyên văn', value: stage.heading, tone: 'plain' },
-    { label: 'Vị trí trong trích đoạn', value: readLocator(stage.at), tone: 'locator' },
-    { label: 'Vị trí, nguyên dạng lưu trữ', value: stage.at, tone: 'plain' },
+    { label: 'Nguồn', value: citeSource(stage.at), tone: 'locator' },
+    { label: 'Vị trí, nguyên dạng lưu trữ', value: auditRef(stage.at), tone: 'plain' },
     { label: 'Loại nội dung', value: 'SOURCE CONTENT', tone: 'status' },
     {
       label: 'Trạng thái',
@@ -840,6 +1105,39 @@ function stageEvidence(stage: Stage): { title: string; items: EvidenceItem[] } {
   }
 
   return { title: `Chặng ${String(stage.ordinal)}: nguồn và trạng thái`, items };
+}
+
+/**
+ * A supporting figure, placed beside the station it supports.
+ *
+ * The brief for this product asks supporting visuals to appear "close to the
+ * passage / turning point / quotation they actually support", not stacked at
+ * the top of the stage with the primary anchor. The placement is declared in
+ * the data (`FigureSlot.anchor`) rather than decided by layout, so a document
+ * cannot drift away from the claim it evidences.
+ *
+ * It renders only when the position is actually filled. An unfilled supporting
+ * position stays declared and visibly blocked in the verification register; it
+ * does not put an empty frame into the middle of a stage, which would be
+ * repeating a gap rather than reporting it.
+ */
+function supportFor(station: Station, stage: Stage): HTMLElement | null {
+  const slot = FIGURE_SLOTS.find((f) => {
+    if (f.stageId !== stage.id || f.kind !== 'supporting') return false;
+    const a = f.anchor;
+    switch (a.where) {
+      case 'entrance':
+        return false;
+      case 'passage':
+        return station.kind === 'passage' && station.passage.id === a.id;
+      case 'turn':
+        return station.kind === 'turn' && station.turn.id === a.id;
+      case 'quote':
+        return station.kind === 'quote' && station.id === a.id;
+    }
+  });
+  if (!slot || !hasFigure(slot.id)) return null;
+  return h('div', { class: 'station__support' }, figureSlot(slot.id, slot.role));
 }
 
 function stationView(station: Station, stage: Stage): HTMLElement {
@@ -891,8 +1189,8 @@ function passageView(p: Passage, stage: Stage): HTMLElement {
 
   const items: EvidenceItem[] = [
     { label: 'Mã đoạn', value: p.id, tone: 'plain' },
-    { label: 'Vị trí', value: readLocator(p.at), tone: 'locator' },
-    { label: 'Vị trí, nguyên dạng lưu trữ', value: p.at, tone: 'plain' },
+    { label: 'Nguồn', value: citeSource(p.at), tone: 'locator' },
+    { label: 'Vị trí, nguyên dạng lưu trữ', value: auditRef(p.at), tone: 'plain' },
   ];
   if (parts.length > 1) {
     // Split for reading, so the whole of it stays available in one piece here.
@@ -979,6 +1277,51 @@ function passageView(p: Passage, stage: Stage): HTMLElement {
  * appear, and the magnifier carries their basis - the two positions, the cited
  * passages, and the printed time marker.
  */
+/**
+ * Two lines becoming one.
+ *
+ * The brief asks that at a turning point the timeline lines converge. This is
+ * that, drawn at the moment itself rather than on the stage thread: the two
+ * strands are the two positions the excerpt records either side of the turn,
+ * and they meet at the point the crossing marks. Before the viewer crosses,
+ * the strands run in but the stem past the meeting point is not drawn; after,
+ * it is.
+ *
+ * It encodes one thing and claims nothing: it is the same before/after pair
+ * that the text below states in words. Under reduced motion the stem is simply
+ * already there once crossed - the CSS transition is the only thing that is
+ * conditional, never the final state.
+ */
+function converge(): SVGSVGElement {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('class', 'turn__converge');
+  svg.setAttribute('viewBox', '0 0 260 64');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('focusable', 'false');
+  svg.setAttribute('preserveAspectRatio', 'none');
+
+  const path = (d: string, cls: string): void => {
+    const el = document.createElementNS(ns, 'path');
+    el.setAttribute('d', d);
+    el.setAttribute('class', cls);
+    svg.appendChild(el);
+  };
+
+  path('M0 12 C70 12 90 32 128 32', 'turn__strand');
+  path('M0 52 C70 52 90 32 128 32', 'turn__strand');
+  path('M128 32 L260 32', 'turn__stem');
+
+  const dot = document.createElementNS(ns, 'circle');
+  dot.setAttribute('cx', '128');
+  dot.setAttribute('cy', '32');
+  dot.setAttribute('r', '4.5');
+  dot.setAttribute('class', 'turn__meet');
+  svg.appendChild(dot);
+
+  return svg;
+}
+
 function turnStation(
   tp: TurningPoint,
   initial: TurnPhase,
@@ -1109,17 +1452,35 @@ function turnStation(
     setPhase(phase === 'before' ? 'after' : 'before');
   });
 
+  /*
+   * A turning point breaks the rhythm of the stage.
+   *
+   * Every other stop is a column of reading at the same measure. This one is
+   * wider, sits on its own surface, and opens with the time marker set at
+   * display size - the moment the stage exists for should not look like the
+   * paragraph before it.
+   *
+   * The marker is the string the excerpt prints, whole: `25 đến 30-12-1920`,
+   * not `1920`. The brief's example shows a bare year; compressing a printed
+   * range into one is the precision upgrade the chronology register forbids, so the date
+   * is large but it is the source's own.
+   */
   const root = h(
     'article',
     { class: 'station station--turn', dataset: { kind: 'turn' } },
     h(
-      'p',
-      { class: 'station__kicker' },
-      h('span', { class: 'station__marker', text: tp.marker }),
-      h('span', { text: 'Bước ngoặt' }),
-      tp.caution ? h('span', { class: 'station__flag', text: 'có ghi chú bản in' }) : null,
+      'div',
+      { class: 'turn__head' },
+      h(
+        'div',
+        { class: 'turn__stamp' },
+        h('p', { class: 'turn__stamp-label', text: 'Bước ngoặt' }),
+        h('p', { class: 'turn__date', text: tp.marker }),
+        tp.caution ? h('span', { class: 'station__flag', text: 'có ghi chú bản in' }) : null,
+      ),
+      converge(),
+      h('h2', { class: 'station__turn-title turn__title', text: tp.title }),
     ),
-    h('h2', { class: 'station__turn-title', text: tp.title }),
     body,
     h('div', { class: 'station__foot' }, crossBtn, lensTrigger({ title: tp.title, items: basis }, 'Căn cứ')),
   );
@@ -1131,7 +1492,7 @@ function turnStation(
 function quoteView(q: Quotation): HTMLElement {
   const items: EvidenceItem[] = [
     { label: 'Trích đoạn gán cho', value: q.attribution, tone: 'plain' },
-    { label: 'Vị trí', value: q.at, tone: 'locator' },
+    { label: 'Nguồn', value: citeSource(q.at), tone: 'locator' },
     {
       label: 'Ứng viên định vị',
       value: q.locatorIds.length > 0 ? q.locatorIds.join(', ') : 'Không có chú thích số',
@@ -1171,48 +1532,6 @@ function epilogueLink(): HTMLElement {
     h('span', { text: `${EPILOGUE.label} — ` }),
     h('span', { text: EPILOGUE.status }),
   );
-}
-
-function pager(stage: Stage): HTMLElement {
-  const i = STAGES.findIndex((s) => s.id === stage.id);
-  const prev = STAGES[i - 1];
-  const next = STAGES[i + 1];
-
-  const row = h('nav', { class: 'walk__pager', aria: { label: 'Chuyển chặng' } });
-
-  row.appendChild(
-    prev
-      ? h(
-          'a',
-          { class: 'walk__pager-link', href: `#/chang/${prev.id}` },
-          h('span', { class: 'walk__pager-dir', text: 'Chặng trước' }),
-          h('span', { class: 'walk__pager-name', text: prev.headingPeriod }),
-        )
-      : h(
-          'a',
-          { class: 'walk__pager-link', href: '#/hanh-trinh' },
-          h('span', { class: 'walk__pager-dir', text: 'Về tổng quan' }),
-          h('span', { class: 'walk__pager-name', text: 'Năm chặng' }),
-        ),
-  );
-
-  row.appendChild(
-    next
-      ? h(
-          'a',
-          { class: 'walk__pager-link walk__pager-link--next', href: `#/chang/${next.id}` },
-          h('span', { class: 'walk__pager-dir', text: 'Sợi chỉ đi tiếp' }),
-          h('span', { class: 'walk__pager-name', text: next.headingPeriod }),
-        )
-      : h(
-          'a',
-          { class: 'walk__pager-link walk__pager-link--next', href: '#/tong-hop' },
-          h('span', { class: 'walk__pager-dir', text: 'Tổng hợp' }),
-          h('span', { class: 'walk__pager-name', text: 'Trở lại câu hỏi trung tâm' }),
-        ),
-  );
-
-  return row;
 }
 
 function notFound(id: string): HTMLElement {

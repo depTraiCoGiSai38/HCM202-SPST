@@ -6,6 +6,7 @@
  */
 import { STAGES, EPILOGUE, ALL_QUOTATIONS } from '../src/data/stages.ts';
 import { LOCATORS, RISKS, PRINTED_FORM_NOTES, UNNOTED_MARKERS } from '../src/data/locators.ts';
+import { citeSource } from '../src/data/source.ts';
 
 const line = (s) => console.log(s);
 
@@ -23,13 +24,13 @@ for (const r of RISKS.filter((r) => r.status !== 'DOCUMENT CONFLICT')) {
 
 line('\n=== NEED VERIFICATION: locator candidates ===');
 for (const l of LOCATORS) {
-  const sdd = l.printed.includes('Sđd') ? '  <- Sđd chưa mở rộng' : '';
-  line(`  ${l.id}  ${l.at}${sdd}`);
+  const sdd = l.printed.includes('Sdd') ? '  <- chữ viết tắt chưa mở rộng' : '';
+  line(`  ${l.id}  ${citeSource(l.at)}${sdd}`);
 }
 line(`  (${String(LOCATORS.length)} ứng viên, không cái nào được đánh dấu đã kiểm chứng)`);
 line(`  (${String(UNNOTED_MARKERS.length)} mốc xuất bản in trong thân bài, không có chú thích số)`);
 
-line('\n=== Ngôn ngữ đánh giá do C2 đưa ra, cần kiểm chứng độc lập ===');
+line('\n=== Ngôn ngữ đánh giá do giáo trình đưa ra, cần kiểm chứng độc lập ===');
 let ev = 0;
 for (const s of STAGES) {
   const list = [...s.context, ...s.development].filter((p) => p.evaluative);
@@ -40,13 +41,13 @@ line(`  tổng: ${String(ev)} đoạn`);
 
 line('\n=== Ghi chú bản in giữ nguyên, không sửa ===');
 for (const n of PRINTED_FORM_NOTES) {
-  line(`  "${n.printed}"  ->  dùng: "${n.used}"  (${n.at})${n.registered ? '  [C2-R08]' : ''}`);
+  line(`  "${n.printed}"  ->  dùng: "${n.used}"  (${citeSource(n.at)})${n.registered ? '  [GT-R06]' : ''}`);
 }
 
 line('\n=== Trích dẫn nguyên văn ===');
 line(`  ${String(ALL_QUOTATIONS.length)} trích dẫn; ${String(ALL_QUOTATIONS.filter((q) => q.locatorIds.length === 0).length)} không có chú thích số nào`);
 
-line('\n=== Vĩ thanh ngoài mốc tháng 9-1969 ===');
+line('\n=== Vĩ thanh ngoài mốc ngày 2-9-1969 ===');
 line(`  ${EPILOGUE.label} — ${EPILOGUE.status}`);
 
 line('\n=== Trạng thái tổng thể ===');

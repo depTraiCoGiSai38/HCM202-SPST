@@ -1,4 +1,6 @@
+import { auditRef, citeSource } from '../data/source';
 import { EXPERIENCE_LINKS } from '../data/interactions';
+import { continueJourney, whatNext } from './whatnext';
 import { STAGES, STAGE_BY_ID } from '../data/stages';
 import type { ExperienceLink, StageId } from '../data/types';
 import { clear, h } from '../lib/dom';
@@ -37,7 +39,7 @@ const BY_STAGE = new Map<StageId, ExperienceLink[]>(
  * points at the excerpt rather than handing over the answer.
  */
 function missReason(picked: ExperienceLink, chosen: ExperienceLink): string {
-  if (picked.at !== chosen.at) {
+  if (auditRef(picked.at) !== auditRef(chosen.at)) {
     return `Chưa khớp. Trải nghiệm bạn đang giữ nằm ở ${readLocator(picked.at)}, còn nhận thức vừa chọn nằm ở ${readLocator(chosen.at)}. Trích đoạn đặt mỗi nhận thức ngay cạnh việc đã làm ra nó, nên hai vị trí khác nhau là dấu hiệu chúng không đi cùng nhau.`;
   }
   return `Chưa khớp. Hai mục cùng nằm ở ${readLocator(picked.at)}, nên hãy đọc lại thứ tự câu trong đoạn: nhận thức đi liền sau việc đã làm ra nó, không phải sau việc kế tiếp.`;
@@ -59,8 +61,8 @@ export function connectPage(): HTMLElement {
   function evidenceFor(link: ExperienceLink): EvidenceItem[] {
     const items: EvidenceItem[] = [
       { label: 'Mã cặp', value: link.id, tone: 'plain' },
-      { label: 'Vị trí trong trích đoạn', value: readLocator(link.at), tone: 'locator' },
-      { label: 'Vị trí, nguyên dạng lưu trữ', value: link.at, tone: 'plain' },
+      { label: 'Nguồn', value: citeSource(link.at), tone: 'locator' },
+      { label: 'Vị trí, nguyên dạng lưu trữ', value: auditRef(link.at), tone: 'plain' },
       { label: 'Trạng thái của cách ghép cặp', value: 'PROJECT DECISION', tone: 'status' },
       {
         label: 'Nghĩa là',
@@ -222,7 +224,11 @@ export function connectPage(): HTMLElement {
         },
       },
       h('span', { class: 'join__stage-n', text: String(stage.ordinal) }),
-      h('span', { class: 'join__stage-count', text: `${String(count)} cặp` }),
+      // The count used to be printed on all five buttons at once. Five item
+      // counts standing permanently above the activity is the reading of a
+      // database, not of a journey - and the number only matters for the stage
+      // actually chosen, where the line below now carries it. It stays in the
+      // accessible name of every button, so nothing is lost to a screen reader.
     );
     btn.addEventListener('click', () => {
       stageId = stage.id;
@@ -239,7 +245,9 @@ export function connectPage(): HTMLElement {
   const heading = h('p', { class: 'join__heading' });
   const syncHeading = (): void => {
     const s = STAGE_BY_ID.get(stageId);
-    if (s) heading.textContent = s.headingPeriod;
+    if (!s) return;
+    const n = (BY_STAGE.get(s.id) ?? []).length;
+    heading.textContent = `${s.headingPeriod} · ${String(n)} cặp`;
   };
 
   const tabsWrap = h('div', { class: 'join__stages-wrap' }, tabs, heading);
@@ -266,6 +274,11 @@ export function connectPage(): HTMLElement {
     tabsWrap,
     status,
     board,
+    whatNext({
+      lead: 'Mỗi nhận thức trong trích đoạn đều đi liền với một việc đã làm.',
+      primary: continueJourney(),
+      secondary: { label: 'Đối sánh hai chặng', href: '#/doi-sanh' },
+    }),
   );
 
   syncHeading();

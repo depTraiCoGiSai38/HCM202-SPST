@@ -7,7 +7,7 @@
  *
  * Accent discipline. `--son` marks exactly four things and nothing else:
  *   1. turning points,
- *   2. the current stage in the journey rail,
+ *   2. where you are in the journey,
  *   3. the focus ring and the single primary action on a view,
  *   4. the thread itself.
  *
@@ -30,7 +30,18 @@
   --font-apparatus: 'Be Vietnam Pro', 'Segoe UI', system-ui, -apple-system, sans-serif;
   --font-marker: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'Cascadia Mono', monospace;
 
-  /* ---- Type scale ----------------------------------------------------- */
+  /* ---- Type scale -----------------------------------------------------
+   *
+   * Five roles carry the product: display (step 4 and up), editorial serif
+   * (step 1), body (step 0), interface sans (step -1) and source apparatus
+   * (step -2). `--step--3` is the one micro size below them, for provenance
+   * marks and axis labels.
+   *
+   * Before this pass two arbitrary micro sizes were in use, 0.625rem and
+   * 0.6875rem, written as literals in twenty places. On a stage screen that put
+   * nine distinct sizes in the first viewport. There is now one.
+   */
+  --step--3: 0.6875rem;
   --step--2: clamp(0.69rem, 0.67rem + 0.11vw, 0.75rem);
   --step--1: clamp(0.83rem, 0.79rem + 0.18vw, 0.94rem);
   --step-0: clamp(1rem, 0.95rem + 0.24vw, 1.15rem);

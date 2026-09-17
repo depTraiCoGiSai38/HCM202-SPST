@@ -416,7 +416,7 @@ function feature(beat: PresentationBeat): HTMLElement {
     }
 
     case 'PB-6': {
-      const risk = RISK_BY_ID.get('C2-R05');
+      const risk = RISK_BY_ID.get('GT-R02');
       if (!risk) return lead(beat.title);
       // The room reads this. The audit code stays in the register at
       // #/kiem-chung and in the magnifier, not on the wall.

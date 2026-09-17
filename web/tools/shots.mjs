@@ -33,7 +33,7 @@ await shot('08-compare-laptop', 'laptop', '#/doi-sanh');
 await shot('09-compare-mobile', 'mobile', '#/doi-sanh');
 await shot('10-connect-tablet', 'tablet', '#/noi-ket');
 await shot('11-synthesis-laptop', 'laptop', '#/tong-hop', async (p) => {
-  const order = ['trước ngày 5-6-1911','từ giữa năm 1911','từ cuối năm 1920','từ đầu năm 1930','từ đầu năm 1941'];
+  const order = ['từ ngày 5-6-1911 trở về trước','từ ngày 6-6-1911','từ ngày 31-12-1920','từ ngày 4-2-1930','từ ngày 29-1-1941'];
   for (const key of order) {
     const chips = p.locator('.synth__chip:not([disabled])');
     const n = await chips.count();

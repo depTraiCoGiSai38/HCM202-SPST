@@ -1,0 +1,1202 @@
+# UX/UI REDESIGN — HÀNH TRÌNH TƯ TƯỞNG
+
+## ROLE
+
+Act as a:
+
+- Senior UX/UI Designer
+- Senior Interaction Designer
+- Digital Exhibition Designer
+- Editorial Designer
+- Educational Experience Designer
+- Front-end Design Engineer
+
+## MANDATORY SKILL
+
+You MUST invoke and actively use:
+
+`ui-ux-pro-max`
+
+Read the complete SKILL.md before making design decisions.
+
+Use the actual skill workflow and CLI/scripts where applicable.
+
+Do not merely say that you used the skill.
+
+In the final report include:
+
+- which ui-ux-pro-max methods were used
+- CLI/script outputs that materially affected the work
+- general skill guidance
+- PROJECT DECISIONS derived from that guidance
+
+If `ui-ux-pro-max` is unavailable:
+
+STOP.
+
+Report:
+
+`ui-ux-pro-max skill is unavailable in this environment.`
+
+Do not silently continue without it.
+
+---
+
+# PROJECT CONTEXT
+
+Before changing code, read completely:
+
+- AGENTS.md / AGENTS_v2.md
+- CLAUDE.md if present
+- HCM202_PROJECT_CONTEXT_v2.0.md
+- MASTER.md
+- existing Design Decision Records
+- existing source-verification records
+- existing code and previous UX reports
+
+Academic content:
+
+`C2-02.pdf`
+
+Mandatory regulations:
+
+- `LLCT_Fall2026_Student_Guideline_TT_v2.0_FINAL.pdf`
+- `TT_CamNang_HoSo_ToanDien_Fall2026.pdf`
+
+Academic accuracy always overrides visual ambition.
+
+Do NOT modify:
+
+- approved academic claims
+- five-stage chronology
+- approved Central Question
+- terminology
+- verified citations
+- verification status
+
+for aesthetic reasons.
+
+---
+
+# PRODUCT VISION
+
+Redesign “HÀNH TRÌNH TƯ TƯỞNG” into:
+
+# A LIVING DIGITAL HISTORICAL EXHIBITION
+
+The experience should feel closer to:
+
+Digital Museum
+× Interactive Documentary
+× Editorial Storytelling
+× Guided Learning Journey
+
+and NOT:
+
+Dashboard
+× Database Browser
+× Admin Tool
+× Textbook copied into a website
+
+The user should feel that they are moving through a historical and intellectual journey.
+
+---
+
+# PRIMARY EXPERIENCE GOAL
+
+Transform the current experience from:
+
+`ĐỌC THÔNG TIN`
+
+into:
+
+`NHÌN THẤY BỐI CẢNH`
+→
+`BƯỚC VÀO CÂU CHUYỆN`
+→
+`KHÁM PHÁ TRẢI NGHIỆM`
+→
+`NHẬN RA CHUYỂN BIẾN`
+→
+`KIỂM CHỨNG BẰNG CHỨNG`
+→
+`SUY NGẪM`
+→
+`ĐI TIẾP`
+
+The user should not feel that they are operating a content-management interface.
+
+---
+
+# EXPERIENCE TARGET
+
+The desired feeling:
+
+### First 10 seconds
+
+“Đây là một hành trình, không phải một trang giáo trình.”
+
+### First stage
+
+“Mình hiểu mình đang ở thời kỳ nào và điều gì đang diễn ra.”
+
+### Middle of the journey
+
+“Mình bắt đầu thấy các trải nghiệm và tư tưởng kết nối với nhau.”
+
+### Turning point
+
+“À, đây là lý do giai đoạn này quan trọng.”
+
+### End
+
+“Mình có thể tự giải thích quá trình hình thành và phát triển tư tưởng Hồ Chí Minh.”
+
+Do NOT claim users actually achieved these outcomes until real testing confirms them.
+
+---
+
+# INTERPRETATION OF “SỐNG TRONG TƯ TƯỞNG HỒ CHÍ MINH”
+
+This phrase does NOT mean:
+
+- character simulation
+- roleplay as Hồ Chí Minh
+- invented inner monologue
+- fictional dialogue
+- alternate history
+- AI reconstruction of historical events
+
+It means:
+
+The learner is immersed in:
+
+- historical context
+- authentic imagery
+- chronology
+- experiences
+- documents
+- intellectual transitions
+- verified evidence
+- reflective questions
+
+The learner should feel present in the historical journey while remaining academically grounded.
+
+---
+
+# FIRST TASK — FULL PRODUCT AUDIT
+
+Do NOT code immediately.
+
+Run the existing website.
+
+Review all major routes at:
+
+- desktop
+- tablet
+- mobile
+
+Audit the WHOLE PRODUCT, not isolated components.
+
+Evaluate:
+
+- information architecture
+- navigation
+- content hierarchy
+- typography
+- color
+- spacing
+- image use
+- source presentation
+- interaction language
+- progress
+- chapter transitions
+- motion
+- responsiveness
+- accessibility
+- cognitive load
+
+For each issue provide:
+
+Problem
+→ Why it feels confusing/dry
+→ Learning impact
+→ Severity
+→ Proposed correction
+
+Severity:
+
+CRITICAL
+HIGH
+MEDIUM
+LOW
+
+---
+
+# CURRENT UX PROBLEMS TO INVESTIGATE
+
+Based on the current product screenshots, specifically inspect whether:
+
+1. Too many navigation systems compete with each other.
+
+2. Sidebar + tabs + pagination + buttons + timeline create excessive navigation density.
+
+3. The screen feels like an academic dashboard instead of a guided historical journey.
+
+4. Too much text is visible at the same time.
+
+5. Important visual moments do not have enough hierarchy.
+
+6. Photos are treated as secondary blocks rather than narrative anchors.
+
+7. Buttons frequently compete for attention.
+
+8. Internal system states such as:
+   - verification
+   - source status
+   - opened state
+   - progress
+   appear too prominently in the learning flow.
+
+9. Typography has insufficient hierarchy between:
+   - historical moment
+   - explanation
+   - evidence
+   - navigation
+   - metadata.
+
+10. Each screen appears structurally different without one strong visual grammar.
+
+---
+
+# ONE COHESIVE DESIGN SYSTEM
+
+The redesign MUST establish one visual grammar across the entire product.
+
+The product should have:
+
+## ONE primary navigation system
+
+The learner should always know:
+
+- where am I?
+- which stage am I in?
+- what should I do next?
+
+Avoid three or four equally dominant navigation systems.
+
+Secondary controls should move into:
+
+- drawers
+- contextual menus
+- lightweight utilities
+
+instead of occupying permanent visual space.
+
+---
+
+# PRIMARY NAVIGATION MODEL
+
+Recommended model:
+
+TOP:
+
+`Hành trình tư tưởng`
+
+LEFT / EDGE / MOBILE COLLAPSED:
+
+one continuous five-stage journey indicator
+
+MAIN:
+
+storytelling canvas
+
+RIGHT / DRAWER:
+
+sources and optional supporting information
+
+Avoid keeping:
+
+sidebar navigation
++
+large tabs
++
+pagination
++
+chapter selector
++
+multiple CTA rows
+
+all visible simultaneously.
+
+---
+
+# VISUAL HIERARCHY RULE
+
+At any point in the experience there should usually be only:
+
+1 PRIMARY THING TO LOOK AT
+
+1 PRIMARY ACTION
+
+1 OPTIONAL SECONDARY ACTION
+
+Everything else should visually recede.
+
+Do not give metadata the same visual weight as the historical story.
+
+---
+
+# REDESIGN THE OPENING EXPERIENCE
+
+The current hero gives too much space to the Central Question and competes with the five-stage list.
+
+Redesign it.
+
+Above the fold should contain:
+
+1. Product identity
+2. One strong authentic archival portrait
+3. A short narrative introduction
+4. One main CTA
+5. One secondary overview action
+
+Suggested composition:
+
+LEFT:
+
+small label:
+`HÀNH TRÌNH TƯ TƯỞNG`
+
+large title:
+`5 chặng đường`
+
+short introduction:
+2–3 lines maximum
+
+primary CTA:
+`Bắt đầu hành trình`
+
+secondary:
+`Xem toàn bộ 5 chặng`
+
+RIGHT:
+
+large archival portrait of Hồ Chí Minh
+
+subtle caption + source
+
+Background may contain:
+
+- timeline line
+- map fragment
+- document texture
+- date markers
+
+but keep them quiet.
+
+---
+
+# CENTRAL QUESTION
+
+Preserve the approved Central Question exactly.
+
+Do NOT rewrite it.
+
+Do NOT force the full question to dominate the hero.
+
+Move it into a dedicated section:
+
+# CÂU HỎI DẪN ĐƯỜNG
+
+Present it after the initial emotional introduction.
+
+Use strong editorial typography and generous whitespace.
+
+It should feel like:
+
+“Đây là điều chúng ta sẽ cùng tìm câu trả lời.”
+
+not:
+
+“This is a block of text you must read before entering.”
+
+Keep approval / verification state accessible but visually secondary.
+
+---
+
+# FIVE-STAGE VISUAL SYSTEM
+
+IMPORTANT:
+
+## EVERY STAGE MUST HAVE A PRIMARY AUTHENTIC IMAGE OF HỒ CHÍ MINH
+
+This is an intentional product-design decision.
+
+Each of the five stages should have:
+
+### 1 PRIMARY VISUAL ANCHOR
+
+Prefer:
+
+an authentic archival photograph of Hồ Chí Minh appropriate to that period or closely connected to that stage.
+
+### 1–3 SUPPORTING VISUALS
+
+Possible:
+
+- Vietnam historical context
+- relevant location
+- archival document
+- newspaper
+- organization/event
+- historical environment
+- map
+- authentic period material
+
+Do not turn the stage into a photo gallery.
+
+Every image needs a narrative role.
+
+---
+
+# IMAGE SELECTION RULE
+
+For each image answer:
+
+`Why is this image here?`
+
+Valid reasons:
+
+- introduces historical context
+- establishes time/place
+- illustrates a verified event
+- connects a person to the stage
+- supports a turning point
+- helps interpret a document
+
+Invalid reason:
+
+`because the page needs more pictures`
+
+---
+
+# IMAGE SOURCE SAFETY
+
+Use only authentic archival imagery with traceable sources.
+
+Maintain separately:
+
+- identity verification
+- event/date verification
+- location verification
+- image source
+- rights/usage condition
+- offline packaging status
+
+Do NOT:
+
+- AI-generate Hồ Chí Minh
+- generate fake historical photographs
+- AI-colorize the portrait
+- animate facial expressions
+- animate eyes
+- lip-sync
+- synthesize voice
+- face-swap
+- morph the face
+- make the person perform actions not present in the original source
+
+The regulations prohibit AI-generated/simulated/distorted leader imagery.
+
+Portrait itself must remain authentic and intact.
+
+---
+
+# STAGE OPENING TEMPLATE
+
+Every stage should begin with the same orientation grammar.
+
+Example:
+
+--------------------------------
+
+CHẶNG 02 / 05
+
+1911 — 1920
+
+[large authentic archival portrait]
+
+THỜI KỲ TỪ GIỮA NĂM 1911
+ĐẾN CUỐI NĂM 1920
+
+short contextual hook
+
+“Điều gì đã thay đổi qua hành trình này?”
+
+[Explore]
+
+--------------------------------
+
+This establishes consistency.
+
+But the internal composition of each stage can vary.
+
+Do NOT make all stages identical cards.
+
+---
+
+# STAGE STRUCTURE
+
+Every stage should guide the user through:
+
+## 1. ORIENTATION
+
+Where am I?
+
+## 2. CONTEXT
+
+What historical environment am I entering?
+
+## 3. EXPERIENCE
+
+What relevant experiences/events are supported by the source?
+
+## 4. TRANSFORMATION
+
+What changed or developed?
+
+## 5. TURNING POINT
+
+Where applicable.
+
+## 6. EVIDENCE
+
+How can I verify this?
+
+## 7. REFLECTION
+
+What should the learner notice?
+
+## 8. BRIDGE
+
+Why does the next stage follow?
+
+This structure should be felt visually without displaying eight giant menu tabs.
+
+---
+
+# PHOTO-LED STORYTELLING
+
+Images should lead the rhythm.
+
+Instead of:
+
+TEXT
+TEXT
+TEXT
+IMAGE
+
+prefer compositions like:
+
+IMAGE
++
+DATE
++
+ONE KEY IDEA
+
+then:
+
+context
+
+then:
+
+document/evidence
+
+then:
+
+interpretation
+
+then:
+
+transition
+
+---
+
+# VISUAL RHYTHM
+
+Alternate between:
+
+FULL-BLEED / LARGE IMAGE MOMENT
+
+↓
+
+QUIET READING MOMENT
+
+↓
+
+INTERACTION
+
+↓
+
+DOCUMENT / EVIDENCE
+
+↓
+
+TURNING POINT
+
+↓
+
+REFLECTION
+
+↓
+
+NEXT STAGE
+
+Avoid repeated:
+
+card
+card
+card
+card
+
+---
+
+# TURNING POINTS
+
+Major turning points should break the normal rhythm.
+
+Example direction:
+
+## 1920
+
+Before:
+
+visual elements appear fragmented.
+
+As the user reaches the turning point:
+
+timeline lines slowly converge.
+
+Large:
+
+`1920`
+
+appears.
+
+Authentic archival image remains static.
+
+Around the image:
+
+`Trải nghiệm`
+
+→
+
+`Tiếp thu lý luận`
+
+→
+
+`Bước ngoặt`
+
+The image itself must NOT be artificially animated.
+
+Motion happens around the historical material.
+
+---
+
+# MOTION LANGUAGE
+
+Create one coherent motion system.
+
+Motion should communicate:
+
+- progression
+- chronology
+- reveal
+- connection
+- transition
+- causality
+
+Use:
+
+- subtle fade
+- mask reveal
+- timeline drawing
+- document slide/reveal
+- gentle container scale
+- small parallax of background layers
+- line connection
+- chapter transition
+
+Do NOT use:
+
+- bouncing UI
+- constant floating elements
+- random rotation
+- excessive zoom
+- scroll hijacking
+- animation delays
+- looping decoration
+
+---
+
+# PORTRAIT MOTION RULE
+
+Do NOT directly animate the portrait subject.
+
+Allowed:
+
+- image frame reveal
+- mask reveal
+- entire static image container slightly moves
+- gentle crop transition
+- background layers move
+- caption appears
+- timeline draws around the photo
+- document overlays enter
+
+The historical photograph remains intact.
+
+---
+
+# DESIGN DENSITY RULES
+
+Actively reduce visual overload.
+
+Use these as design constraints:
+
+- Hero introduction: max 2–3 short lines.
+- One primary CTA per major screen.
+- Maximum one secondary CTA beside it.
+- Do not display all metadata by default.
+- Do not display all sources by default.
+- Do not show more than one dominant navigation system.
+- Body reading width should remain comfortable.
+- Avoid very wide text blocks.
+- Break long academic material into meaningful sections.
+- Use whitespace as part of the narrative.
+
+---
+
+# SOURCE AND VERIFICATION UI
+
+Evidence Visible remains mandatory.
+
+But source infrastructure should NOT visually dominate the learning experience.
+
+Use a lightweight source indicator:
+
+`Nguồn`
+
+or
+
+`Kiểm chứng`
+
+Click:
+
+opens a source drawer.
+
+Drawer contains:
+
+- Claim ID
+- source
+- section
+- page
+- volume if relevant
+- verification status
+
+If not verified:
+
+`NEED VERIFICATION`
+
+Do not fake completeness.
+
+---
+
+# “ĐÃ MỞ” IS NOT “ĐÃ HỌC”
+
+Separate:
+
+- visited
+- explored
+- activity completed
+
+from:
+
+- understood
+
+Never display:
+
+“Bạn đã hiểu”
+
+unless the user explicitly provided evidence through an activity designed to measure that.
+
+Prefer:
+
+`Đã xem`
+
+`Đã khám phá`
+
+`Hoàn thành hoạt động`
+
+---
+
+# NỐI KẾT / ĐỐI SÁNH / TỔNG HỢP
+
+Do not present these as unrelated tools in a separate dashboard.
+
+Introduce them naturally.
+
+Example:
+
+After Stage 2:
+
+“Bạn vừa đi qua hai chặng đầu tiên.
+Điều gì đã thay đổi?”
+
+CTA:
+
+`Đối sánh hai chặng`
+
+After Stage 5:
+
+“Bây giờ hãy nhìn lại toàn bộ hành trình.”
+
+CTA:
+
+`Tổng hợp 5 chặng`
+
+Keep independent navigation access too, but the main journey should introduce them at meaningful points.
+
+---
+
+# REMOVE THE DASHBOARD FEELING
+
+The redesigned product should NOT look like:
+
+- an admin interface
+- content management system
+- analytics dashboard
+- research database
+
+Reduce permanent presence of:
+
+- status badges
+- counters
+- item counts
+- technical labels
+- source-state controls
+- debugging-like UI
+
+These can exist in contextual drawers.
+
+The central canvas belongs to the learning experience.
+
+---
+
+# VISUAL STYLE
+
+Direction:
+
+# CONTEMPORARY VIETNAMESE DIGITAL MUSEUM
+
+Use:
+
+- archival photography
+- elegant Vietnamese typography
+- documentary composition
+- warm neutral surfaces
+- controlled red accent
+- subtle gold / paper accent where appropriate
+- editorial grid
+- large historical dates
+- strong whitespace
+- thin journey lines
+- authentic document details
+
+Do not turn everything red and yellow.
+
+Avoid:
+
+- SaaS dashboard design
+- glassmorphism
+- neon
+- excessive gradients
+- generic Bento cards
+- overly rounded components
+- random decorative icons
+
+---
+
+# TYPOGRAPHY
+
+Create a clear hierarchy.
+
+Roles:
+
+DISPLAY
+large historical statements / dates
+
+EDITORIAL SERIF
+important narrative / quotations where appropriate
+
+SANS UI
+navigation / controls / labels
+
+BODY
+comfortable long-form reading
+
+SOURCE
+small but readable metadata
+
+Do not use six unrelated type styles.
+
+---
+
+# COLOR SYSTEM
+
+Create one restrained system.
+
+Recommended structure:
+
+Base:
+warm charcoal / archival dark
+
+Surface:
+warm off-white / paper
+
+Primary accent:
+muted Vietnamese red
+
+Secondary accent:
+subtle archival gold / ochre
+
+Information states:
+use separate accessible semantic colors
+
+Do not use accent color for every interactive component.
+
+---
+
+# MOBILE EXPERIENCE
+
+Design mobile independently.
+
+The mobile experience must still feel like a story.
+
+On mobile:
+
+portrait
+↓
+date
+↓
+hook
+↓
+context
+↓
+interaction
+↓
+evidence
+↓
+bridge
+
+Collapse stage navigation into one clear journey control.
+
+Avoid permanent multi-level sidebars.
+
+---
+
+# ACCESSIBILITY
+
+Use ui-ux-pro-max accessibility guidance.
+
+Verify:
+
+- contrast
+- keyboard navigation
+- focus
+- touch targets
+- semantic markup
+- line length
+- text zoom
+- reduced motion
+- non-color status signals
+
+Reduced motion must preserve all content and navigation.
+
+---
+
+# IMPLEMENTATION
+
+Keep:
+
+- Vite
+- TypeScript
+- CSS
+- offline mode
+- presentation mode
+
+Do not add a heavy library solely for visual effects.
+
+Prefer CSS / existing tools where possible.
+
+Preserve previous work where appropriate.
+
+Make reversible incremental changes.
+
+---
+
+# REQUIRED IMPLEMENTATION SEQUENCE
+
+## PHASE 1 — AUDIT
+
+No code.
+
+Output:
+
+- UX problems
+- UI problems
+- navigation problems
+- image problems
+- storytelling problems
+- density problems
+- consistency problems
+
+## PHASE 2 — PROJECT DESIGN DECISION
+
+Before coding state:
+
+### ONE-SENTENCE DESIGN DIRECTION
+
+### LEARNING JOURNEY
+
+### PRIMARY NAVIGATION MODEL
+
+### STAGE TEMPLATE
+
+### IMAGE STRATEGY
+
+### MOTION STRATEGY
+
+### DESIGN TOKENS
+
+## PHASE 3 — REDESIGN
+
+Implement directly.
+
+Start with:
+
+1. global navigation
+2. opening hero
+3. stage shell
+4. imagery
+5. timeline
+6. stage content
+7. transitions
+8. reflection / synthesis
+9. source drawer
+
+## PHASE 4 — TEST
+
+Test complete flow:
+
+Landing
+→ Overview
+→ Stage 1
+→ Stage 2
+→ Activity
+→ Stage 3
+→ Stage 4
+→ Stage 5
+→ Synthesis
+→ Sources
+
+Desktop
+Tablet
+Mobile
+
+Keyboard
+Text zoom
+Reduced motion
+Offline
+Presentation mode
+
+## PHASE 5 — REPORT
+
+Create:
+
+`UX_REDESIGN_REPORT.md`
+
+Include:
+
+- previous problems
+- unified design principles
+- before/after architecture
+- images added
+- image sources
+- verification status
+- motion implemented
+- ui-ux-pro-max usage
+- tests actually run
+- remaining risks
+- items waiting for human testing
+
+---
+
+# CRITICAL FINAL RULE
+
+Do not optimize for:
+
+“more UI”
+
+Optimize for:
+
+“more experience with less interface.”
+
+The learner should remember:
+
+- the image
+- the moment
+- the transition
+- the idea
+
+not:
+
+- the tab
+- the counter
+- the menu
+- the dashboard
+
+---
+
+# STATUS
+
+After implementation do NOT write:
+
+`Users now enjoy the course more.`
+
+Do NOT write:
+
+`Students understand better.`
+
+until real user testing supports those claims.
+
+Use:
+
+`UX REDESIGN IMPLEMENTED — REQUIRES HUMAN VERIFICATION AND REAL PROJECT EVIDENCE`
+
+---
+
+# START
+
+Invoke `ui-ux-pro-max`.
+
+Read the complete skill.
+
+Then inspect the current product in its running state.
+
+Begin with the full-product UX/UI audit.
+
+Do not code until the audit is documented.
+
+After the audit, proceed directly into implementation of reversible improvements.

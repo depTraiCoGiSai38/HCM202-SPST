@@ -4,7 +4,8 @@
 > **Audit date:** 2026-09-16  
 > **Course:** HCM202 - Tư tưởng Hồ Chí Minh  
 > **Term named by the rule documents:** Fall 2026  
-> **Assigned content file / project input:** `C2-02.pdf`  
+> **Primary academic content source:** `Giáo trình Tư tưởng Hồ Chí Minh - 2019.pdf` (printed tr.28-35)  
+> **Legacy / comparison reference:** `C2-02.pdf` - retired as base source on 2026-09-17, retained for migration trace  
 > **Intended use:** persistent project context for a coding agent working on a new machine or in a new session  
 > **Current completion state:** `REQUIRES HUMAN VERIFICATION AND REAL PROJECT EVIDENCE`
 
@@ -17,10 +18,11 @@ This file is a source-grounded rebuild. It distinguishes document requirements f
 Before changing code, content, design, slides, evidence, or dossier files:
 
 1. Read this file completely.
-2. Read the three local PDF files completely:
-   - `C2-02.pdf`
+2. Read the local PDF files completely:
+   - `Giáo trình Tư tưởng Hồ Chí Minh - 2019.pdf` (primary academic source; image-only scan, render the pages)
    - `LLCT_Fall2026_Student_Guideline_TT_v2.0_FINAL.pdf`
    - `TT_CamNang_HoSo_ToanDien_Fall2026.pdf`
+   - `C2-02.pdf` (legacy comparison reference only; it controls no locator)
 3. Confirm that the three files match the SHA-256 values in section 2. If a hash differs, write `SOURCE FILE CHANGED - RE-AUDIT REQUIRED` and do not reuse old locators as if they were still valid.
 4. Inspect the repository and version-control status without modifying existing work.
 5. Produce a Repository + Compliance Audit before implementation.
@@ -38,7 +40,7 @@ Use these labels consistently. They are operational labels for this project; the
 | Label | Meaning |
 |---|---|
 | `SOURCE REQUIREMENT` | A rule stated in one or both Fall 2026 rule documents. |
-| `SOURCE CONTENT` | Academic content transcribed or faithfully summarized from `C2-02.pdf`. |
+| `SOURCE CONTENT` | Academic content transcribed or faithfully summarized from `Giáo trình Tư tưởng Hồ Chí Minh - 2019.pdf`. |
 | `PROJECT INPUT` | A fact supplied by the user, such as the assigned filename/topic label. It is not automatically an academic fact. |
 | `PROJECT DECISION` | A design, technical, or framing choice made for this product. It must not be presented as a document requirement. |
 | `VERIFIED IN FILE` | The wording or fact was visually located in the named PDF. This does not independently authenticate the PDF, its citations, or its legal claims. |
@@ -50,21 +52,27 @@ Use these labels consistently. They are operational labels for this project; the
 
 ### Verification rule
 
-`VERIFIED IN FILE` is never equivalent to final academic verification. The two Fall 2026 documents require cross-verification of source locators. A sentence appearing in `C2-02.pdf` proves only that it appears in the assigned excerpt until a human checks the required approved source.
+`VERIFIED IN FILE` is never equivalent to final academic verification. The two Fall 2026 documents require cross-verification of source locators. A sentence appearing in `Giáo trình Tư tưởng Hồ Chí Minh - 2019.pdf` proves only that it appears in the assigned excerpt until a human checks the required approved source.
 
 ---
 
 ## 2. AUDIT BASIS, HASHES, AND LOCATOR CONVENTION
 
-The forensic pass used exactly these three PDFs as its HCM202 audit corpus:
+The audit corpus, after the base-source migration of 2026-09-17:
 
-| Code | Exact filename | Pages | Bytes | SHA-256 |
-|---|---|---:|---:|---|
-| `C2` | `C2-02.pdf` | 10 | 597,384 | `F8AB7AA8BE1FB327F3DCE15027DD813CB971DDC8240864A2E745BDA30BEB485E` |
-| `SG` | `LLCT_Fall2026_Student_Guideline_TT_v2.0_FINAL.pdf` | 9 | 1,683,134 | `B37D8F67A30B0E9ECC3E5F1E8D8BE3DD7C8855C691767A7445D5AA376AC3D51A` |
-| `HB` | `TT_CamNang_HoSo_ToanDien_Fall2026.pdf` | 5 | 239,742 | `3F9408308ADE107FDB7C1D9201E462E7879CA76B9A98EB1359E8578D0CADF54A` |
+| Code | Exact filename | Pages | Bytes | SHA-256 | Role |
+|---|---|---:|---:|---|---|
+| `GT` | `Giáo trình Tư tưởng Hồ Chí Minh - 2019.pdf` | 8 | 1,157,396 | `A520532C4F5034AA7BDF69E7E63459A748C5899BD7E525EA313BEC3AD70F720A` | PRIMARY academic source |
+| `SG` | `LLCT_Fall2026_Student_Guideline_TT_v2.0_FINAL.pdf` | 9 | 1,683,134 | `B37D8F67A30B0E9ECC3E5F1E8D8BE3DD7C8855C691767A7445D5AA376AC3D51A` | rule document |
+| `HB` | `TT_CamNang_HoSo_ToanDien_Fall2026.pdf` | 5 | 239,742 | `3F9408308ADE107FDB7C1D9201E462E7879CA76B9A98EB1359E8578D0CADF54A` | rule document |
+| `C2` | `C2-02.pdf` | 10 | 597,384 | `F8AB7AA8BE1FB327F3DCE15027DD813CB971DDC8240864A2E745BDA30BEB485E` | LEGACY / comparison only |
 
-All 24 PDF pages were rendered and visually inspected. Text extraction was used as an index, not as a substitute for page review.
+The two rule documents' 14 pages were rendered and visually inspected in the original
+forensic pass. All 8 pages of `GT` were rendered and read page by page during the
+2026-09-17 migration; `GT` has NO text layer at all, so text extraction was not
+available for it and every reading came from the rendered page.
+
+`C2` no longer controls any locator. It is kept so the migration can be re-checked.
 
 `SG PDF p.1` names `ThS. Nguyễn Trung Hiếu` as lecturer. This is verified only as document text; current instructor identity or authority on a particular class remains `NEED VERIFICATION` if operationally relevant.
 
@@ -72,8 +80,15 @@ All 24 PDF pages were rendered and visually inspected. Text extraction was used 
 
 - `SG PDF p.N` means the one-based page index in the 9-page Student Guideline. The document shows no printed page numbers.
 - `HB PDF p.N` means the one-based page index in the 5-page handbook. The document shows no printed page numbers.
-- `C2 PDF p.N / book p.M` identifies the PDF page and the page number printed in the textbook excerpt when visible.
-- In `C2`, printed odd pages 27, 29, 31, 33, and 35 are visible. The intervening even pages are sequentially implied but their numbers are obscured/not printed in the supplied rendering; treat those even-page mappings as `NEED VERIFICATION` if used as final locators.
+- A public academic citation is `Giáo trình Tư tưởng Hồ Chí Minh - 2019, tr. N`, using the
+  PRINTED textbook page. A range uses the smallest accurate span, e.g. `tr. 29–31`.
+- `GT` prints its page number at the foot of every one of its eight pages, so the printed
+  page is always available and the PDF sheet number is never published. The mapping is
+  PDF 1 = tr.28 through PDF 8 = tr.35; it is evidenced on all eight pages, not assumed.
+- The PDF sheet is retained for internal audit strings only.
+- Locators were re-derived per claim during the migration, by reading the 2019 page each
+  claim appears on. They were NOT produced by shifting the old C2 page numbers: the two
+  editions set this material differently, so no constant offset exists between them.
 
 ### Audit limitation concerning prior artifacts
 
@@ -101,12 +116,18 @@ The product-format lists are examples, not an exhaustive mandate. SG names infog
 
 ### 3.2 Academic content scope
 
-`C2-02.pdf` is the assigned content excerpt for this project. It contains:
+`Giáo trình Tư tưởng Hồ Chí Minh - 2019.pdf` is the assigned content excerpt for this
+project, covering printed pages 28 to 35. It contains:
 
-- the closing part of an earlier discussion of subjective factors;
-- Section II, `QUÁ TRÌNH HÌNH THÀNH VÀ PHÁT TRIỂN TƯ TƯỞNG HỒ CHÍ MINH`;
+- Section II, `QUÁ TRÌNH HÌNH THÀNH VÀ PHÁT TRIỂN TƯ TƯỞNG HỒ CHÍ MINH`, from its heading;
 - five named historical periods;
-- the opening heading of Section III at the end.
+- Section III's heading, its first subsection heading, and the opening of that
+  subsection's body text.
+
+Unlike the retired C2 excerpt, the 2019 excerpt does not begin mid-argument: it opens at
+the Section II heading on tr.28. It also runs slightly further at the end, into the body
+of III.1.a on tr.35. That body is outside the assigned content and is not used as
+product content.
 
 Do not expand a product claim beyond what the supplied excerpt or an approved, verified additional source supports.
 
@@ -120,18 +141,21 @@ The following hierarchy is itself a `SOURCE REQUIREMENT` from `SG PDF p.3`:
 
 The hierarchy does not list AI output as an academic source. Operationally, this project must never treat AI output as verified academic evidence. This is a derived integrity control, not a claim that the PDFs contain the verbatim sentence `AI is not an academic source`.
 
-### 3.4 Source-provenance risk in the supplied C2 file
+### 3.4 Source-provenance risk in the supplied academic file
 
-`C2-02.pdf` displays Studocu/Studersnel branding and a download QR/watermark. Its metadata title also names a Studocu copy of a textbook. The Student Guideline, meanwhile, requires the official textbook as Source 1.
+The retired `C2-02.pdf` displayed Studocu/Studersnel branding and a download QR/watermark, and its metadata title named a Studocu copy of a textbook. That provenance problem is one reason the base source was migrated on 2026-09-17.
+
+The replacement does not remove the problem. `Giáo trình Tư tưởng Hồ Chí Minh - 2019.pdf` is an image-only scan: 8 pages, 8 grayscale image objects, no text layer, produced by `PDF-XChange Lite 11.0.1`, with a handwritten or stamped mark at the foot of every page. It carries no publisher imprint page in the supplied range. It has NOT been authenticated as the official Bộ GD&ĐT / NXB Chính trị quốc gia Sự thật edition.
 
 Status: `SOURCE PROVENANCE CONFLICT - NEED VERIFICATION`.
 
 Operational consequence:
 
-- use `C2-02.pdf` to preserve the assigned content boundary and wording;
+- use the 2019 file to preserve the assigned content boundary and wording;
 - do not state that this particular file has been authenticated as the official edition;
 - before final submission, a human must compare its claims, printed pages, and citations with the approved official textbook/source copy;
-- footnotes printed in `C2-02.pdf` are locator candidates, not independently verified locators.
+- footnotes printed in it are locator candidates, not independently verified locators;
+- migrating the base source did not upgrade any claim's verification status.
 
 ### 3.5 External legal/institutional citations
 
@@ -172,9 +196,9 @@ This subsection preserves continuity with the earlier project context. Every ite
 
 `CONTEXT -> EXPERIENCE / PRACTICE -> RECOGNITION -> IDEOLOGICAL DEVELOPMENT -> REVOLUTIONARY APPLICATION -> SIGNIFICANCE`
 
-This model may help learning design, but it must never replace C2's terminology or force claims that the source does not support.
+This model may help learning design, but it must never replace the textbook's terminology or force claims that the source does not support.
 
-**Working journey architecture:** title; Central Question; journey overview; five exact C2 stages with transition/turning-point moments; cross-stage connection; final synthesis; source/evidence library; and a real-feedback entry point. English aliases such as Roots, Search, Formation, Test or Realization may be internal UI aids only; never substitute them for the exact Vietnamese headings in academic content.
+**Working journey architecture:** title; Central Question; journey overview; the five exact stages with transition/turning-point moments; cross-stage connection; final synthesis; source/evidence library; and a real-feedback entry point. English aliases such as Roots, Search, Formation, Test or Realization may be internal UI aids only; never substitute them for the exact Vietnamese headings in academic content.
 
 **Interaction hypotheses:**
 
@@ -190,7 +214,7 @@ This model may help learning design, but it must never replace C2's terminology 
 
 **Repository hypothesis:** keep academic content in structured data where practical, including stages, events, claims, sources and interactions; every quiz answer must map to verified content; do not replace a working architecture merely to adopt a preferred framework. Inspect the repository before applying any proposed structure.
 
-**Working product goal:** build an original interactive learning product that helps students understand the five-stage process in C2 while remaining traceable, verifiable, testable, revisable and compliant with the Fall 2026 rules.
+**Working product goal:** build an original interactive learning product that helps students understand the five-stage process in the assigned excerpt while remaining traceable, verifiable, testable, revisable and compliant with the Fall 2026 rules.
 
 ### Draft Central Question retained as a project hypothesis
 
@@ -198,7 +222,7 @@ This model may help learning design, but it must never replace C2's terminology 
 
 This wording may guide prototyping only after it is recorded as a project decision. It is not approved merely because it appears here.
 
-Working one-sentence core message: the process described in C2 develops through connected historical stages rather than isolated events. This is also a project hypothesis and requires audience/lecturer validation.
+Working one-sentence core message: the process described in the assigned excerpt develops through connected historical stages rather than isolated events. This is also a project hypothesis and requires audience/lecturer validation.
 
 ---
 
@@ -304,9 +328,9 @@ Unless repository evidence proves otherwise, initialize these states:
 |---|---|
 | Central Question approval | `NEED VERIFICATION` |
 | Topic Bank registration / exact Topic ID approval | `NEED VERIFICATION` |
-| Official-textbook provenance of the supplied C2 file | `NEED VERIFICATION` |
-| C2 claims cross-checked against approved Source 1 | `NEED VERIFICATION` |
-| C2 footnote locators cross-checked against original volumes | `NEED VERIFICATION` |
+| Official-textbook provenance of the supplied 2019 file | `NEED VERIFICATION` |
+| 2019 excerpt claims cross-checked against approved Source 1 | `NEED VERIFICATION` |
+| 2019 footnote locators cross-checked against original volumes | `NEED VERIFICATION` |
 | Current official-source evidence for criterion 1.2 | `NEED VERIFICATION` |
 | Prompt Log completeness | `NOT YET EVIDENCED` until the real log is found |
 | Prototype v0.1/v1.0/v2.0 history | `NOT YET EVIDENCED` until files/commits are found |
@@ -322,88 +346,135 @@ Do not convert any initial state to a stronger status without inspecting the cor
 
 ---
 
-## 8. C2 ACADEMIC CONTENT MAP
+## 8. ACADEMIC CONTENT MAP - `Giáo trình Tư tưởng Hồ Chí Minh - 2019`, tr.28-35
 
 ### 8.1 Scope and use rule
 
-The content below is a faithful, bounded map of what appears in the supplied 10-page excerpt. Every narrative proposition is `SOURCE CONTENT - EXTERNAL VERIFICATION REQUIRED` unless explicitly labeled only as a heading or boundary. A nearby footnote does not authenticate a whole paragraph. The excerpt begins mid-sentence and ends immediately after the opening heading of Section III; do not call it a complete chapter or book.
+The content below is a faithful, bounded map of what appears in the supplied 8-page
+excerpt (printed tr.28-35). Every narrative proposition is
+`SOURCE CONTENT - EXTERNAL VERIFICATION REQUIRED` unless explicitly labeled only as a
+heading or boundary. A nearby footnote does not authenticate a whole paragraph.
+
+MIGRATED 2026-09-17 from the retired `C2-02.pdf` excerpt. The substantive five-stage
+content is very close between the two editions, but the 2019 edition prints more precise
+stage boundaries, corrects several printing anomalies, and paginates differently. Nothing
+below was carried across unchecked; every heading, page and note was re-read from the 2019
+page scans.
 
 The governing heading in the excerpt is:
 
 `II. QUÁ TRÌNH HÌNH THÀNH VÀ PHÁT TRIỂN TƯ TƯỞNG HỒ CHÍ MINH`
 
-Source locator: `C2 PDF p.1`.
+Source locator: `tr.28`.
 
-The first page also closes an earlier discussion. It says Hồ Chí Minh worked in about 30 countries and links the formation of Hồ Chí Minh Thought to subjective qualities and broad practical activity, including study through documents/media, lived experience of colonialism, participation in communist movements, organizational activity, and the reciprocal relationship between theory and practice. Because the preceding heading and opening sentence are outside the excerpt, do not reconstruct them or turn the bundled statements into independently verified biographical facts.
+The excerpt opens at this heading. Unlike the retired excerpt it does not begin
+mid-sentence, so there is no preceding subjective-factors passage to account for.
 
 ### 8.2 Exact five-period structure
 
 | Stage | Exact source heading | Source-bounded content present in the excerpt | Locator | Control |
 |---|---|---|---|---|
-| 1 | `Thời kỳ trước ngày 5-6-1911: Hình thành tư tưởng yêu nước và có chí hướng tìm con đường cứu nước mới` | Influences of homeland, family and nation; Nguyễn Sinh Sắc and Hoàng Thị Loan; progressive reading in Vinh and Huế; participation in the 1908 anti-tax movement in Trung Kỳ; teaching at Trường Dục Thanh in 1910; admiration for the patriotism but rejection of the rescue approaches of Phan Bội Châu, Phan Châu Trinh and Hoàng Hoa Thám; departure abroad on 5-6-1911. | `C2 PDF pp.1-2`; printed p.27 visible on PDF p.2 | Keep the exact heading and date. Do not add the unprinted methods of the three predecessors. |
-| 2 | `Thời kỳ từ giữa năm 1911 đến cuối năm 1920: Dần dần hình thành tư tưởng cứu nước, giải phóng dân tộc Việt Nam theo con đường cách mạng vô sản` | Gradual development through living, work, study, theory and revolutionary practice; travel in 1911-1917; return to France in 1917; joining the French Socialist Party in 1919; `Yêu sách của nhân dân An Nam` at `Hội nghị Vecxay` on 18-6-1919; study of Lênin's theses in July 1920; the Tours congress from 25 to 30-12-1920; support for the Comintern; participation in founding the French Communist Party; the text calls him the first Vietnamese communist and treats the moment as a turning point linking patriotism with a proletarian revolutionary position. | `C2 PDF pp.2-4`; printed pp.27 and 29 visible on PDF pp.2 and 4 | `First` and other evaluative claims require independent checking. Preserve `Vecxay` as the source spelling. |
-| 3 | `Thời kỳ từ cuối năm 1920 đến đầu năm 1930: Hình thành những nội dung cơ bản tư tưởng về cách mạng Việt Nam` | Use of the press and revolutionary organization; the two L'Humanité article candidates printed as `8-1919` and `4-11-1920`; formation of `Hội liên hiệp thuộc địa` in 1921; Le Paria activity in 1922; `Bản án chế độ thực dân Pháp` in Paris in 1925; in June 1925, the exact printed organization name `Hội Việt Nam Thanh niên Cách mạng` and newspaper Thanh niên; `Đường cách mệnh`, Quảng Châu, 1927; the early-1930 unification conference and `Cương lĩnh chính trị đầu tiên`; Party leadership, worker-peasant alliance, national unity, and the `giai cấp - dân tộc - quốc tế` relationship. | `C2 PDF pp.4-6`; printed pp.29 and 31 visible on PDF pp.4 and 6 | Do not silently change the printed organization name. The 1919/1920 article dates sit inside a stage headed as beginning at the end of 1920; retain this periodization tension. |
-| 4 | `Thời kỳ từ đầu năm 1930 đến đầu năm 1941: Vượt qua thử thách, giữ vững đường lối, phương pháp cách mạng Việt Nam đúng đắn, sáng tạo` | Internal and external challenges; historically situated criticisms `hữu khuynh` and `dân tộc chủ nghĩa`; the October 1930 Central Committee conference and Party-name change as narrated by C2; return to the Soviet Union in 1934; continued misunderstanding in 1934-1938; a letter dated 6-6-1938 requesting return to activity; departure from the Soviet Union through China in October 1938; reaching the Vietnam-China border in December 1940; `Con đường giải phóng` dated 1-1941; return to Vietnam at the end of January 1941; the May 1941 conference at Pác Bó, Hà Quảng, Cao Bằng, placing national liberation first and developing the strategic shift. | `C2 PDF pp.6-8`; printed pp.31 and 33 visible on PDF pp.6 and 8 | Keep the criticism labels in historical quotation/context, not as the project's voice. Do not invent a conference number or the 1938 letter addressee. The WWII/6-6-1938 sentence is a chronology conflict. |
-| 5 | `Thời kỳ từ đầu năm 1941 đến tháng 9-1969: Tư tưởng Hồ Chí Minh tiếp tục phát triển, hoàn thiện, soi đường cho sự nghiệp cách mạng của Đảng và nhân dân ta` | Basic unity of Hồ Chí Minh Thought and Party line as framed by C2; founding Mặt trận Việt Minh on 19-5-1941; founding `Việt Nam tuyên truyền giải phóng quân` on 22-12-1944; `Lời kêu gọi Tổng khởi nghĩa` on 18-8-1945 and the August Revolution; `Tuyên ngôn Độc lập` on 2-9-1945; flexible strategy from 2-9-1945 to 19-12-1946 under `Dĩ bất biến ứng vạn biến`; `Lời kêu gọi toàn quốc kháng chiến` on 19-12-1946; the 1946-1954 resistance; transition after 1954; `hai nhiệm vụ chiến lược` pursued simultaneously from 1954-1969; development across politics, economics, military affairs, culture, ethics and foreign affairs; the call of 17-7-1966; `Di chúc`. | `C2 PDF pp.8-10`; printed pp.33 and 35 visible on PDF pp.8 and 10 | Do not treat evaluative or causal language as independently verified. Keep the post-1969 narrative separate as an epilogue. |
+| 1 | `Thời kỳ từ ngày 5-6-1911 trở về trước: Hình thành tư tưởng yêu nước và chí hướng tìm con đường cứu nước mới` | Influences of homeland, family and nation; Nguyễn Sinh Sắc and Hoàng Thị Loan; progressive reading in Vinh and Huế; participation in the 1908 anti-tax movement in Trung Kỳ; teaching at Trường Dục Thanh in 1910; admiration for the patriotism but rejection of the rescue approaches of Phan Bội Châu, Phan Châu Trinh and Hoàng Hoa Thám; departure abroad on 5-6-1911. | `tr.28` | Keep the exact heading and date. Do not add the unprinted methods of the three predecessors. Note the heading form is `từ ngày 5-6-1911 trở về trước`, which INCLUDES that date in stage 1. |
+| 2 | `Thời kỳ từ ngày 6-6-1911 đến ngày 30-12-1920: Hình thành tư tưởng cứu nước, giải phóng dân tộc Việt Nam theo con đường cách mạng vô sản` | Gradual development through living, work, study, theory and revolutionary practice; travel 1911-1917; return to France in 1917; joining the French Socialist Party in 1919; `Yêu sách của nhân dân An Nam` at `Hội nghị Vécxây` on 18-6-1919; study of Lênin's theses in July 1920; the Tours congress from 25 to 30-12-1920; support for the Comintern; participation in founding the French Communist Party; the text calls him the first Vietnamese communist and treats the moment as a turning point linking patriotism with a proletarian revolutionary position. | `tr.28–29` | The stage OPENS ON 6-6-1911, the day after stage 1 closes. Do not write 5-6-1911. The 2019 claim half has no `Dần dần`. Preserve `Vécxây` as the source spelling. `First` and other evaluative claims require independent checking. |
+| 3 | `Thời kỳ từ ngày 31-12-1920 đến ngày 3-2-1930: Hình thành những nội dung cơ bản tư tưởng về cách mạng Việt Nam` | Use of the press and revolutionary organization; the two L'Humanité article candidates printed as `8-1919` and `4-11-1920`; formation of `Hội liên hiệp thuộc địa` in 1921; Le Paria activity in 1922; `Bản án chế độ thực dân Pháp` in Pari in 1925; in June 1925 the exact printed organization name `Hội Việt Nam Thanh niên Cách mạng` and newspaper Thanh niên; `Đường cách mệnh`, Quảng Châu, 1927; the early-1930 unification conference and `Cương lĩnh chính trị đầu tiên`; Party leadership, worker-peasant alliance, national unity, and the `giai cấp - dân tộc - quốc tế` relationship. | `tr.29–31` | Do not silently change the printed organization name. The 1919/1920 article dates sit inside a stage that now opens on an exact date, 31-12-1920; retain this periodization tension (`GT-R01`). |
+| 4 | `Thời kỳ từ ngày 4-2-1930 đến ngày 28-1-1941: Vượt qua thử thách, giữ vững đường lối, phương pháp cách mạng Việt Nam đúng đắn, sáng tạo` | Internal and external challenges; the doctrinaire influence the text attributes to `Đại hội VI của Quốc tế Cộng sản`; historically situated criticisms `hữu khuynh` and `dân tộc chủ nghĩa`; the October 1930 Central Committee conference and Party-name change; return to the Soviet Union in 1934; continued misunderstanding 1934-1938; a letter dated 6-6-1938 requesting return to activity; departure from the Soviet Union through China in October 1938; reaching the Vietnam-China border in December 1940; `Con đường giải phóng` dated 1-1941; return to Vietnam at the end of January 1941; the May 1941 conference at Pác Bó, huyện Hà Quảng, tỉnh Cao Bằng, placing national liberation first. | `tr.31–33` | Keep the criticism labels in historical quotation/context, not as the project's voice. Do not invent a conference number or the 1938 letter addressee. The WWII/6-6-1938 sentence is a chronology conflict (`GT-R02`). The heading stops at 28-1-1941 while the body narrates May 1941 (`GT-R03`). |
+| 5 | `Thời kỳ từ ngày 29-1-1941 đến ngày 2-9-1969: Tư tưởng Hồ Chí Minh tiếp tục phát triển, soi đường cho sự nghiệp cách mạng của Đảng và nhân dân ta` | Basic unity of Hồ Chí Minh Thought and Party line as framed by the textbook; founding Mặt trận Việt Minh on 19-5-1941; founding `Việt Nam tuyên truyền giải phóng quân` on 22-12-1944; `Lời kêu gọi Tổng khởi nghĩa` on 18-8-1945 and the August Revolution; `Tuyên ngôn Độc lập` on 2-9-1945; flexible strategy from 2-9-1945 to 19-12-1946 under `Dĩ bất biến ứng vạn biến`; `Lời kêu gọi toàn quốc kháng chiến` on 19-12-1946; the 1946-1954 resistance; transition after 1954; `hai nhiệm vụ chiến lược` pursued simultaneously 1954-1969; development across politics, economics, military affairs, culture, ethics and foreign affairs; the call of 17-7-1966; `Di chúc`. | `tr.33–35` | The claim half has NO `hoàn thiện,` in this edition. The endpoint is the exact date 2-9-1969, not `tháng 9-1969`. Do not treat evaluative or causal language as independently verified. Keep the post-1969 narrative separate as an epilogue. |
 
 ### 8.3 Post-period epilogue and excerpt boundary
 
-After the Stage 5 material, `C2 PDF p.10 / printed p.35` continues to 1975 and an undated `Ngày nay`. This exceeds the stage heading's endpoint of September 1969. Treat it as `POST-PERIOD EPILOGUE - CURRENTNESS NEEDS VERIFICATION`, not as evidence inside the 1941-9/1969 period and not as a current claim in 2026.
+After the Stage 5 material, `tr.35` continues to 1975 and an undated `Ngày nay`. This
+exceeds the stage heading's endpoint of 2-9-1969. Treat it as
+`POST-PERIOD EPILOGUE - CURRENTNESS NEEDS VERIFICATION`, not as evidence inside the
+29-1-1941 - 2-9-1969 period and not as a current claim in 2026.
 
-The last visible lines are only the headings:
+`tr.35` then prints three headings and continues into body text:
 
 - `III. GIÁ TRỊ TƯ TƯỞNG HỒ CHÍ MINH`
 - `1. Đối với cách mạng Việt Nam`
+- `a. Tư tưởng Hồ Chí Minh đưa cách mạng giải phóng dân tộc Việt Nam đến thắng lợi và bắt đầu xây dựng một xã hội mới trên đất nước ta`
 
-There is no body text for that subsection in the supplied excerpt. Do not invent it.
+This differs from the retired excerpt, which stopped at the second heading with no body
+text. The body of III.1.a lies outside the assigned content (Section II) and is not used
+as product content. Do not treat its presence as licence to extend the product's scope.
 
 ### 8.4 Chronology and text-risk register
 
 | Risk ID | Source issue | Required handling |
 |---|---|---|
-| `C2-R01` | Stage 1 ends before 5-6-1911; Stage 2 begins `từ giữa năm 1911`; the body gives 5-6-1911 as the departure. | Preserve all three expressions. Do not redefine the Stage 2 start as exactly 5-6-1911. |
-| `C2-R02` | Stage 2 ends at the end of 1920 and Stage 3 begins at the end of 1920. | Treat late 1920 as a shared transition boundary; do not manufacture a disjoint cutoff. |
-| `C2-R03` | Stage 4 ends at the beginning of 1941 and Stage 5 begins at the beginning of 1941. | Preserve both headings; do not invent an exact cutoff date. |
-| `C2-R04` | Under Stage 3, `Đầu thời kỳ này` introduces L'Humanité candidates dated 8-1919 and 4-11-1920. | `DOCUMENT INTERNAL PERIODIZATION TENSION - NEED VERIFICATION`; do not move them silently. |
-| `C2-R05` | A sentence connects `Khi Chiến tranh thế giới thứ hai bùng nổ...` to a return-request letter dated 6-6-1938. | `DOCUMENT INTERNAL CHRONOLOGY CONFLICT - NEED VERIFICATION`; preserve the source and do not repair it from memory. |
-| `C2-R06` | Stage 5 is headed through September 1969, but the prose reaches 1975 and `Ngày nay`. | Separate the epilogue and verify any present-day use. |
-| `C2-R07` | Three printed notes use `Sđd`; five alternate pages have no visible printed number. | Never expand `Sđd`; cite those pages by PDF position only until the original edition is checked. |
-| `C2-R08` | Visible apparent print anomalies include `bước ngoạt`, duplicated `trở thành thành`, `Hòa hình lập lại`, and `quân đội viễn Chính Mỹ`. | Use a faithful paraphrase and `NEED VERIFICATION`; do not turn apparent errors into authoritative quotations or silently normalize them as if checked. |
-| `C2-R09` | Most narrative claims have no direct note. | Never use a nearby note to validate a whole stage or paragraph. |
+| `GT-R01` | Under Stage 3, `Đầu thời kỳ này` introduces L'Humanité candidates dated 8-1919 and 4-11-1920, both before the stage's own opening date of 31-12-1920. | `DOCUMENT INTERNAL PERIODIZATION TENSION - NEED VERIFICATION`; do not move them silently. |
+| `GT-R02` | A sentence connects `Khi Chiến tranh thế giới thứ hai bùng nổ...` to a return-request letter dated 6-6-1938 (tr.32). | `DOCUMENT INTERNAL CHRONOLOGY CONFLICT - NEED VERIFICATION`; preserve the source and do not repair it from memory. |
+| `GT-R03` | The Stage 4 heading ends 28-1-1941 while the body under it narrates the May 1941 conference and its resolution. | Preserve the printed arrangement. Do not move the May 1941 events into Stage 5 and do not alter the heading's endpoint. |
+| `GT-R04` | Stage 5 is headed through 2-9-1969, but the prose reaches 1975 and `Ngày nay`. | Separate the epilogue and verify any present-day use. |
+| `GT-R05` | Three printed notes replace the full title with an unresolved abbreviation. | Never expand it. Cite those notes exactly as printed. |
+| `GT-R06` | Visible printed forms in the 2019 pages include the duplicated `trở thành thành` (tr.32), lower-case `pháp` in `chống thực dân pháp` (tr.34), the abbreviation printed `Sdd` rather than `Sđd` (tr.32, tr.35), and `thày giáo` (tr.28). | Use a faithful paraphrase and record both forms; do not turn a printed form into an authoritative quotation and do not silently normalise it. |
+| `GT-R07` | Most narrative claims have no direct note; Stage 2 carries no numbered note at all. | Never use a nearby note to validate a whole stage or paragraph. |
+| `GT-R08` | The supplied file is an unauthenticated image-only scan with a handwritten mark on every page. | Keep provenance `NEED VERIFICATION`; a human must compare against the approved official edition before submission. |
+
+Risks retired by the migration, recorded so their removal can be checked rather than
+trusted. The product keeps this audit trail in `web/src/data/locators.ts` as
+`SUPERSEDED_RISKS`:
+
+| Former ID | What the 2019 edition prints | Outcome |
+|---|---|---|
+| `C2-R01` | Stage 1 `từ ngày 5-6-1911 trở về trước`, Stage 2 `từ ngày 6-6-1911`. | RESOLVED - the boundary is two consecutive days, not a blur. |
+| `C2-R02` | Stage 2 ends 30-12-1920; Stage 3 opens 31-12-1920. | RESOLVED - no shared boundary. |
+| `C2-R03` | Stage 4 ends 28-1-1941; Stage 5 opens 29-1-1941. | PARTLY RESOLVED - the blur is gone; the heading/body tension survives as `GT-R03`. |
+| `C2-R04` | Same two article dates, now under an exactly dated stage. | CARRIED OVER as `GT-R01`. |
+| `C2-R05` | Same sentence, tr.32. | CARRIED OVER as `GT-R02`. |
+| `C2-R06` | Same epilogue; endpoint now 2-9-1969. | CARRIED OVER as `GT-R04`. |
+| `C2-R07` | All eight pages show printed numbers; the abbreviation is still unresolved. | PARTLY RESOLVED - page-number half resolved; abbreviation survives as `GT-R05`. |
+| `C2-R08` | 2019 prints `bước ngoặt`, `Hòa bình lập lại`, `quân đội viễn chinh Mỹ`, `Cương lĩnh`, and `trong sinh hoạt` correctly. | PARTLY RESOLVED - four anomalies gone; `trở thành thành` survives, and new 2019 forms are registered, as `GT-R06`. |
+| `C2-R09` | Unchanged. | CARRIED OVER as `GT-R07`. |
 
 ### 8.5 Controlled time markers
 
-Retain only the precision printed in C2. The full marker set found in the excerpt is:
+Retain only the precision printed in the 2019 edition. The full marker set found in the
+excerpt is:
 
-- Stage 1: `trước ngày 5-6-1911`; 1908; 1910; 5-6-1911.
-- Stage 2: `từ giữa năm 1911 đến cuối năm 1920`; 1911-1917; 1917; 1919; 18-6-1919; 7-1920; 25 to 30-12-1920.
-- Stage 3: `từ cuối năm 1920 đến đầu năm 1930`; 8-1919; 4-11-1920; 1921; 1922; 1925; 6-1925; 1927; `đầu năm 1930`; `cuối thế kỷ XIX đến đầu năm 1930`.
-- Stage 4: `từ đầu năm 1930 đến đầu năm 1941`; 10-1930; 1934; 1934-1938; 6-6-1938; 10-1938; 12-1940; 1-1941; `cuối tháng 1-1941`; 5-1941; and the retrospective marker 11-1939.
-- Stage 5: `từ đầu năm 1941 đến tháng 9-1969`; 19-5-1941; 22-12-1944; 18-8-1945; 8-1945; 2-9-1945; 2-9-1945 to 19-12-1946; 1946-1954; 19-12-1946; 1954; 1954-1969; 17-7-1966.
+- Stage 1: `từ ngày 5-6-1911 trở về trước`; 1908; 1910; 5-6-1911.
+- Stage 2: `từ ngày 6-6-1911 đến ngày 30-12-1920`; 1911-1917; 1917; 1919; 18-6-1919; 7-1920; 25 to 30-12-1920.
+- Stage 3: `từ ngày 31-12-1920 đến ngày 3-2-1930`; 8-1919; 4-11-1920; 1921; 1922; 1925; 6-1925; 1927; `đầu năm 1930`; `cuối thế kỷ XIX đến đầu năm 1930`.
+- Stage 4: `từ ngày 4-2-1930 đến ngày 28-1-1941`; 10-1930; 1934; 1934-1938; 6-6-1938; 10-1938; 12-1940; 1-1941; `cuối tháng 1-1941`; 5-1941; and the retrospective marker 11-1939.
+- Stage 5: `từ ngày 29-1-1941 đến ngày 2-9-1969`; 19-5-1941; 22-12-1944; 18-8-1945; 8-1945; 2-9-1945; 2-9-1945 to 19-12-1946; 1946-1954; 19-12-1946; 1954; 1954-1969; 17-7-1966.
 - Epilogue: 1975; `Ngày nay`.
 
-Do not upgrade month-only or year-only markers to exact dates. The source also prints the relative durations `hơn ngàn năm` and `hơn 80 năm` in its August Revolution account; both require verification before use.
+Do not upgrade month-only or year-only markers to exact dates, and do not downgrade the
+five stage boundaries, which this edition prints as exact dates. The source also prints
+the relative durations `hơn ngàn năm` and `hơn 80 năm` in its August Revolution account;
+both require verification before use.
 
 ---
 
-## 9. C2 PRINTED LOCATOR CANDIDATES
+## 9. PRINTED LOCATOR CANDIDATES
 
-These are exactly the ten numbered notes visible in the excerpt. They are not verified sources. A final citation may use them only after the cited work and page have been opened and checked.
+These are exactly the ten numbered notes visible in the 2019 excerpt, transcribed from the
+page scans. They are not verified sources. A final citation may use them only after the
+cited work and page have been opened and checked.
 
-| C2 locator | Printed candidate | Nearby item | Status |
+| Locator | Printed candidate | Nearby item | Status |
 |---|---|---|---|
-| `C2 PDF p.2 / printed p.27, note 1` | `Ban nghiên cứu lịch sử Đảng Trung ương; Chủ tịch Hồ Chí Minh - Tiểu sử sự nghiệp, Nxb Sự thật, Hà Nội, 1980, tr.12` | First Nguyễn Sinh Sắc quotation | `NEED VERIFICATION` |
-| `C2 PDF p.2 / printed p.27, note 2` | `Học viện Chính trị quốc gia Hồ Chí Minh - Song Thành (Chủ biên): Hồ Chí Minh - Tiểu sử, Nxb Lý luận chính trị, Hà Nội, 2006, tr.24-25` | Second Nguyễn Sinh Sắc quotation | `NEED VERIFICATION` |
-| `C2 PDF p.5, note 1` | `Hồ Chí Minh: Toàn tập, Nxb Chính trị quốc gia, Hà Nội 2011, t.3, tr 1` | First-Platform objective quotation | `NEED VERIFICATION` |
-| `C2 PDF p.5, note 2` | `Hồ Chí Minh: Toàn tập, Nxb Chính trị quốc gia, Hà Nội, 2011, t.3, tr.22` | First-Platform overthrow formulation | `NEED VERIFICATION` |
-| `C2 PDF p.6 / printed p.31, note 1` | `Đảng Cộng sản Việt Nam: Văn kiện Đảng: Toàn tập, Nxb Chính trị quốc gia, Hà Nội, 2005, t.2, tr.110-111` | October 1930 conference criticism | `NEED VERIFICATION` |
-| `C2 PDF p.7, note 1` | `Học viện Chính trị quốc gia Hồ Chí Minh: Hồ Chí Minh - Tiểu sử, Sđd, tr. 250.` | 1938 letter quotation | `NEED VERIFICATION - Sđd unresolved` |
-| `C2 PDF p.7, note 2` | `Hồ Chí Minh: Toàn tập, Nxb Chính trị quốc gia, Hà Nội, 2011, t.3, tr.230.` | May 1941 Hồ Chí Minh quotation | `NEED VERIFICATION` |
-| `C2 PDF p.7, note 3` | `Đảng Cộng sản Việt Nam: Văn kiện Đảng toàn tập, Nxb Chính trị quốc gia, Hà Nội, 2000, t.7 tr.113.` | May 1941 conference-resolution quotation | `NEED VERIFICATION` |
-| `C2 PDF p.10 / printed p.35, note 1` | `Hồ Chí Minh: Toàn tập, Sđd, t.15, tr.131.` | 17-7-1966 call quotation | `NEED VERIFICATION - Sđd unresolved` |
-| `C2 PDF p.10 / printed p.35, note 2` | `Hồ Chí Minh: Toàn tập, Sđd, t.15, tr.624.` | `Di chúc` final-wish quotation | `NEED VERIFICATION - Sđd unresolved` |
+| `L1` - tr.28, note 1 | `Ban nghiên cứu lịch sử Đảng Trung ương: Chủ tịch Hồ Chí Minh - Tiểu sử sự nghiệp, Nxb Sự thật, Hà Nội, 1980, tr.12.` | First Nguyễn Sinh Sắc quotation | `NEED VERIFICATION` |
+| `L2` - tr.28, note 2 | `Học viện Chính trị quốc gia Hồ Chí Minh – Song Thành (Chủ biên): Hồ Chí Minh - Tiểu sử, Nxb Lý luận Chính trị, Hà Nội, 2006, tr.24-25.` | Second Nguyễn Sinh Sắc quotation | `NEED VERIFICATION` |
+| `L3` - tr.31, note 1 | `Hồ Chí Minh: Toàn tập, Nxb Chính trị quốc gia, Hà Nội, 2011, t.3, tr.1.` | First-Platform objective quotation | `NEED VERIFICATION` |
+| `L4` - tr.31, note 2 | `Hồ Chí Minh: Toàn tập, Nxb Chính trị quốc gia, Hà Nội, 2011, t.3, tr.22.` | First-Platform overthrow formulation | `NEED VERIFICATION` |
+| `L5` - tr.31, note 1 of the second run | `Đảng Cộng sản Việt Nam: Văn kiện Đảng: Toàn tập, Nxb Chính trị quốc gia, Hà Nội, 2005, t.2, tr.110-111.` | October 1930 conference criticism | `NEED VERIFICATION` - tr.31 restarts its note numbering, so this page carries two notes numbered `1`. Preserve that; do not renumber it `3`. |
+| `L6` - tr.32, note 1 | `Học viện Chính trị quốc gia Hồ Chí Minh: Hồ Chí Minh - Tiểu sử, Sdd, tr. 250.` | 1938 letter quotation | `NEED VERIFICATION` - abbreviation unresolved, printed `Sdd` |
+| `L7` - tr.32, note 2 | `Hồ Chí Minh: Toàn tập, Nxb Chính trị quốc gia, Hà Nội, 2011, t.3, tr. 230.` | May 1941 Hồ Chí Minh quotation | `NEED VERIFICATION` |
+| `L8` - tr.32, note 3 | `Đảng Cộng sản Việt Nam: Văn kiện Đảng toàn tập, Nxb Chính trị quốc gia, Hà Nội, 2000, t.7, tr.113.` | May 1941 conference-resolution quotation | `NEED VERIFICATION` - the retired excerpt printed this page ambiguously as `tr.l13`; the 2019 page prints `tr.113`. The number itself is still unchecked against Văn kiện Đảng. |
+| `L9` - tr.35, note 1 | `Hồ Chí Minh: Toàn tập, Sdd, t.15, tr. 131.` | 17-7-1966 call quotation | `NEED VERIFICATION` - abbreviation unresolved, printed `Sdd` |
+| `L10` - tr.35, note 2 | `Hồ Chí Minh: Toàn tập, Sdd, t.15, tr. 624.` | `Di chúc` final-wish quotation | `NEED VERIFICATION` - abbreviation unresolved, printed `Sdd` |
 
-Also unverified are in-body publication markers without numbered notes: `Vấn đề dân bản xứ`, L'Humanité, 8-1919; `Ở Đông Dương`, L'Humanité, 4-11-1920; `Bản án chế độ thực dân Pháp`, Paris, 1925; `Đường cách mệnh`, Quảng Châu, 1927; and `Con đường giải phóng`, 1-1941.
+The abbreviation in L6, L9 and L10 must never be expanded by guesswork, and must not be
+normalised to `Sđd` either: this edition prints it without the bar.
+
+Also unverified are in-body publication markers without numbered notes: `Vấn đề dân bản
+xứ`, L'Humanité, 8-1919; `Ở Đông Dương`, L'Humanité, 4-11-1920; `Bản án chế độ thực dân
+Pháp`, Pari, 1925; `Đường cách mệnh`, Quảng Châu, 1927; and `Con đường giải phóng`, 1-1941.
+
+Note the migration did NOT convert these entries into textbook citations. L3, L4, L7, L9
+and L10 point at `Hồ Chí Minh: Toàn tập`, and L5 and L8 at `Văn kiện Đảng`; those remain
+original-document sources in their own right, recorded separately from the textbook that
+reproduces them.
 
 ---
 
@@ -541,7 +612,7 @@ This weekly lifecycle is stated in SG; HB does not provide a weekly lifecycle. H
 | Week / slots | Required work | Required evidence named by SG | Stop condition |
 |---|---|---|---|
 | Week 1 / Slots 01-02 | Form a group of 4-5; elect a leader; create all 15 Drive folders and grant lecturer access; select HCM202 Topic ID from Bank 21; establish Central Question; submit the Folder 01 Concept Note | Folders `00`, `01` | Bank content, Topic ID approval, CQ approval, member identities or Drive permission cannot be invented. |
-| Week 2 / Slots 03-04 | Research the official textbook; identify `các luận điểm mácxít trục`; create the Source Verification Map; build first test version Prototype v1.0; draft the detailed Product Dossier outline | Folders `03`, `04`, `08`, `10` | Supplied C2 provenance remains unresolved; source entries cannot be marked authenticated before original-source checking. |
+| Week 2 / Slots 03-04 | Research the official textbook; identify `các luận điểm mácxít trục`; create the Source Verification Map; build first test version Prototype v1.0; draft the detailed Product Dossier outline | Folders `03`, `04`, `08`, `10` | Supplied 2019 file provenance remains unresolved; source entries cannot be marked authenticated before original-source checking. |
 | Week 3 / Slots 05-06 | Put Prototype v1.0 before real target users; examples are classmates and students in the institution; collect Google Forms or interview data and interaction screenshots; fully disclose all AI prompts used | Folders `07`, `09`, `10` | No synthetic user, response, quote, chart, interview or screenshot. No minimum sample is stated. |
 | Week 4 / Slots 07-08 | Analyze user feedback; revise/upgrade product to v2.0; complete the full Product Dossier; lock 100% cited sources; create Showcase slides and minute-by-minute role script; practice 3C and prepare for direct defense | Folders `03`, `04`, `05`, `10` | `Lock` means resolve or explicitly flag a citation; it never authorizes a guessed locator. Version label remains subject to section 5.1. |
 | Week 5 / Slots 09-10 | Showcase before class and lecturer for 10-12 minutes; direct 3C Q&A for at most 20 minutes under No-AI; record actual defense minutes; complete individual contribution assessment; receive in-class feedback; write reflection; package completed product | Folders `06`, `11`, `02`, `12`; final completion evidence is all folders `00`-`14` | The 10-12-minute Showcase and maximum-20-minute Q&A are separate. Actual post-event evidence is mandatory. |
@@ -566,12 +637,12 @@ No exact calendar dates are printed for Weeks 1-5. Do not invent them.
 | `CM-008` | `Evidence Visible` with exact locators | `SG PDF p.1`; `HB PDF p.1` | `VERIFIED IN FILE` | Viewer-facing locator display; unknown values marked `NEED VERIFICATION`. |
 | `CM-009` | Real interaction data measures communication effectiveness | `SG PDF p.1`; `HB PDF p.1` | `VERIFIED IN FILE` | Authentic Folder 09 artifacts and analysis; no invented threshold. |
 | `CM-010` | `Revision Trace` from v1.0 to v2.0 | `SG PDF pp.1, 6-9`; `HB PDF pp.1, 4-5` | `VERIFIED IN FILE`; `DOCUMENT CONFLICT` on timing | Both versions plus authentic feedback-to-change records; human ruling on final version label. |
-| `CM-011` | Official textbook is Source 1; page and subsection for definitions/frameworks | `SG PDF p.3` | `VERIFIED IN FILE` | Approved official copy opened and checked. Supplied C2 provenance is unresolved. |
+| `CM-011` | Official textbook is Source 1; page and subsection for definitions/frameworks | `SG PDF p.3` | `VERIFIED IN FILE` | Approved official copy opened and checked. Supplied 2019 file provenance is unresolved. |
 | `CM-012` | `Hồ Chí Minh Toàn tập`, 15 volumes, 2011, for original writings with exact volume/page | `SG PDF p.3` | `VERIFIED IN FILE` | Correct volume/page opened; no inferred `Sđd`. |
 | `CM-013` | Official Party/state/current-law document classes are Source 3 | `SG PDF p.3` | `VERIFIED IN FILE` | Current official document and exact available locator opened. |
 | `CM-014` | Do not treat AI output as an academic source | Derived from the SG source hierarchy and SG/HB verification rules | `OPERATIONAL CONSEQUENCE - NOT VERBATIM SOURCE WORDING` | AI output never occupies the verified source/evidence field. |
-| `CM-015` | C2 excerpt boundary, exact five headings and controlled chronology | `C2 PDF pp.1-10` | `VERIFIED IN FILE`; external claims unverified | Implement from section 8 without silently repairing tensions or typos. |
-| `CM-016` | Ten C2 numbered footnotes are candidates only | `C2 PDF pp.2, 5-7, 10` | `VERIFIED IN FILE` | Open every original work/page before promoting a locator. |
+| `CM-015` | Excerpt boundary, exact five headings and controlled chronology | `GT tr.28-35` | `VERIFIED IN FILE`; external claims unverified | Implement from section 8 without silently repairing tensions or typos. Stage 2 opens 6-6-1911 and stage 5 omits `hoàn thiện`. |
+| `CM-016` | Ten numbered footnotes are candidates only | `GT tr.28, 31, 32, 35` | `VERIFIED IN FILE` | Open every original work/page before promoting a locator. Never expand the abbreviation printed `Sdd`. |
 | `CM-017` | Course delivery is 10 slots/5 weeks with 135-minute slot and stated workload arithmetic | `SG PDF p.1` | `VERIFIED IN FILE` | Planning/status uses exact values. |
 | `CM-018` | Textbook pre-reading occurs at home | `SG PDF pp.1-2` | `VERIFIED IN FILE` | Course plan does not consume slot time for required first reading. |
 | `CM-019` | Course weights and eligibility conditions | `SG PDF p.2` | `VERIFIED IN FILE` | Preserve Participation 10%, Progress 20%, Final 30%, Assignment 40%, absence, Final and Coursera conditions. |
@@ -625,7 +696,14 @@ The forensic working audit registered:
 - `SG-001` through `SG-120`: 120 rule and lifecycle items.
 - `HB-001` through `HB-090`: 90 rule, rubric, sanction and dossier items.
 
-All IDs were checked for continuity and all 24 pages were visually reviewed. The matrix above consolidates aligned atomic items into 60 implementation controls without turning document differences into false agreement.
+All IDs were checked for continuity and all 24 pages were visually reviewed.
+
+This paragraph records the original forensic pass of 2026-09-16, which audited
+`C2-02.pdf`. It is left as written because it is a record of what was actually done. The
+`C2-0NN` item IDs belong to that pass and to the retired excerpt; the academic content the
+product now publishes is governed by sections 8 and 9 above, which were re-derived from
+`Giáo trình Tư tưởng Hồ Chí Minh - 2019.pdf` on 2026-09-17. The migration itself is
+recorded in `SOURCE_MIGRATION_2019_REPORT.md`. The matrix above consolidates aligned atomic items into 60 implementation controls without turning document differences into false agreement.
 
 ---
 
@@ -650,7 +728,7 @@ Project operational status flow, not source wording:
 
 `UNVERIFIED -> NEED VERIFICATION -> VERIFIED AGAINST OPEN SOURCE`
 
-Never move an entry to the final state from memory, from an AI answer, from a search snippet, or from the C2 footnote alone.
+Never move an entry to the final state from memory, from an AI answer, from a search snippet, or from the textbook footnote alone.
 
 ### 15.2 Prompt Log - Folder 07
 
@@ -730,7 +808,7 @@ None of the three supplied PDFs provides or proves:
 - a complete citation style decision between APA and Chicago;
 - lower rubric bands, rounding rules, a 2.3 scoring formula or automatic sanction-selection rules;
 - definitions for `nguồn rác`, `nguồn chính thống`, `AI hỗ trợ đáng kể`, `AI làm thay toàn bộ`, `lãnh tụ`, `mô phỏng`, `biến dạng`, `bản lĩnh thật`, or the A/B/C trust ratings;
-- independent authenticity of C2, its ten footnotes, or any external legal/institutional citation;
+- independent authenticity of the 2019 file, its ten footnotes, or any external legal/institutional citation;
 - a source-defined resolution to the v2 timing conflict.
 
 Plausible values are still invented values. Use `NEED VERIFICATION`.

@@ -75,11 +75,11 @@ test('synthesis stays operable from the keyboard and ends on the payoff', async 
   await page.goto('/#/tong-hop');
 
   const ORDER = [
-    'trước ngày 5-6-1911',
-    'từ giữa năm 1911',
-    'từ cuối năm 1920',
-    'từ đầu năm 1930',
-    'từ đầu năm 1941',
+    'từ ngày 5-6-1911 trở về trước',
+    'từ ngày 6-6-1911',
+    'từ ngày 31-12-1920',
+    'từ ngày 4-2-1930',
+    'từ ngày 29-1-1941',
   ];
 
   // Choosing a segment.

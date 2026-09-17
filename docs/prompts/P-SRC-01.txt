@@ -1,0 +1,253 @@
+# SOURCE MIGRATION — HCM202
+## Migrate academic base from the 2021 excerpt to the 2019 textbook excerpt
+
+Before modifying anything:
+
+1. Read `AGENTS.md`.
+2. Read the current forensic project context (`HCM202_PROJECT_CONTEXT_v3.0_FORENSIC_FINAL.md` or the currently active context file).
+3. Inspect `git status`.
+4. Read the NEW source completely:
+
+`Giáo trình Tư tưởng Hồ Chí Minh - 2019.pdf`
+
+5. Also read the previous academic excerpt currently used by the project (`C2-02.pdf`) only for comparison.
+
+Do NOT assume the two editions differ only by pagination.
+
+First compare them.
+
+---
+
+# PURPOSE
+
+The academic source-of-truth for the assigned C2-02 content is changing.
+
+OLD BASE SOURCE:
+the previous C2-02 excerpt taken from the later textbook edition.
+
+NEW BASE SOURCE:
+`Giáo trình Tư tưởng Hồ Chí Minh - 2019.pdf`
+
+From now on, public product citations to the textbook must use the label:
+
+`Giáo trình Tư tưởng Hồ Chí Minh - 2019`
+
+and the printed page numbers from the 2019 source.
+
+Do NOT display the old label such as:
+
+- `C2 PDF p.x`
+- `C2-02.pdf`
+- `Giáo trình ... 2021`
+
+as the public academic citation for this section.
+
+Internal audit references may retain PDF-page information separately if useful.
+
+---
+
+# IMPORTANT
+
+The substantive five-stage content is highly similar between the two editions.
+
+However, DO NOT perform a blind page-number replacement.
+
+The 2019 edition uses some more precise stage-boundary wording/dates.
+
+Therefore:
+
+1. preserve the academic meaning;
+2. update page locators;
+3. update stage headings/date boundaries wherever the 2019 wording differs;
+4. do not introduce any wording that is not supported by the 2019 source.
+
+---
+
+# 2019 PRINTED PAGE MAP
+
+The uploaded 2019 excerpt contains printed textbook pages:
+
+`28 → 35`
+
+Mapping:
+
+```text
+PDF page 1  -> textbook p.28
+PDF page 2  -> textbook p.29
+PDF page 3  -> textbook p.30
+PDF page 4  -> textbook p.31
+PDF page 5  -> textbook p.32
+PDF page 6  -> textbook p.33
+PDF page 7  -> textbook p.34
+PDF page 8  -> textbook p.35
+```
+
+Use PRINTED textbook page numbers in public citations.
+Do not expose PDF page 1, PDF page 2, etc. as the academic locator.
+
+FIVE STAGES — 2019 SOURCE BOUNDARIES
+
+Use the 2019 source wording as authoritative for the assigned content.
+
+Stage 1
+Source heading:
+Thời kỳ từ ngày 5-6-1911 trở về trước: Hình thành tư tưởng yêu nước và chí hướng tìm con đường cứu nước mới
+Primary textbook locator:
+Giáo trình Tư tưởng Hồ Chí Minh - 2019, tr. 28
+
+Stage 2
+Source heading:
+Thời kỳ từ ngày 5-6-1911 đến ngày 30-12-1920: Hình thành tư tưởng cứu nước, giải phóng dân tộc Việt Nam theo con đường cách mạng vô sản
+Locator:
+Giáo trình Tư tưởng Hồ Chí Minh - 2019, tr. 28–29
+
+Stage 3
+Source heading:
+Thời kỳ từ ngày 31-12-1920 đến ngày 3-2-1930: Hình thành những nội dung cơ bản tư tưởng về cách mạng Việt Nam
+Locator:
+Giáo trình Tư tưởng Hồ Chí Minh - 2019, tr. 29–31
+
+Stage 4
+Source heading:
+Thời kỳ từ ngày 4-2-1930 đến ngày 28-1-1941: Vượt qua thử thách, giữ vững đường lối, phương pháp cách mạng Việt Nam đúng đắn, sáng tạo
+Locator:
+Giáo trình Tư tưởng Hồ Chí Minh - 2019, tr. 31–33
+
+Stage 5
+Source heading:
+Thời kỳ từ ngày 29-1-1941 đến ngày 2-9-1969: Tư tưởng Hồ Chí Minh tiếp tục phát triển, hoàn thiện, soi đường cho sự nghiệp cách mạng của Đảng và nhân dân ta
+Locator:
+Giáo trình Tư tưởng Hồ Chí Minh - 2019, tr. 33–35
+
+MIGRATION AUDIT FIRST
+
+Before editing, search the entire repository for all references to:
+C2
+C2-02
+C2 PDF
+2021
+Giáo trình Tư tưởng Hồ Chí Minh
+p.1 ... p.10
+tr.
+printedPage
+pdfPage
+locator
+sourceName
+sourceLabel
+
+Also inspect:
+- source data
+- claim map
+- stage data
+- source drawer
+- verification page
+- stage headings
+- turning points
+- citations
+- reports
+- README/context
+- tests
+- Prompt Logs where appropriate
+- source verification records
+
+Produce:
+SOURCE MIGRATION AUDIT
+Include:
+1. all files containing old textbook references;
+2. current public citation format;
+3. old locator → new locator mapping;
+4. headings/date boundaries that differ;
+5. references that must NOT be changed;
+6. tests affected.
+
+Then continue directly into implementation.
+Do not stop after the audit.
+
+WHAT MUST CHANGE
+
+1. SOURCE LABEL — public textbook citation becomes exactly
+   `Giáo trình Tư tưởng Hồ Chí Minh - 2019`, e.g. `..., tr. 29` or `..., tr. 29–31`.
+   Do not use `C2 PDF p.3` as the visible citation.
+
+2. PAGE LOCATORS — update every textbook locator to the correct printed 2019 page.
+   Do not mechanically add/subtract a fixed offset. Verify each claim against the
+   actual 2019 page where it appears. A claim spanning multiple pages should use
+   the smallest accurate page range.
+
+3. STAGE HEADINGS — audit the broad boundaries against the exact 2019 source and
+   prefer the exact 2019 wording. Do not silently keep later-edition wording.
+
+4. CLAIM CONTENT — do NOT rewrite claim content unless comparison with the 2019
+   source shows a real wording/content difference. Preserve the existing UX redesign,
+   interactions, narrative architecture, image system, motion system and source
+   verification infrastructure.
+
+5. ORIGINAL / SECONDARY SOURCES — do NOT replace valid references to
+   Hồ Chí Minh: Toàn tập, Văn kiện Đảng: Toàn tập, archival image sources, BnF /
+   museum sources, or other original-document evidence with the textbook label.
+   Do not collapse textbook source and original document source into one citation.
+
+6. SOURCE DATA MODEL — keep internal distinction between source file, PDF page and
+   printed textbook page, but the public UI must use the printed textbook page.
+   Do not invent the structure if the existing data model already solves it cleanly.
+   Adapt minimally.
+
+7. SOURCE-OF-TRUTH UPDATE — active project documentation must state the primary
+   academic content source. `C2-02.pdf` becomes LEGACY / COMPARISON REFERENCE and
+   must no longer control public locators. Do not delete it automatically.
+
+8. HASH / INTEGRITY — compute SHA-256 for the new 2019 PDF, record it, do not
+   silently overwrite old hash history, mark the old C2 file as superseded for
+   academic locator purposes, and follow the AGENTS re-audit protocol.
+
+9. SOURCE VERIFICATION LOG — update the Source Verification Map. Do not mark
+   VERIFIED merely because an automated script found matching words. If not
+   manually verified: NEED HUMAN VERIFICATION.
+
+10. UI — update all user-visible source text. Keep it compact; do not let the
+    longer source label dominate the UX. Source detail can live in the existing
+    source drawer / verification view.
+
+11. TESTS — update tests that depend on source label, page numbers, stage
+    boundaries, expected headings, locator text, PDF-page counts. Do not weaken
+    tests. Add tests preventing old public citation labels from returning.
+
+12. REPOSITORY-WIDE STALE-REFERENCE CHECK — classify every remaining occurrence of
+    C2-02 / C2 PDF / 2021 as LEGITIMATE HISTORICAL / MIGRATION RECORD or
+    STALE ACTIVE REFERENCE. There must be zero stale active references before
+    finishing. Do not erase Prompt Logs or historical reports.
+
+13. DO NOT REWRITE HISTORY — Prompt Logs and previous audit reports must preserve
+    what actually happened. Add a new migration record SOURCE_MIGRATION_2021_TO_2019
+    containing reason, old source, new source, files changed, locator changes, date,
+    verification status.
+
+REQUIRED VALIDATION
+
+Run the existing project checks after migration, including the currently supported
+equivalents of: npm run typecheck, lint, test, build, e2e, build:offline, check:offline.
+Also inspect the rendered UI at: opening, all 5 stages, source drawer, verification
+page, synthesis / activities where textbook sources appear. Check desktop + mobile.
+
+FINAL REPORT
+
+Create SOURCE_MIGRATION_2019_REPORT.md including:
+1. Old source → new source
+2. New SHA-256
+3. Files changed
+4. Stage-boundary changes
+5. Locator migration table
+6. Remaining legacy references and why they remain
+7. Tests run
+8. Items still requiring human verification
+
+Do NOT claim academic verification is complete unless it actually is.
+Final status should remain:
+REQUIRES HUMAN VERIFICATION AND REAL PROJECT EVIDENCE
+unless the existing project completion gate says otherwise.
+
+EXECUTION
+
+Start with the audit.
+Then perform the migration directly.
+Do not stop after producing a plan.

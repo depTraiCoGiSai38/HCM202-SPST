@@ -38,25 +38,28 @@ test('every screen after the five stages can be reached by clicking', async ({ p
   }
 });
 
-test('the rail carries the four destinations and marks the current one', async ({ page }) => {
+test('the menu carries the four destinations and marks the current one', async ({ page }) => {
   await page.goto('/#/noi-ket');
-  const rail = page.locator('nav.rail');
+  await page.locator('.masthead__menu').click();
+  const menu = page.locator('.menu');
 
   // The five stages stay the spine; the destinations are a separate group.
-  await expect(rail.locator('.rail__item')).toHaveCount(5);
-  await expect(rail.locator('.rail__aside-item')).toHaveCount(4);
+  await expect(menu.locator('.menu__stage')).toHaveCount(5);
+  await expect(menu.locator('.menu__after-item')).toHaveCount(4);
 
-  const current = rail.locator('.rail__aside-link[aria-current="page"]');
+  const current = menu.locator('.menu__after-link[aria-current="page"]');
   await expect(current).toHaveCount(1);
   await expect(current).toContainText('Nối kết');
 
   // Moving on moves the mark with it.
   await page.goto('/#/kiem-chung');
-  await expect(rail.locator('.rail__aside-link[aria-current="page"]')).toContainText('Kiểm chứng');
+  await page.locator('.masthead__menu').click();
+  await expect(menu.locator('.menu__after-link[aria-current="page"]')).toContainText('Kiểm chứng');
 
   // On a stage screen no destination is current.
   await page.goto('/#/chang/ky-2');
-  await expect(rail.locator('.rail__aside-link[aria-current="page"]')).toHaveCount(0);
+  await page.locator('.masthead__menu').click();
+  await expect(menu.locator('.menu__after-link[aria-current="page"]')).toHaveCount(0);
 });
 
 test('the overview names what each stage is about and what joins them', async ({ page }) => {
@@ -66,17 +69,18 @@ test('the overview names what each stage is about and what joins them', async ({
   await expect(rows).toHaveCount(5);
   // The claim half of the official heading, not only the dates.
   await expect(rows.nth(0).locator('.chain__claim')).toHaveText(
-    'Hình thành tư tưởng yêu nước và có chí hướng tìm con đường cứu nước mới',
+    'Hình thành tư tưởng yêu nước và chí hướng tìm con đường cứu nước mới',
   );
   // The full official heading is still the accessible name of the row.
-  await expect(rows.nth(0).locator('a')).toContainText('Thời kỳ trước ngày 5-6-1911');
+  await expect(rows.nth(0).locator('a')).toContainText('Thời kỳ từ ngày 5-6-1911 trở về trước');
 
-  // One named joint between each adjacent pair, and the blurred one says so.
+  // One named joint between each adjacent pair. The 2019 edition dates every
+  // joint exactly, so each one names the two consecutive days it sits between.
   const joints = page.locator('.chain__joint');
   await expect(joints).toHaveCount(4);
-  await expect(joints.nth(0)).toHaveAttribute('data-kind', 'blurred');
-  await expect(joints.nth(0)).toContainText('C2-R01');
-  await expect(joints.nth(1)).toContainText('cuối năm 1920');
+  await expect(joints.nth(0)).toHaveAttribute('data-kind', 'exact');
+  await expect(joints.nth(0)).toContainText('5-6-1911 › 6-6-1911');
+  await expect(joints.nth(1)).toContainText('30-12-1920 › 31-12-1920');
 });
 
 test('a stage opens by asking, and says whose question it is', async ({ page }) => {
@@ -101,28 +105,73 @@ test('a stage opens by asking, and says whose question it is', async ({ page }) 
   await expect(ask).toBeHidden();
 });
 
-test('the phase bar shows what a stage is made of and jumps into it', async ({ page }) => {
+test('the thread names the part of the stage you are standing in', async ({ page }) => {
   await page.goto('/#/chang/ky-2');
 
-  const phases = page.locator('.walk__phase');
-  await expect(phases).toHaveCount(4);
-  await expect(page.locator('.walk__phase[data-state="here"]')).toHaveCount(1);
-  await expect(page.locator('.walk__phase[data-phase="boi-canh"]')).toHaveAttribute(
-    'data-state',
-    'here',
-  );
+  // The row of phase buttons is gone: the structure is shown on the thread, not
+  // offered as a table of contents for a chapter you are already inside.
+  await expect(page.locator('.walk__phase')).toHaveCount(0);
 
-  // The counts are the stations, not a guess: stage 2 records two turning points.
-  await expect(page.locator('.walk__phase[data-phase="buoc-ngoat"] .walk__phase-n')).toHaveText('2');
+  const name = page.locator('.walk__phase-name');
+  await expect(name).toHaveText('Bối cảnh và trải nghiệm');
 
-  // Jumping lands on that phase, and the bar follows.
-  await page.locator('.walk__phase[data-phase="buoc-ngoat"]').click();
-  await expect(page.locator('.station--turn')).toBeVisible();
-  await expect(page.locator('.walk__phase[data-phase="buoc-ngoat"]')).toHaveAttribute(
-    'data-state',
-    'here',
-  );
+  // No ordinal. The excerpt interleaves development with turning points, so a
+  // "part N of M" would run backwards partway through four of the five stages.
+  await expect(page.locator('.walk__phase-of')).toHaveCount(0);
+
+  // Nothing in the caption is a control.
+  await expect(page.locator('.walk__phase-now a, .walk__phase-now button')).toHaveCount(0);
+
+  // Walking on changes it, and the thread marks where the kind changes.
+  const next = page.locator('.walk__nav.btn--primary');
+  for (let i = 0; i < 40; i++) {
+    if ((await name.textContent()) !== 'Bối cảnh và trải nghiệm') break;
+    await next.click();
+  }
+  await expect(name).toHaveText('Chuyển biến nhận thức');
+  await expect(page.locator('.track__tick[data-phase-start="true"]').first()).toBeAttached();
 });
+
+test('the caption never claims a position that runs backwards', async ({ page }) => {
+  await page.goto('/#/chang/ky-2');
+  const name = page.locator('.walk__phase-name');
+  const next = page.locator('.walk__nav.btn--primary');
+  const total = await page.locator('.walk__hit').count();
+
+  // Walk the whole stage and collect what the caption said at every stop. The
+  // caption may return to an earlier kind - the excerpt does - but it must
+  // never be empty, and it must never print an ordinal alongside it.
+  const seen: string[] = [];
+  for (let i = 0; i < total; i++) {
+    const text = (await name.textContent())?.trim() ?? '';
+    expect(text.length, `stop ${String(i)}`).toBeGreaterThan(0);
+    expect(text, `stop ${String(i)}`).not.toMatch(/\d+\s*\/\s*\d+/);
+    seen.push(text);
+    if (i < total - 1) await next.click();
+  }
+  // Stage 2 genuinely returns to development after its first turning point,
+  // which is exactly the case the old ordinal got wrong.
+  expect(new Set(seen).size).toBeGreaterThan(1);
+});
+
+/**
+ * Walk to the first turning point with the control that exists everywhere.
+ *
+ * The row of phase buttons that used to jump straight to a phase is gone: the
+ * stage now shows its structure on the thread rather than offering it as a
+ * menu. Stepping with Next is what a viewer does on every viewport, including
+ * the narrow ones where the per-stop marks are not shown.
+ */
+async function walkToFirstTurn(page: Page): Promise<void> {
+  const next = page.locator('.walk__nav.btn--primary');
+  const turn = page.locator('.station--turn');
+  const total = await page.locator('.walk__hit').count();
+  for (let i = 0; i < total; i++) {
+    if (await turn.isVisible()) return;
+    await next.click();
+  }
+  await expect(turn).toBeVisible();
+}
 
 /** Count the stations the guided traverse offers for a stage. */
 async function stopCount(page: Page, stage: string): Promise<number> {
@@ -169,12 +218,12 @@ test('a stage hands off to the next one, with the shared boundary named', async 
   await page.keyboard.press('End');
   await expect(bridge).toBeVisible();
 
-  // The next stage's own claim, and the boundary the two headings share.
+  // The next stage's own claim, and the two dates the joint sits between.
   await expect(bridge.locator('.bridge__claim')).toHaveText(
     'Hình thành những nội dung cơ bản tư tưởng về cách mạng Việt Nam',
   );
-  await expect(bridge.locator('.bridge__joint')).toContainText('cuối năm 1920');
-  await expect(bridge.locator('.bridge__joint')).toContainText('dùng chung');
+  await expect(bridge.locator('.bridge__joint')).toContainText('30-12-1920 › 31-12-1920');
+  await expect(bridge.locator('.bridge__joint')).toContainText('hai ngày kế tiếp');
 
   await bridge.locator('.bridge__go').click();
   await expect(page).toHaveURL(/chang\/ky-3$/);
@@ -196,7 +245,7 @@ test('a missed pairing explains itself instead of only saying no', async ({ page
   const status = page.locator('.join__status');
   await expect(status).toContainText('Chưa khớp');
   // The reason names where to look, in the excerpt, rather than the answer.
-  await expect(status).toContainText('C2 PDF');
+  await expect(status).toContainText('tr. ');
   // The choice is kept, so the viewer can simply try the other end.
   await expect(rows.nth(0).locator('.join__end[data-side="experience"]')).toHaveAttribute(
     'aria-pressed',
@@ -214,10 +263,10 @@ test('the opening names the stage its one action opens', async ({ page }) => {
 
   // Concrete, not a slogan: the label carries the stage and the period.
   await expect(go.locator('.scene__go-lead')).toContainText('chặng 1');
-  await expect(go.locator('.scene__go-name')).toHaveText('Thời kỳ trước ngày 5-6-1911');
+  await expect(go.locator('.scene__go-name')).toHaveText('Thời kỳ từ ngày 5-6-1911 trở về trước');
   // And the full official heading is what assistive technology gets.
   await expect(go).toContainText(
-    'Thời kỳ trước ngày 5-6-1911: Hình thành tư tưởng yêu nước và có chí hướng tìm con đường cứu nước mới',
+    'Thời kỳ từ ngày 5-6-1911 trở về trước: Hình thành tư tưởng yêu nước và chí hướng tìm con đường cứu nước mới',
   );
 
   await go.click();
@@ -275,7 +324,7 @@ test('a wrong guess says which stage that sentence belongs to', async ({ page })
   await expect(verdict).toContainText('thời kỳ');
   // The stage's own answer is then shown, with both locations.
   await expect(page.locator('.guess__where')).toBeVisible();
-  await expect(page.locator('.guess__locators')).toContainText('C2 PDF');
+  await expect(page.locator('.guess__locators')).toContainText('tr. ');
   // Outcome is not carried by colour alone.
   await expect(page.locator('.guess__option[data-stage="ky-2"]')).toHaveAttribute(
     'data-state',
@@ -301,10 +350,12 @@ test('crossing a turning point fills the record beside the reading', async ({ pa
   await expect(items.nth(0).locator('.gained__todo')).toBeVisible();
   await expect(page.locator('.gained__count')).toContainText('2 bước ngoặt');
 
-  // Where this stage sits in the five.
-  await expect(page.locator('.gained__where-n')).toHaveText('2 / 5');
+  // Where this stage sits in the five is said once, by the strip under the
+  // masthead, not repeated here as well.
+  await expect(page.locator('.gained__where-n')).toHaveCount(0);
+  await expect(page.locator('.jbar__where')).toHaveText('Chặng 2 / 5');
 
-  await page.locator('.walk__phase[data-phase="buoc-ngoat"]').click();
+  await walkToFirstTurn(page);
   await page.locator('.turn__cross').click();
 
   await expect(items.nth(0)).toHaveAttribute('data-state', 'done');

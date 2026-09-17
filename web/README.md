@@ -1,7 +1,7 @@
 # HÀNH TRÌNH TƯ TƯỞNG
 
 Sản phẩm web tương tác cho học phần HCM202, trình bày năm thời kỳ trong mục II của
-trích đoạn được giao (`C2-02.pdf`).
+trích đoạn được giao (`Giáo trình Tư tưởng Hồ Chí Minh - 2019.pdf`, trang in 28-35).
 
 > **Trạng thái dự án:** `REQUIRES HUMAN VERIFICATION AND REAL PROJECT EVIDENCE`
 > Sản phẩm chạy được và đã qua kiểm thử kỹ thuật, nhưng **chưa** có ai đối chiếu nội dung
@@ -155,7 +155,7 @@ sửa bất kỳ nội dung học thuật nào. Những điều sau là bắt bu
 - Nội dung học thuật chỉ nằm trong trích đoạn được giao. Không mở rộng ra ngoài.
 - Năm tiêu đề tiếng Việt phải giữ nguyên văn. Tên tiếng Anh rút gọn chỉ dùng trong mã nguồn,
   không bao giờ thay thế tiêu đề trong nội dung hiển thị.
-- Các căng thẳng niên đại `C2-R01` đến `C2-R09` phải giữ nguyên, không sửa.
+- Các căng thẳng niên đại `GT-R01` đến `GT-R08` phải giữ nguyên, không sửa. Sổ `SUPERSEDED_RISKS` ghi lại các rủi ro `C2-R01`..`C2-R09` của trích đoạn cũ và kết cục của từng mục sau khi chuyển nguồn.
 - Chữ viết tắt `Sđd` không bao giờ được suy đoán mở rộng.
 - Không tạo, không mô phỏng, không làm biến dạng chân dung của bất kỳ nhân vật nào.
 - Không tạo dữ liệu khảo sát, phản hồi hay người dùng giả lập.

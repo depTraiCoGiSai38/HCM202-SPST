@@ -1,3 +1,4 @@
+import { ref } from './source.ts';
 import type { Provenance, StageId } from './types';
 
 /**
@@ -28,11 +29,11 @@ export const CORE_MESSAGE =
 export const CORE_MESSAGE_STATUS = 'PROJECT DECISION - NEED AUDIENCE/LECTURER VALIDATION';
 
 export const SECTION_HEADING = 'II. QUÁ TRÌNH HÌNH THÀNH VÀ PHÁT TRIỂN TƯ TƯỞNG HỒ CHÍ MINH';
-export const SECTION_HEADING_AT = 'C2 PDF p.1';
+export const SECTION_HEADING_AT = ref(28);
 
 /**
  * The reading model used to organise each stage screen.
- * A learning-design aid only. It never replaces C2's own terminology and never
+ * A learning-design aid only. It never replaces the textbook's own terminology and never
  * forces a claim the excerpt does not support.
  */
 export const READING_MODEL = [
@@ -82,13 +83,13 @@ export const STAGE_ENTRY: Record<StageId, StageEntry> = {
     question:
       'Điều gì khiến một người đã có tư tưởng yêu nước lại không đi theo những con đường cứu nước đang có, mà quyết định đi tìm một con đường khác?',
     basis:
-      'Tiêu đề chặng nói tới việc “có chí hướng tìm con đường cứu nước mới”. Phần thân chặng ghi lại việc không tán thành, không đi theo phương pháp và khuynh hướng cứu nước của các vị tiền bối, rồi đi ra nước ngoài ngày 5-6-1911.',
+      'Tiêu đề chặng nói tới việc “chí hướng tìm con đường cứu nước mới”. Phần thân chặng ghi lại việc không tán thành, không đi theo phương pháp và khuynh hướng cứu nước của các vị tiền bối, rồi đi ra nước ngoài ngày 5-6-1911.',
   },
   'ky-2': {
     question:
       'Từ việc sống, làm việc và đi qua nhiều nước, đến chỗ xác định một con đường cụ thể — trích đoạn đặt bước chuyển ấy ở thời điểm nào?',
     basis:
-      'Tiêu đề chặng nói tới việc “dần dần hình thành”. Phần thân chặng ghi lại hành trình 1911-1917, việc nghiên cứu Sơ thảo luận cương vào tháng 7-1920 và Đại hội ở thành phố Tua cuối tháng 12-1920.',
+      'Câu mở đầu chặng nói tư tưởng ấy “được hình thành từng bước”. Phần thân chặng ghi lại hành trình 1911-1917, việc nghiên cứu Sơ thảo luận cương vào tháng 7-1920 và Đại hội ở thành phố Tua cuối tháng 12-1920.',
   },
   'ky-3': {
     question:
@@ -104,9 +105,9 @@ export const STAGE_ENTRY: Record<StageId, StageEntry> = {
   },
   'ky-5': {
     question:
-      'Sau khi đường lối được giữ vững, trích đoạn ghi lại những gì để cho thấy tư tưởng ấy tiếp tục phát triển và hoàn thiện?',
+      'Sau khi đường lối được giữ vững, trích đoạn ghi lại những gì để cho thấy tư tưởng ấy tiếp tục phát triển?',
     basis:
-      'Tiêu đề chặng nói tới việc “tiếp tục phát triển, hoàn thiện”. Phần thân chặng ghi lại các mốc từ ngày 19-5-1941 đến Di chúc, trong khung thời gian tới tháng 9-1969.',
+      'Tiêu đề chặng nói tới việc “tiếp tục phát triển, soi đường”. Phần thân chặng ghi lại các mốc từ ngày 19-5-1941 đến Di chúc, trong khung thời gian tới ngày 2-9-1969.',
   },
 };
 
@@ -237,11 +238,13 @@ export const INTEGRITY_STATEMENTS = [
 export const DESIGN_DECISIONS = [
   {
     id: 'DD-1',
-    decision: 'Thanh chỉ dẫn năm chặng vẽ ranh giới chồng lấn thay vì cắt rời',
+    decision: 'Thanh chỉ dẫn năm chặng vẽ ranh giới bằng mốc ngày xác định',
     reason:
-      'Hai ranh giới cuối năm 1920 và đầu năm 1941 được hai tiêu đề liền nhau cùng sử dụng. Một thanh thời gian cắt rời sẽ trình bày sai cấu trúc của tài liệu.',
-    evidence: 'Sổ rủi ro C2-R02 và C2-R03 trong ngữ cảnh dự án.',
-    alternative: 'Thanh thời gian cắt rời theo mốc năm, bị loại vì làm mất đặc điểm của nguồn.',
+      'Giáo trình 2019 ghi mỗi ranh giới bằng hai ngày liền nhau: 5-6-1911 với 6-6-1911, 30-12-1920 với 31-12-1920, 3-2-1930 với 4-2-1930, 28-1-1941 với 29-1-1941. Vẽ ranh giới mờ sẽ trình bày sai cấu trúc của tài liệu.',
+    evidence:
+      'Năm tiêu đề chặng in ở các trang 28, 29, 31 và 33 của giáo trình 2019; sổ rủi ro thay thế ghi ở mục SUPERSEDED_RISKS trong dữ liệu nguồn của sản phẩm.',
+    alternative:
+      'Thanh thời gian cắt rời theo mốc năm, bị loại vì làm mất đặc điểm của nguồn. ĐÍNH CHÍNH 17-9-2026: quyết định trước đây vẽ ranh giới chồng lấn, vì trích đoạn học thuật cũ để hai tiêu đề liền nhau dùng chung một mốc mờ (“cuối năm 1920”, “đầu năm 1941”). Khi nguồn học thuật chuyển sang giáo trình 2019, các mốc ấy là ngày xác định và không còn chồng lấn, nên lý do của quyết định cũ không còn đứng vững. Đây là thay đổi do nguồn quy định, không phải lựa chọn thẩm mỹ.',
   },
   {
     id: 'DD-2',
@@ -252,7 +255,7 @@ export const DESIGN_DECISIONS = [
     evidence:
       'Biến thể tài liệu DV-08 trong ngữ cảnh dự án. Ngày 17-9-2026 đã mở ba nguồn để kiểm; kết quả từng nguồn được in ở mục “Ảnh tư liệu: vị trí còn trống” trên trang này.',
     alternative:
-      'Bản quyết định trước đây loại bỏ hoàn toàn hình ảnh người. Nay được thay bằng: sáu vị trí ảnh có thật trong sản phẩm, đang bị chặn và ghi rõ lý do, thay vì không tồn tại. Lý do sửa: một vị trí bị chặn và nói rõ vì sao thì kiểm toán được, còn một vị trí không tồn tại thì không.',
+      'Bản quyết định trước đây loại bỏ hoàn toàn hình ảnh người. Nay được thay bằng: các vị trí ảnh có thật trong sản phẩm, vị trí nào chưa có nguồn thì bị chặn và ghi rõ lý do, thay vì không tồn tại. Lý do sửa: một vị trí bị chặn và nói rõ vì sao thì kiểm toán được, còn một vị trí không tồn tại thì không. ĐÍNH CHÍNH 17-9-2026: câu này từng ghi “sáu vị trí”. Con số ấy đúng khi viết, nhưng sản phẩm nay khai báo mười một vị trí — một ở màn mở đầu, năm vị trí chính và năm vị trí bổ trợ. Số vị trí được suy ra từ dữ liệu ở trang Kiểm chứng, không viết tay ở bất kỳ đâu.',
   },
   {
     id: 'DD-3',
@@ -322,7 +325,7 @@ export const DESIGN_DECISIONS = [
     id: 'DD-10',
     decision: 'Cuối mỗi chặng có một cầu nối sang chặng kế tiếp',
     reason:
-      'Một chặng dừng lại mà không nói gì sẽ để người đọc tự đoán chặng sau liên quan thế nào. Cầu nối in vế sau trong tiêu đề chính thức của chặng kế tiếp và nhãn ranh giới mà hai tiêu đề dùng chung.',
+      'Một chặng dừng lại mà không nói gì sẽ để người đọc tự đoán chặng sau liên quan thế nào. Cầu nối in vế sau trong tiêu đề chính thức của chặng kế tiếp và hai ngày kế tiếp nhau mà giáo trình 2019 in ở hai bên mối nối.',
     evidence:
       'Toàn bộ chữ trong cầu nối lấy từ dữ liệu đã lưu: tiêu đề chặng kế tiếp và bản ghi ranh giới, kèm mã rủi ro khi có.',
     alternative:
@@ -382,7 +385,7 @@ export const DESIGN_DECISIONS = [
     id: 'DD-16',
     decision: 'Sợi chỉ ở màn tổng quan tự vẽ một lần theo đúng thứ tự năm chặng',
     reason:
-      'Điều bản vẽ muốn nói là năm tiêu đề làm thành một quá trình liên tục. Vẽ cùng lúc thì nó đọc như một sơ đồ tĩnh; vẽ lần lượt từ trái sang phải thì mắt đi đúng con đường người đọc sắp đi, và hai chỗ hai đường cùng chạy được thấy là chồng lấn chứ không phải chỉ nằm cạnh nhau.',
+      'Điều bản vẽ muốn nói là năm tiêu đề làm thành một quá trình liên tục. Vẽ cùng lúc thì nó đọc như một sơ đồ tĩnh; vẽ lần lượt từ trái sang phải thì mắt đi đúng con đường người đọc sắp đi, và bốn mối nối được thấy là chỗ chặng trước khép lại để chặng sau mở ra, chứ không phải bốn đoạn rời nhau.',
     evidence:
       'Chuyển động không giấu gì: mọi liên kết sống ngay từ đầu, không phải chờ. Khi tắt chuyển động thì các đường đơn giản là đã vẽ sẵn. Hai kiểm thử trình duyệt khoá cả hai trạng thái.',
     alternative:

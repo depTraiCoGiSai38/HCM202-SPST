@@ -86,9 +86,23 @@ if (existsSync(imageDir)) {
   }
 }
 
+/*
+ * 3. Splice both into the document.
+ *
+ * The replacements go in through a function, not a string.
+ * `String.prototype.replace` reads `$&`, `$\`` , `$'` and `$1` inside a
+ * replacement string as instructions, and minified code contains them by
+ * accident: a module-level variable minified to `$` turned
+ * `return !!(panel && !panel.hidden)` into `return!!($&&!$.hidden)`. That `$&`
+ * spliced the matched `<script src=...>` tag back into the middle of the
+ * inlined bundle and dropped everything after it - a 181 KB script became
+ * 58 KB, the tag reappeared inside its own script block, and every route in the
+ * offline build died on `Unexpected token '<'`. A replacer function has no such
+ * syntax, so no future identifier can trigger this again.
+ */
 html = html
-  .replace(cssRef[0], `<style>\n${css}\n</style>`)
-  .replace(jsRef[0], `<script type="module">\n${js}\n</script>`);
+  .replace(cssRef[0], () => `<style>\n${css}\n</style>`)
+  .replace(jsRef[0], () => `<script type="module">\n${js}\n</script>`);
 
 writeFileSync(OUT, html, 'utf8');
 

@@ -9,11 +9,11 @@ import { type Page, expect, test } from '@playwright/test';
  */
 
 const HEADINGS = [
-  'Thời kỳ trước ngày 5-6-1911: Hình thành tư tưởng yêu nước và có chí hướng tìm con đường cứu nước mới',
-  'Thời kỳ từ giữa năm 1911 đến cuối năm 1920: Dần dần hình thành tư tưởng cứu nước, giải phóng dân tộc Việt Nam theo con đường cách mạng vô sản',
-  'Thời kỳ từ cuối năm 1920 đến đầu năm 1930: Hình thành những nội dung cơ bản tư tưởng về cách mạng Việt Nam',
-  'Thời kỳ từ đầu năm 1930 đến đầu năm 1941: Vượt qua thử thách, giữ vững đường lối, phương pháp cách mạng Việt Nam đúng đắn, sáng tạo',
-  'Thời kỳ từ đầu năm 1941 đến tháng 9-1969: Tư tưởng Hồ Chí Minh tiếp tục phát triển, hoàn thiện, soi đường cho sự nghiệp cách mạng của Đảng và nhân dân ta',
+  'Thời kỳ từ ngày 5-6-1911 trở về trước: Hình thành tư tưởng yêu nước và chí hướng tìm con đường cứu nước mới',
+  'Thời kỳ từ ngày 6-6-1911 đến ngày 30-12-1920: Hình thành tư tưởng cứu nước, giải phóng dân tộc Việt Nam theo con đường cách mạng vô sản',
+  'Thời kỳ từ ngày 31-12-1920 đến ngày 3-2-1930: Hình thành những nội dung cơ bản tư tưởng về cách mạng Việt Nam',
+  'Thời kỳ từ ngày 4-2-1930 đến ngày 28-1-1941: Vượt qua thử thách, giữ vững đường lối, phương pháp cách mạng Việt Nam đúng đắn, sáng tạo',
+  'Thời kỳ từ ngày 29-1-1941 đến ngày 2-9-1969: Tư tưởng Hồ Chí Minh tiếp tục phát triển, soi đường cho sự nghiệp cách mạng của Đảng và nhân dân ta',
 ];
 
 const ROUTES = [
@@ -195,36 +195,60 @@ test('a long passage is read in order and never shortened', async ({ page }) => 
   await expect(lens).toContainText(second.slice(0, 40));
 });
 
-test('the rail steps back on a stage screen and stands down on the overview', async ({ page }) => {
-  // On the overview the diagram already names and selects all five stages, so a
-  // second list of the same five beside it is just a duplicate.
-  await page.goto('/#/hanh-trinh');
-  await expect(page.locator('nav.rail')).toBeHidden();
-
-  // On a stage screen it is a progress indicator, not a table of contents.
+test('the chrome holds one navigation system and one position indicator', async ({ page }) => {
   await page.goto('/#/chang/ky-2');
-  const rail = page.locator('nav.rail');
-  await expect(rail).toBeVisible();
-  await expect(rail).toHaveAttribute('data-compact', 'true');
-  await expect(rail.locator('.rail__item')).toHaveCount(5);
 
-  // And the viewer can always open it again.
-  await rail.locator('.rail__toggle').click();
-  await expect(rail).toHaveAttribute('data-compact', 'false');
+  // The sidebar is gone. Nothing addresses the five stages except the menu.
+  await expect(page.locator('nav.rail')).toHaveCount(0);
+
+  // What stays on screen says where you are and offers nowhere to go.
+  const bar = page.locator('.jbar');
+  await expect(bar).toBeVisible();
+  await expect(bar).toContainText('Chặng 2 / 5');
+  await expect(bar.locator('a, button')).toHaveCount(0);
+  await expect(bar.locator('.jbar__mark[data-here="true"]')).toHaveCount(1);
+
+  // The opening is about orientation already, so the strip stays out of it.
+  await page.goto('/#/');
+  await expect(page.locator('.jbar')).toBeHidden();
+
+  // And it names every other screen, not only the stages. The router's name for
+  // a route is not its address, so this is checked at each address.
+  const elsewhere: [string, string][] = [
+    ['/#/hanh-trinh', 'Tổng quan hành trình'],
+    ['/#/doi-sanh', 'Đối sánh'],
+    ['/#/noi-ket', 'Nối kết'],
+    ['/#/tong-hop', 'Tổng hợp'],
+    ['/#/kiem-chung', 'Kiểm chứng'],
+  ];
+  for (const [href, label] of elsewhere) {
+    await page.goto(href);
+    await expect(bar, href).toBeVisible();
+    await expect(bar.locator('.jbar__where'), href).toHaveText(label);
+  }
 });
 
-test('the journey rail is present on every route and marks the current stage', async ({ page }) => {
+test('the menu is the one way to every destination and marks the current one', async ({ page }) => {
   await page.goto('/#/chang/ky-3');
-  const rail = page.locator('nav.rail');
-  await expect(rail).toBeVisible();
-  await expect(rail.locator('.rail__item')).toHaveCount(5);
-  await expect(rail.locator('.rail__item[aria-current="step"]')).toHaveCount(1);
-  await expect(rail.locator('.rail__item[aria-current="step"]')).toHaveAttribute(
-    'data-stage',
-    'ky-3',
-  );
+
+  const trigger = page.locator('.masthead__menu');
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await trigger.click();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+
+  const menu = page.locator('.menu');
+  await expect(menu.locator('.menu__stage')).toHaveCount(5);
   // Shared-boundary markers between each adjacent pair.
-  await expect(rail.locator('.rail__boundary')).toHaveCount(4);
+  await expect(menu.locator('.menu__joint')).toHaveCount(4);
+
+  const here = menu.locator('.menu__stage-link[aria-current="step"]');
+  await expect(here).toHaveCount(1);
+  await expect(here).toContainText('Thời kỳ từ ngày 31-12-1920 đến ngày 3-2-1930');
+
+  // Escape closes it and gives focus back to the control that opened it.
+  await page.keyboard.press('Escape');
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await expect(trigger).toBeFocused();
 });
 
 test('a turning point is crossed one side at a time and can be crossed back', async ({ page }) => {
@@ -534,4 +558,82 @@ test('reduced motion is honoured', async ({ page }) => {
     () => document.querySelector('.scene')?.getAttribute('data-draw') ?? null,
   );
   expect(drawState).toBeNull();
+
+  // The chapter opening settles in on arrival. With motion reduced it is simply
+  // already in place: no animation at all, and full opacity either way, so
+  // nothing is revealed by movement alone.
+  await page.goto('/#/chang/ky-2');
+  const entrance = await page.evaluate(() => {
+    const el = document.querySelector('.walk__heading');
+    if (!el) return null;
+    const cs = getComputedStyle(el);
+    return { name: cs.animationName, opacity: cs.opacity };
+  });
+  expect(entrance?.name).toBe('none');
+  expect(entrance?.opacity).toBe('1');
+});
+
+test('the chapter opening settles in once, and only on arrival', async ({ page }) => {
+  await page.goto('/#/chang/ky-2');
+  const head = page.locator('.walk__head');
+  await expect(head).toHaveAttribute('data-mode', 'full');
+
+  const anim = await page.evaluate(() => {
+    const el = document.querySelector('.walk__heading');
+    if (!el) return null;
+    const cs = getComputedStyle(el);
+    return {
+      name: cs.animationName,
+      iteration: cs.animationIterationCount,
+      duration: cs.animationDuration,
+      delay: cs.animationDelay,
+    };
+  });
+  expect(anim?.name).toBe('chapter-open');
+  // Once, not a loop, and short enough not to hold up reading.
+  expect(anim?.iteration).toBe('1');
+  expect(parseFloat(anim?.duration ?? '9')).toBeLessThanOrEqual(0.5);
+  expect(parseFloat(anim?.delay ?? '9')).toBeLessThanOrEqual(0.2);
+
+  // Past the entrance nothing in the header is animating any more.
+  await page.locator('.walk__nav.btn--primary').click();
+  await expect(head).toHaveAttribute('data-mode', 'compact');
+  const after = await page.evaluate(
+    () => getComputedStyle(document.querySelector('.walk__heading') as Element).animationName,
+  );
+  expect(after).toBe('none');
+});
+
+test('the sticky masthead never covers the control that has focus', async ({ page }) => {
+  await page.goto('/#/chang/ky-2');
+
+  // The offset is measured, not assumed: the masthead is one row on a laptop
+  // and two on a phone.
+  const published = await page.evaluate(() =>
+    getComputedStyle(document.documentElement).getPropertyValue('--chrome-h').trim(),
+  );
+  const measured = await page.locator('.masthead').evaluate((el) =>
+    Math.round(el.getBoundingClientRect().height),
+  );
+  expect(published).toBe(`${String(measured)}px`);
+
+  // Tab through the screen and check every landing place clears the chrome.
+  for (let i = 0; i < 25; i++) {
+    await page.keyboard.press('Tab');
+    const clear = await page.evaluate(() => {
+      const el = document.activeElement;
+      if (!el || el === document.body) return true;
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 && r.height === 0) return true;
+      const bar = document.querySelector('.masthead');
+      if (!bar || bar.contains(el)) return true;
+      // Things that deliberately sit above the masthead rather than under it:
+      // the dialogs, and the skip link, which is z-index 100 against the
+      // masthead's 40 precisely so it can appear over the chrome.
+      if (el.closest('.menu, .lens, .shade, .deck')) return true;
+      if (el.classList.contains('skip-link')) return true;
+      return r.top >= bar.getBoundingClientRect().bottom - 1;
+    });
+    expect(clear, `tab stop ${String(i)}`).toBe(true);
+  }
 });

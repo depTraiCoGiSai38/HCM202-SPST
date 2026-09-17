@@ -1,3 +1,4 @@
+import { citeSource } from '../data/source';
 import { LOCATOR_BY_ID } from '../data/locators';
 import { QUOTATION_BY_ID } from '../data/stages';
 import type { Quotation } from '../data/types';
@@ -21,7 +22,7 @@ function sourceEntry(locatorId: string): HTMLElement | null {
     { class: 'source' },
     h('span', { class: 'source__id', text: `Ứng viên định vị ${loc.id}` }),
     h('p', { class: 'source__printed', text: loc.printed }),
-    h('p', { class: 'source__at', text: loc.at }),
+    h('p', { class: 'source__at', text: citeSource(loc.at) }),
     h('p', { class: 'source__attached', text: `Gắn với: ${loc.attachedTo}` }),
     loc.caution ? h('p', { class: 'source__caution', text: loc.caution }) : null,
     chipForStatus(loc.status),
@@ -105,7 +106,7 @@ export function quotationBlock(q: Quotation): HTMLElement {
       h('span', { class: 'marker', text: ' · Không có chú thích số kèm theo trong trích đoạn.' }),
     );
   }
-  foot.appendChild(h('span', { class: 'marker', text: ` · ${q.at}` }));
+  foot.appendChild(h('span', { class: 'marker', text: ` · ${citeSource(q.at)}` }));
 
   return h(
     'figure',

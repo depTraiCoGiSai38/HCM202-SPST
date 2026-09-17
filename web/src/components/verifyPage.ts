@@ -1,10 +1,14 @@
+import { citeSource } from '../data/source';
 import { LOCATORS, PRINTED_FORM_NOTES, RISKS, UNNOTED_MARKERS } from '../data/locators';
+import { continueJourney, whatNext } from './whatnext';
 import { ALL_QUOTATIONS, STAGES } from '../data/stages';
 import { DESIGN_DECISIONS, INTEGRITY_STATEMENTS } from '../data/project';
 import {
   FIGURE_REQUIREMENTS,
   FIGURE_SLOTS,
-  FIGURE_STATUS,
+  figureFilledCount,
+  figureStatus,
+  slotStatus,
   SOURCING_CHECKS,
 } from '../data/figures';
 import { chipForStatus, h } from '../lib/dom';
@@ -51,28 +55,47 @@ export function verifyPage(): HTMLElement {
   wrap.appendChild(anchor('khai-bao', statementsSection()));
   wrap.appendChild(h('hr', { class: 'rule' }));
   wrap.appendChild(anchor('thiet-ke', designSection()));
+  wrap.appendChild(
+    whatNext({
+      lead: 'Đây là bản ghi những gì chưa xác thực, không phải một chặng của hành trình.',
+      primary: continueJourney(),
+      secondary: { label: 'Về câu hỏi dẫn đường', href: '#/' },
+    }),
+  );
 
   return wrap;
 }
 
 /**
- * Documentary photographs: the positions, and why they are empty.
+ * Documentary photographs: the positions, which are filled, and why the rest
+ * are empty.
  *
- * The product has six positions for a photograph and no photograph that has
- * cleared both a checkable source and a usage condition. That is a gap in the
- * evidence, so it is published here with the rest of the gaps, including what
- * was actually checked and what each check found, quoted.
+ * Every number and every status on this screen is derived from the figure data.
+ * They used to be written by hand, and when the first photograph cleared its
+ * source and its usage condition the hand-written text did not move - so this
+ * screen, whose whole job is to state the evidence truthfully, went on saying
+ * that nothing had cleared while the opening screen displayed something that
+ * had. Under AGENTS.md that is the wrong direction of error to leave standing,
+ * so nothing here is a constant any more.
  */
 function figureSection(): HTMLElement {
+  const total = FIGURE_SLOTS.length;
+  const filled = figureFilledCount();
+  const empty = total - filled;
+
   const sec = h('section', { class: 'stack' });
-  sec.appendChild(h('h2', { class: 'section-title', text: 'Ảnh tư liệu: vị trí còn trống' }));
+  sec.appendChild(h('h2', { class: 'section-title', text: 'Ảnh tư liệu: vị trí đã điền và vị trí còn trống' }));
   sec.appendChild(
     h('p', {
       class: 'section-lede',
-      text: `Sản phẩm có ${String(FIGURE_SLOTS.length)} vị trí dành cho ảnh tư liệu. Hiện chưa vị trí nào được điền: chưa có ảnh nào vừa mở được trang nguồn để kiểm, vừa có điều kiện sử dụng cho phép dùng lại. Các vị trí được để trống và ghi rõ, không dựng ảnh thay thế và không dùng AI tạo chân dung.`,
+      text:
+        `Sản phẩm có ${String(total)} vị trí dành cho ảnh tư liệu. ` +
+        `Hiện ${String(filled)} vị trí đã được điền và ${String(empty)} vị trí còn trống. ` +
+        'Một vị trí chỉ được điền khi ảnh vừa mở được trang nguồn để kiểm, vừa có điều kiện sử dụng cho phép dùng lại. ' +
+        'Các vị trí còn lại được để trống và ghi rõ là đang bị chặn, không dựng ảnh thay thế và không dùng AI tạo chân dung.',
     }),
   );
-  sec.appendChild(h('p', {}, chipForStatus(FIGURE_STATUS)));
+  sec.appendChild(h('p', {}, chipForStatus(figureStatus())));
 
   const slots = h('div', { class: 'table-wrap' });
   const slotTable = h('table', { class: 'grid' });
@@ -97,7 +120,7 @@ function figureSection(): HTMLElement {
         {},
         h('td', {}, h('span', { class: 'marker', text: slot.id })),
         h('td', { text: slot.role }),
-        h('td', {}, chipForStatus('NOT YET EVIDENCED')),
+        h('td', {}, chipForStatus(slotStatus(slot.id))),
       ),
     );
   }
@@ -212,7 +235,7 @@ function contents(): HTMLElement {
  * than hunted for inside the risk table - where it also remains, in full.
  */
 function conflictFocus(): HTMLElement {
-  const risk = RISK_BY_ID.get('C2-R05');
+  const risk = RISK_BY_ID.get('GT-R02');
   if (!risk) return h('div');
 
   return h(
@@ -286,7 +309,7 @@ function locatorTable(): HTMLElement {
         {},
         h('td', {}, h('span', { class: 'source__id', text: l.id })),
         h('td', {}, h('span', { class: 'source__printed', text: l.printed })),
-        h('td', {}, h('span', { class: 'marker', text: l.at })),
+        h('td', {}, h('span', { class: 'marker', text: citeSource(l.at) })),
         h('td', {}, h('span', { text: l.attachedTo })),
         h(
           'td',
@@ -401,13 +424,13 @@ function printedFormSection(): HTMLElement {
         h('td', {}, h('span', { class: 'source__id', text: n.id })),
         h('td', {}, h('span', { class: 'source__printed', text: n.printed })),
         h('td', {}, h('span', { text: n.used })),
-        h('td', {}, h('span', { class: 'marker', text: n.at })),
+        h('td', {}, h('span', { class: 'marker', text: citeSource(n.at) })),
         h('td', {}, h('span', { text: n.where })),
         h(
           'td',
           {},
           n.registered
-            ? h('span', { class: 'chip chip--source', text: 'ĐÃ GHI TRONG C2-R08' })
+            ? h('span', { class: 'chip chip--source', text: 'ĐÃ GHI TRONG GT-R06' })
             : chipForStatus('NEED VERIFICATION'),
         ),
       ),
@@ -420,7 +443,7 @@ function printedFormSection(): HTMLElement {
     h('h2', { class: 'page-head__title', text: 'Đối chiếu dạng chữ in và dạng dùng trong diễn giải' }),
     h('p', {
       class: 'page-head__lede',
-      text: 'Bản được cung cấp hiển thị một số dạng chữ khác với dạng mà sản phẩm dùng trong câu diễn giải tiếng Việt. Bảng này ghi lại cả hai dạng thay vì lặng lẽ thay thế. Bốn mục đầu đã nằm trong C2-R08; các mục còn lại quan sát được trong lớp văn bản của tệp. Việc mỗi mục là lỗi in thật hay là hiện tượng của lớp văn bản vẫn chưa được giải quyết và cần bản sạch.',
+      text: 'Giáo trình 2019 in một số dạng chữ khác với dạng mà sản phẩm dùng trong câu diễn giải tiếng Việt. Bảng này ghi lại cả hai dạng thay vì lặng lẽ thay thế. Mỗi mục đều đọc trực tiếp trên bản quét ở mức phóng to và đều nằm trong GT-R06. Việc mỗi mục là lỗi in thật hay là đặc điểm của bản quét vẫn chưa được giải quyết và cần bản in sạch.',
     }),
     h('p', {
       class: 'page-head__lede',

@@ -166,4 +166,5 @@ export const ICONS = {
   next: 'M9 6l6 6-6 6',
   plus: 'M12 6v12M6 12h12',
   lens: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14Zm5 12 4.5 4.5',
+  menu: 'M4 7h16M4 12h16M4 17h16',
 } as const;

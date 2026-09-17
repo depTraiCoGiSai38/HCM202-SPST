@@ -1,3 +1,5 @@
+import { locatorText } from '../data/source';
+import type { SourceRef } from '../data/types';
 import { ICONS, clear, h, icon } from '../lib/dom';
 
 /**
@@ -27,21 +29,16 @@ export interface EvidencePayload {
 }
 
 /**
- * Locator wording for the audience.
+ * Compact locator wording for the audience, e.g. `tr. 29`.
  *
- * The stored value is the audit locator and never changes; this is a reading of
- * it for people in the room, who should not have to parse `PDF p.2 / printed
- * p.27`. The magnifier always shows the stored value alongside, so the exact
- * string an auditor needs is still one click away.
+ * This is the short form used on the many inline evidence chips, where spelling
+ * out the full source label on every claim would crowd the reading surface.
+ * Every chip opens the magnifier, and the magnifier always shows the full
+ * citation from `citeSource` plus the internal audit string from `auditRef`, so
+ * the exact label and the PDF sheet an auditor needs are one interaction away.
  */
-export function readLocator(at: string): string {
-  return at
-    .replace(/PDF pp\./g, 'PDF tr.')
-    .replace(/PDF p\./g, 'PDF tr.')
-    .replace(/\s*\/\s*printed pp\./g, ' · trang in ')
-    .replace(/\s*\/\s*printed p\./g, ' · trang in ')
-    .replace(/printed pp\./g, 'trang in ')
-    .replace(/printed p\./g, 'trang in ');
+export function readLocator(at: SourceRef): string {
+  return locatorText(at);
 }
 
 

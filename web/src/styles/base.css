@@ -113,9 +113,16 @@ p {
   border-radius: var(--radius-s);
 }
 
-/* Keep the focus ring visible above sticky chrome. */
+/*
+ * Keep the focus ring clear of the sticky chrome.
+ *
+ * `--chrome-h` is the measured height of the masthead, republished whenever it
+ * changes - it is one row on a laptop, two on a phone and taller again at 200%
+ * text, so a constant was wrong at two of those three sizes. The fallback is
+ * the old constant, for the moment before the first measurement.
+ */
 :focus-visible {
-  scroll-margin-block: 7rem;
+  scroll-margin-block: calc(var(--chrome-h, 7rem) + var(--space-s));
 }
 
 .skip-link {
@@ -193,8 +200,10 @@ p {
   *::before,
   *::after {
     animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
     scroll-behavior: auto !important;
   }
 }
@@ -203,12 +212,25 @@ p {
   scroll-behavior: auto;
 }
 
+/*
+ * The two switches must be equivalent.
+ *
+ * They were not. The OS setting suppresses a rule written inside
+ * `prefers-reduced-motion: no-preference`, so the animation never starts. The
+ * in-product toggle only shortened it - and left `animation-delay` alone, so a
+ * staggered entrance with `fill: both` held its element at opacity 0 for the
+ * length of the delay before snapping in. Small, but it is a flash of missing
+ * content produced by the switch that is supposed to remove exactly that.
+ * Resetting the delays makes the two switches behave the same.
+ */
 :root[data-motion='off'] *,
 :root[data-motion='off'] *::before,
 :root[data-motion='off'] *::after {
   animation-duration: 1ms !important;
+  animation-delay: 0ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 1ms !important;
+  transition-delay: 0ms !important;
   scroll-behavior: auto !important;
 }
 

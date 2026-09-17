@@ -181,7 +181,7 @@ export function resetVisited(): void {
   emit();
 }
 
-/** Fraction of the five stages opened so far, used only by the mobile rail. */
+/** Fraction of the five stages opened so far. */
 export function progressFraction(): number {
   return prefs.visited.length / STAGES.length;
 }

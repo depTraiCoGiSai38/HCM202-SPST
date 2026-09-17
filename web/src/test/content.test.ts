@@ -12,12 +12,22 @@ import { parse } from '../lib/router';
 import { quizFor } from '../components/predict';
 import {
   FIGURES,
+  figureFilledCount,
+  figureStatus,
+  slotStatus,
   FIGURE_REQUIREMENTS,
   FIGURE_SLOTS,
   SOURCING_CHECKS,
 } from '../data/figures';
 import { splitForReading } from '../components/stagePage';
-import { LOCATORS, PRINTED_FORM_NOTES, RISKS, UNNOTED_MARKERS } from '../data/locators';
+import {
+  LOCATORS,
+  PRINTED_FORM_NOTES,
+  RISKS,
+  SUPERSEDED_RISKS,
+  UNNOTED_MARKERS,
+} from '../data/locators';
+import { SOURCE, citeSource, isInExcerpt, pdfPageOf } from '../data/source';
 import { COMPARE_AXES, EXPERIENCE_LINKS, PRESENTATION_BEATS, PRESENTATION_BUDGET_MAX, PRESENTATION_BUDGET_MIN } from '../data/interactions';
 
 /**
@@ -28,13 +38,21 @@ import { COMPARE_AXES, EXPERIENCE_LINKS, PRESENTATION_BEATS, PRESENTATION_BUDGET
  * outside the Showcase slot.
  */
 
-/** The five exact headings, as recorded in context section 8.2. */
+/**
+ * The five exact headings as printed in `Giáo trình Tư tưởng Hồ Chí Minh - 2019`,
+ * tr.28, 29, 31 and 33, read from the page scans at magnification.
+ *
+ * Two of these differ from the edition the product previously used, in ways that
+ * are easy to reintroduce by accident, so they are pinned here character for
+ * character: stage 2 opens on 6-6-1911 (not 5-6-1911, which belongs to stage 1),
+ * and stage 5 does NOT contain the word `hoàn thiện`.
+ */
 const EXACT_HEADINGS = [
-  'Thời kỳ trước ngày 5-6-1911: Hình thành tư tưởng yêu nước và có chí hướng tìm con đường cứu nước mới',
-  'Thời kỳ từ giữa năm 1911 đến cuối năm 1920: Dần dần hình thành tư tưởng cứu nước, giải phóng dân tộc Việt Nam theo con đường cách mạng vô sản',
-  'Thời kỳ từ cuối năm 1920 đến đầu năm 1930: Hình thành những nội dung cơ bản tư tưởng về cách mạng Việt Nam',
-  'Thời kỳ từ đầu năm 1930 đến đầu năm 1941: Vượt qua thử thách, giữ vững đường lối, phương pháp cách mạng Việt Nam đúng đắn, sáng tạo',
-  'Thời kỳ từ đầu năm 1941 đến tháng 9-1969: Tư tưởng Hồ Chí Minh tiếp tục phát triển, hoàn thiện, soi đường cho sự nghiệp cách mạng của Đảng và nhân dân ta',
+  'Thời kỳ từ ngày 5-6-1911 trở về trước: Hình thành tư tưởng yêu nước và chí hướng tìm con đường cứu nước mới',
+  'Thời kỳ từ ngày 6-6-1911 đến ngày 30-12-1920: Hình thành tư tưởng cứu nước, giải phóng dân tộc Việt Nam theo con đường cách mạng vô sản',
+  'Thời kỳ từ ngày 31-12-1920 đến ngày 3-2-1930: Hình thành những nội dung cơ bản tư tưởng về cách mạng Việt Nam',
+  'Thời kỳ từ ngày 4-2-1930 đến ngày 28-1-1941: Vượt qua thử thách, giữ vững đường lối, phương pháp cách mạng Việt Nam đúng đắn, sáng tạo',
+  'Thời kỳ từ ngày 29-1-1941 đến ngày 2-9-1969: Tư tưởng Hồ Chí Minh tiếp tục phát triển, soi đường cho sự nghiệp cách mạng của Đảng và nhân dân ta',
 ];
 
 describe('the five exact period headings', () => {
@@ -80,19 +98,36 @@ describe('locator candidates', () => {
     }
   });
 
-  it('never expands the "Sdd" abbreviation', () => {
-    const sdd = LOCATORS.filter((l) => l.printed.includes('Sđd'));
+  it('never expands the unresolved abbreviation, and keeps it as printed', () => {
+    // The 2019 edition prints it as "Sdd", without the bar on the d.
+    const sdd = LOCATORS.filter((l) => l.printed.includes('Sdd'));
     expect(sdd).toHaveLength(3);
     for (const l of sdd) {
       expect(l.caution).toBeDefined();
-      expect(l.caution).toContain('Sđd');
+      expect(l.caution).toContain('Sdd');
+      // Never silently normalised to the expected spelling, never expanded.
+      expect(l.printed).not.toContain('Sách đã dẫn');
     }
   });
 
-  it('keeps the printed page anomaly in note L8 unrepaired', () => {
+  it('records that the 2019 edition resolves the old page ambiguity in note L8', () => {
     const l8 = LOCATORS.find((l) => l.id === 'L8');
-    expect(l8?.printed).toContain('tr.l13');
-    expect(l8?.printed).not.toContain('tr.113');
+    // The retired excerpt printed an ambiguous "tr.l13"; the 2019 page prints "tr.113".
+    expect(l8?.printed).toContain('tr.113');
+    expect(l8?.printed).not.toContain('tr.l13');
+    // The change is explained rather than applied silently.
+    expect(l8?.caution).toContain('tr.l13');
+  });
+
+  it('keeps the restarted footnote numbering on tr.31 as printed', () => {
+    const l5 = LOCATORS.find((l) => l.id === 'L5');
+    expect(l5?.at.page).toBe(31);
+    expect(l5?.at.note).toBe(1);
+    expect(l5?.at.series).toBeDefined();
+    // L3 is also note 1 on the same page. That is what the page prints.
+    const l3 = LOCATORS.find((l) => l.id === 'L3');
+    expect(l3?.at.page).toBe(31);
+    expect(l3?.at.note).toBe(1);
   });
 
   it('every locator referenced by a stage or quotation exists', () => {
@@ -111,24 +146,39 @@ describe('locator candidates', () => {
 });
 
 describe('chronology and text risks', () => {
-  it('carries all nine registered risks', () => {
+  it('carries the eight risks registered against the 2019 edition', () => {
     expect(RISKS.map((r) => r.id)).toEqual([
-      'C2-R01',
-      'C2-R02',
-      'C2-R03',
-      'C2-R04',
-      'C2-R05',
-      'C2-R06',
-      'C2-R07',
-      'C2-R08',
-      'C2-R09',
+      'GT-R01',
+      'GT-R02',
+      'GT-R03',
+      'GT-R04',
+      'GT-R05',
+      'GT-R06',
+      'GT-R07',
+      'GT-R08',
     ]);
   });
 
   it('keeps the 6-6-1938 / Second World War sentence as a document conflict', () => {
-    const r5 = RISKS.find((r) => r.id === 'C2-R05');
-    expect(r5?.status).toBe('DOCUMENT CONFLICT');
-    expect(r5?.issue).toContain('6-6-1938');
+    const r = RISKS.find((r) => r.id === 'GT-R02');
+    expect(r?.status).toBe('DOCUMENT CONFLICT');
+    expect(r?.issue).toContain('6-6-1938');
+  });
+
+  it('accounts for every risk the retired excerpt carried', () => {
+    // Nothing may be dropped silently by the migration: each former risk is
+    // either resolved by the 2019 edition or carried over to a current entry.
+    expect(SUPERSEDED_RISKS).toHaveLength(9);
+    const current = new Set(RISKS.map((r) => r.id));
+    for (const sr of SUPERSEDED_RISKS) {
+      expect(sr.formerId).toMatch(/^C2-R0[1-9]$/);
+      if (sr.resolution === 'RESOLVED') {
+        expect(sr.nowId).toBeUndefined();
+      } else {
+        expect(sr.nowId, `${sr.formerId} must point at a live risk`).toBeDefined();
+        expect(current.has(sr.nowId as string)).toBe(true);
+      }
+    }
   });
 
   it('every risk referenced by a stage exists in the register', () => {
@@ -138,32 +188,46 @@ describe('chronology and text risks', () => {
     }
   });
 
-  it('the stages that share a boundary both cite the boundary risk', () => {
-    const s2 = STAGES.find((s) => s.id === 'ky-2');
-    const s3 = STAGES.find((s) => s.id === 'ky-3');
-    expect(s2?.riskIds).toContain('C2-R02');
-    expect(s3?.riskIds).toContain('C2-R02');
-
+  it('keeps the periodisation tension inside stage 4, where the source prints it', () => {
+    // The stage 4 heading stops at 28-1-1941 while its body narrates May 1941.
     const s4 = STAGES.find((s) => s.id === 'ky-4');
-    const s5 = STAGES.find((s) => s.id === 'ky-5');
-    expect(s4?.riskIds).toContain('C2-R03');
-    expect(s5?.riskIds).toContain('C2-R03');
+    expect(s4?.riskIds).toContain('GT-R03');
+    expect(s4?.headingPeriod).toContain('28-1-1941');
+    expect(JSON.stringify(s4?.development)).toContain('5-1941');
+  });
+
+  it('keeps the article-dating tension inside stage 3', () => {
+    const s3 = STAGES.find((s) => s.id === 'ky-3');
+    expect(s3?.riskIds).toContain('GT-R01');
+    expect(s3?.markers).toContain('8-1919');
+    expect(s3?.markers).toContain('4-11-1920');
   });
 });
 
-describe('rail geometry encodes the printed boundaries', () => {
-  it('draws late 1920 and early 1941 as overlapping, not as clean cuts', () => {
-    const byId = new Map(STAGES.map((s) => [s.id, s]));
-    const s2 = byId.get('ky-2');
-    const s3 = byId.get('ky-3');
-    const s4 = byId.get('ky-4');
-    const s5 = byId.get('ky-5');
-    if (!s2 || !s3 || !s4 || !s5) throw new Error('missing stage');
+describe('journey geometry encodes the printed boundaries', () => {
+  it('draws every joint as a clean cut, because the 2019 edition dates them exactly', () => {
+    // The retired excerpt shared vague boundaries between consecutive headings,
+    // so these ranges used to overlap. The 2019 edition prints consecutive days
+    // on either side of every joint, so they must now meet exactly.
+    for (let i = 0; i < STAGES.length - 1; i++) {
+      const a = STAGES[i];
+      const b = STAGES[i + 1];
+      if (!a || !b) throw new Error('missing stage');
+      expect(b.railStart, `stage ${String(i + 2)} must start where stage ${String(i + 1)} ends`).toBe(
+        a.railEnd,
+      );
+    }
+    expect(STAGES[0]?.railStart).toBe(0);
+    expect(STAGES[STAGES.length - 1]?.railEnd).toBe(1);
+  });
 
-    // Stage 3 starts before stage 2 ends: the shared late-1920 boundary.
-    expect(s3.railStart).toBeLessThan(s2.railEnd);
-    // Stage 5 starts before stage 4 ends: the shared early-1941 boundary.
-    expect(s5.railStart).toBeLessThan(s4.railEnd);
+  it('names both dates on every joint and registers no boundary risk', () => {
+    for (const b of BOUNDARIES) {
+      expect(b.kind).toBe('exact');
+      expect(b.riskId).toBeNull();
+      // Two printed dates, separated by the joint marker.
+      expect(b.label).toMatch(/^\d{1,2}-\d{1,2}-\d{4} › \d{1,2}-\d{1,2}-\d{4}$/);
+    }
   });
 
   it('has one boundary marker between each adjacent pair of stages', () => {
@@ -187,9 +251,13 @@ describe('excerpt boundary and epilogue', () => {
     expect(EPILOGUE.status).toBe('NEED VERIFICATION');
   });
 
-  it('records that section III has no body text in the excerpt', () => {
+  it('records where the 2019 excerpt stops, including the section III material', () => {
     expect(EXCERPT_BOUNDARY.headings).toContain('III. GIÁ TRỊ TƯ TƯỞNG HỒ CHÍ MINH');
-    expect(EXCERPT_BOUNDARY.note).toContain('Không có phần thân bài');
+    expect(EXCERPT_BOUNDARY.headings).toContain('1. Đối với cách mạng Việt Nam');
+    // Unlike the retired excerpt, the 2019 pages run on into the body of III.1.a.
+    // That body is outside the assigned content and must be declared as such.
+    expect(EXCERPT_BOUNDARY.headings).toHaveLength(3);
+    expect(EXCERPT_BOUNDARY.note).toContain('ngoài nội dung được giao');
   });
 });
 
@@ -210,7 +278,7 @@ describe('time markers keep the printed precision', () => {
   it('keeps the stage 1 departure marker at exactly 5-6-1911', () => {
     const s1 = STAGES.find((s) => s.id === 'ky-1');
     expect(s1?.markers).toContain('5-6-1911');
-    expect(s1?.markers).toContain('trước ngày 5-6-1911');
+    expect(s1?.markers).toContain('từ ngày 5-6-1911 trở về trước');
   });
 });
 
@@ -221,7 +289,7 @@ describe('cross-stage comparison', () => {
         const answer = axis.answers[stage.id];
         expect(answer, `${axis.id} is missing ${stage.id}`).toBeDefined();
         expect(answer.text.length).toBeGreaterThan(0);
-        expect(answer.at.length).toBeGreaterThan(0);
+        expect(isInExcerpt(answer.at)).toBe(true);
       }
     }
   });
@@ -237,7 +305,7 @@ describe('cross-stage comparison', () => {
 describe('experience links', () => {
   it('every pair carries a location in the excerpt', () => {
     for (const l of EXPERIENCE_LINKS) {
-      expect(l.at).toMatch(/^C2 PDF/);
+      expect(isInExcerpt(l.at)).toBe(true);
       expect(l.experience.length).toBeGreaterThan(0);
       expect(l.recognition.length).toBeGreaterThan(0);
     }
@@ -288,17 +356,23 @@ describe('printed-form register', () => {
   it('records both forms and never presents the normalised one as the source', () => {
     for (const n of PRINTED_FORM_NOTES) {
       expect(n.printed).not.toEqual(n.used);
-      expect(n.at).toMatch(/^C2 PDF/);
+      expect(isInExcerpt(n.at)).toBe(true);
       expect(n.where.length).toBeGreaterThan(0);
     }
   });
 
-  it('carries the four forms already registered under C2-R08', () => {
+  it('carries only forms actually printed in the 2019 pages', () => {
     const registered = PRINTED_FORM_NOTES.filter((n) => n.registered).map((n) => n.printed);
-    expect(registered).toContain('bước ngoạt');
     expect(registered).toContain('trở thành thành yếu tố chỉ đạo');
-    expect(registered).toContain('Hòa hình lập lại');
-    expect(registered).toContain('quân đội viễn Chính Mỹ');
+    expect(registered).toContain('chống thực dân pháp');
+    expect(registered).toContain('thày giáo');
+
+    // These four belonged to the retired excerpt and the 2019 pages print them
+    // correctly, so carrying them over would assert a defect that is not there.
+    expect(registered).not.toContain('bước ngoạt');
+    expect(registered).not.toContain('Hòa hình lập lại');
+    expect(registered).not.toContain('quân đội viễn Chính Mỹ');
+    expect(registered).not.toContain('Cương lĩhh chính trị đầu tiên');
   });
 
   it('ids are unique', () => {
@@ -307,11 +381,23 @@ describe('printed-form register', () => {
   });
 
   it('every passage that normalises a printed form carries a caution', () => {
-    // P1-6 normalises a duplicated word; it must say so rather than absorb it.
+    // P1-6 renders the 2019 spelling "thày giáo" as "thầy giáo"; it must say so
+    // rather than absorb the difference.
     const s1 = STAGES.find((s) => s.id === 'ky-1');
     const p16 = s1?.context.find((p) => p.id === 'P1-6');
     expect(p16?.caution).toBeDefined();
-    expect(p16?.caution).toContain('trong trong');
+    expect(p16?.caution).toContain('thày giáo');
+
+    // Every registered printed form must be reachable from some passage caution
+    // or from the register itself, so none of them is normalised in silence.
+    const cautions = JSON.stringify(
+      STAGES.flatMap((st) => [...st.context, ...st.development].map((x) => x.caution ?? '')),
+    );
+    for (const n of PRINTED_FORM_NOTES) {
+      expect(cautions.includes(n.printed), `${n.id} (${n.printed}) is normalised silently`).toBe(
+        true,
+      );
+    }
   });
 });
 
@@ -397,13 +483,35 @@ describe('documentary photographs', () => {
    * the reasons the slots are still blocked must stay published rather than
    * quietly disappearing when someone tidies up.
    */
-  it('publishes a position for the opening and for every stage', () => {
+  it('publishes a primary position for the opening and for every stage, plus one supporting position per stage', () => {
     expect(FIGURE_SLOTS.filter((s) => s.stageId === null)).toHaveLength(1);
     for (const stage of STAGES) {
-      expect(FIGURE_SLOTS.filter((s) => s.stageId === stage.id), stage.id).toHaveLength(1);
+      const mine = FIGURE_SLOTS.filter((s) => s.stageId === stage.id);
+      expect(mine.filter((s) => s.kind === 'primary'), stage.id).toHaveLength(1);
+      // The brief asks for one to three supporting visuals per stage.
+      const supporting = mine.filter((s) => s.kind === 'supporting').length;
+      expect(supporting, stage.id).toBeGreaterThanOrEqual(1);
+      expect(supporting, stage.id).toBeLessThanOrEqual(3);
     }
+  });
+
+  /**
+   * A role must say why an image would be here, not where it sits.
+   *
+   * Every stage role was once the same sentence with the period swapped, which
+   * answers "where does it go" and leaves "why is this image here" unanswered -
+   * the question the brief requires each image to answer before it is used.
+   */
+  it('gives every position a narrative role rather than a placement', () => {
+    const seen = new Set<string>();
     for (const slot of FIGURE_SLOTS) {
-      expect(slot.role.length).toBeGreaterThan(15);
+      expect(slot.role.length, slot.id).toBeGreaterThan(40);
+      // No two positions may share a role: identical roles mean the roles are
+      // describing the slot, not the job.
+      expect(seen.has(slot.role), slot.id).toBe(false);
+      seen.add(slot.role);
+      // The discarded template, kept as an explicit guard.
+      expect(slot.role, slot.id).not.toMatch(/^Tư liệu cho thời kỳ/);
     }
   });
 
@@ -491,6 +599,96 @@ describe('documentary photographs', () => {
       expect(blob.toLowerCase()).not.toContain(banned.toLowerCase());
     }
   });
+
+  /**
+   * The register may not drift from the data in either direction.
+   *
+   * It once reported that no photograph had cleared, because the summary status
+   * was a hand-written constant that nobody moved when the first one did. That
+   * is a false statement about evidence, which AGENTS.md treats as seriously as
+   * the opposite error. These derive-from-data guards make it impossible for
+   * the two to disagree again.
+   */
+  it('derives the documentary status from the records, in both directions', () => {
+    expect(figureFilledCount()).toBe(
+      FIGURE_SLOTS.filter((slot) => FIGURES.some((f) => f.id === slot.id)).length,
+    );
+    expect(figureFilledCount()).toBeGreaterThan(0);
+    expect(figureFilledCount()).toBeLessThan(FIGURE_SLOTS.length);
+    // A cleared photograph exists, so the programme is no longer NOT YET EVIDENCED.
+    expect(figureStatus()).toBe('NEED VERIFICATION');
+    for (const slot of FIGURE_SLOTS) {
+      const fig = FIGURES.find((f) => f.id === slot.id);
+      expect(slotStatus(slot.id), slot.id).toBe(fig ? fig.status : 'NOT YET EVIDENCED');
+    }
+  });
+
+  /**
+   * A supporting figure must name a real place in the stage flow.
+   *
+   * The placement lives in the data so a document cannot drift away from the
+   * claim it evidences. That only holds if every declared anchor resolves to a
+   * station that actually exists in that stage - otherwise the figure silently
+   * never renders and nobody notices.
+   */
+  it('anchors every supporting position to a station that exists in its stage', () => {
+    for (const slot of FIGURE_SLOTS) {
+      if (slot.kind === 'primary') {
+        expect(slot.anchor.where, slot.id).toBe('entrance');
+        continue;
+      }
+      expect(slot.anchor.where, slot.id).not.toBe('entrance');
+      const stage = STAGES.find((st) => st.id === slot.stageId);
+      expect(stage, slot.id).toBeDefined();
+      if (!stage || slot.anchor.where === 'entrance') continue;
+
+      const id = slot.anchor.id;
+      const found =
+        slot.anchor.where === 'turn'
+          ? stage.turningPoints.some((t) => t.id === id)
+          : slot.anchor.where === 'quote'
+            ? stage.quotations.includes(id)
+            : [...stage.context, ...stage.development].some((p) => p.id === id);
+      expect(found, `${slot.id} -> ${slot.anchor.where} ${id}`).toBe(true);
+    }
+  });
+
+  /**
+   * A record and the position it fills must agree about which stage they are
+   * on. A figure whose `stageId` disagreed with its slot would render in one
+   * place and be reported in another.
+   */
+  it('keeps every filled record on the same stage as the position it fills', () => {
+    for (const fig of FIGURES) {
+      const slot = FIGURE_SLOTS.find((sl) => sl.id === fig.id);
+      expect(slot, fig.id).toBeDefined();
+      if (slot) expect(fig.stageId, fig.id).toBe(slot.stageId);
+    }
+  });
+
+  /**
+   * The brief for this product requires identity, event/date, location, source,
+   * rights and offline packaging to be maintained SEPARATELY, so that a cleared
+   * axis can never carry an uncleared one. Each has its own field and each must
+   * actually say something.
+   */
+  it('keeps the six provenance checks as separate fields', () => {
+    for (const fig of FIGURES) {
+      for (const [name, value] of [
+        ['identification', fig.identification],
+        ['eventCheck', fig.eventCheck],
+        ['locationCheck', fig.locationCheck],
+        ['offlineCheck', fig.offlineCheck],
+        ['sourceUrl', fig.sourceUrl],
+        ['rights', fig.rights],
+      ] as const) {
+        expect(value.length, `${fig.id}.${name}`).toBeGreaterThan(10);
+      }
+      // The axes must not be copies of one another.
+      expect(fig.eventCheck).not.toBe(fig.identification);
+      expect(fig.locationCheck).not.toBe(fig.eventCheck);
+    }
+  });
 });
 
 describe('the optional guess uses only real stored answers', () => {
@@ -516,7 +714,7 @@ describe('the optional guess uses only real stored answers', () => {
         expect(answer, `${s.id} -> ${id}`).toBeDefined();
         // The option text is the stored answer, character for character.
         expect(answer.text.length).toBeGreaterThan(0);
-        expect(answer.at).toMatch(/^C2 PDF/);
+        expect(isInExcerpt(answer.at)).toBe(true);
       }
     }
   });
@@ -633,5 +831,67 @@ describe('a passage too long for one screen is split, never shortened', () => {
   it('leaves a passage inside the budget alone', () => {
     const short = 'Một câu ngắn.';
     expect(splitForReading(short)).toEqual([short]);
+  });
+});
+
+describe('the migrated base source', () => {
+  it('is the 2019 textbook, with the excerpt page range it actually has', () => {
+    expect(SOURCE.name).toBe('Giáo trình Tư tưởng Hồ Chí Minh - 2019');
+    expect(SOURCE.firstPage).toBe(28);
+    expect(SOURCE.lastPage).toBe(35);
+    expect(SOURCE.pdfPages).toBe(8);
+    // The supplied file is an unauthenticated scan. Migrating the source does
+    // not upgrade its provenance.
+    expect(SOURCE.provenance).toBe('NEED VERIFICATION');
+  });
+
+  it('maps every printed page onto a sheet of the supplied file', () => {
+    expect(pdfPageOf(SOURCE.firstPage)).toBe(1);
+    expect(pdfPageOf(SOURCE.lastPage)).toBe(SOURCE.pdfPages);
+  });
+
+  it('builds every public citation from the exact label and a printed page', () => {
+    const refs = [
+      ...STAGES.map((st) => st.at),
+      ...STAGES.flatMap((st) => [...st.context, ...st.development].map((p) => p.at)),
+      ...ALL_QUOTATIONS.map((q) => q.at),
+      ...LOCATORS.map((l) => l.at),
+      ...EXPERIENCE_LINKS.map((l) => l.at),
+      ...COMPARE_AXES.flatMap((a) => Object.values(a.answers).map((v) => v.at)),
+      ...PRINTED_FORM_NOTES.map((n) => n.at),
+      EPILOGUE.at,
+    ];
+    expect(refs.length).toBeGreaterThan(80);
+    for (const r of refs) {
+      expect(isInExcerpt(r), JSON.stringify(r)).toBe(true);
+      expect(citeSource(r)).toMatch(/^Giáo trình Tư tưởng Hồ Chí Minh - 2019, tr\. \d{2}(–\d{2})?/);
+    }
+  });
+
+  it('never lets the retired excerpt back in as a public citation', () => {
+    // The migration audit trail is allowed to name the old risk ids; the
+    // academic content the audience reads is not allowed to name the old file,
+    // its PDF pages, or the later edition.
+    const published = JSON.stringify([
+      STAGES,
+      ALL_QUOTATIONS,
+      LOCATORS,
+      RISKS,
+      COMPARE_AXES,
+      EXPERIENCE_LINKS,
+      PRINTED_FORM_NOTES,
+      BOUNDARIES,
+      EPILOGUE,
+      EXCERPT_BOUNDARY,
+    ]);
+    expect(published).not.toContain('C2 PDF');
+    expect(published).not.toContain('C2-02');
+    expect(published).not.toContain('C2-R');
+    expect(published).not.toContain('Giáo trình Tư tưởng Hồ Chí Minh - 2021');
+    expect(published).not.toContain('printed p.');
+  });
+
+  it('keeps the retired ids only in the migration audit trail', () => {
+    expect(SUPERSEDED_RISKS.map((r) => r.formerId)).toContain('C2-R01');
   });
 });

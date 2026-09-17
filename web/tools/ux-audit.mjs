@@ -62,7 +62,12 @@ const STATES = [
     route: '#/chang/ky-2',
     name: 'turning point crossed',
     prep: async (page) => {
-      await page.locator('.walk__phase[data-phase="buoc-ngoat"]').click();
+      // Step to the turn with Next. The phase jump buttons were removed when
+      // the stage stopped carrying a table of contents for itself.
+      const next = page.locator('.walk__nav.btn--primary');
+      const turn = page.locator('.station--turn');
+      const total = await page.locator('.walk__hit').count();
+      for (let i = 0; i < total && !(await turn.isVisible()); i++) await next.click();
       await page.waitForTimeout(200);
       await page.locator('.turn__cross').click();
       await page.waitForTimeout(500);

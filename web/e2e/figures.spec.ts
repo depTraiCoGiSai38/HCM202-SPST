@@ -93,13 +93,86 @@ test('the enlarged view opens, carries the credit, and closes back to its trigge
   await expect(shade).toBeHidden();
 });
 
-test('every stage carries its own documentary position', async ({ page }) => {
+test('every stage entrance carries its primary documentary position', async ({ page }) => {
   for (const id of ['ky-1', 'ky-2', 'ky-3', 'ky-4', 'ky-5']) {
     await page.goto(`/#/chang/${id}`);
-    const slot = page.locator('.walk__figure .figure--blocked');
-    await expect(slot, id).toBeVisible();
-    await expect(slot, id).toContainText('Tư liệu');
-    await expect(page.locator('main img'), id).toHaveCount(0);
+
+    // Exactly one position at the entrance: the primary anchor. The supporting
+    // position moved to the station it supports, so it no longer competes with
+    // the chapter opening.
+    const portrait = page.locator('.walk__portrait');
+    await expect(portrait, id).toHaveCount(1);
+    await expect(portrait.locator('.figure--blocked, .figure__frame'), id).toHaveCount(1);
+
+    // No primary portrait has cleared, so each entrance states the gap.
+    const note = portrait.locator('.figure--blocked');
+    await expect(note, id).toBeVisible();
+    await expect(note.locator('.station__flag'), id).toHaveCount(1);
+
+    // It states why an image would be there, not merely where it would sit.
+    const role = (await note.locator('.figure__blocked-role').textContent()) ?? '';
+    expect(role.length, id).toBeGreaterThan(40);
+    expect(role, id).not.toMatch(/^Tư liệu cho thời kỳ/);
+
+    // Nothing at a stage entrance is an image today.
+    await expect(portrait.locator('img'), id).toHaveCount(0);
+  }
+});
+
+test('a supporting document renders at the station it supports, not at the entrance', async ({
+  page,
+}) => {
+  await page.goto('/#/chang/ky-2');
+
+  // Not at the entrance.
+  await expect(page.locator('.walk__portrait img')).toHaveCount(0);
+  await expect(page.locator('.station__support')).toHaveCount(0);
+
+  // Walk to the turning point the figure is anchored to.
+  const next = page.locator('.walk__nav.btn--primary');
+  const support = page.locator('.station__support');
+  const total = await page.locator('.walk__hit').count();
+  for (let i = 0; i < total && !(await support.isVisible()); i++) await next.click();
+
+  await expect(support).toBeVisible();
+  // It sits under a turning point, which is the anchor declared in the data.
+  await expect(page.locator('.station--turn')).toBeVisible();
+
+  const img = support.locator('img');
+  await expect(img).toHaveCount(1);
+  // A local file, never a hotlink.
+  await expect(img).toHaveAttribute('src', /^\/?tu-lieu\//);
+  // Decoded, not a broken box.
+  expect(await img.evaluate((el) => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+
+  // The credit its source requires is beside it, not hidden behind a control.
+  await expect(support).toContainText('Source gallica.bnf.fr / Bibliothèque nationale de France');
+
+  // The product makes no claim that any individual appears in it.
+  const alt = (await img.getAttribute('alt')) ?? '';
+  expect(alt.length).toBeGreaterThan(60);
+  for (const name of ['Nguyễn Ái Quốc', 'Hồ Chí Minh', 'Nguyen Ai Quoc']) {
+    expect(alt, `alt must not name anyone: ${name}`).not.toContain(name);
+  }
+
+  // And the stated date discrepancy is published rather than smoothed over.
+  await support.locator('.lens-trigger').first().click();
+  const lens = page.locator('.lens');
+  await expect(lens).toContainText('16 décembre 1920');
+  await expect(lens).toContainText('25 đến 30-12-1920');
+  await expect(lens).toContainText('chưa xác lập');
+});
+
+test('the supporting position is only in the reading flow when it is filled', async ({ page }) => {
+  // ky-1's supporting position is declared and blocked. A blocked supporting
+  // position must not put an empty frame into the middle of a stage; it stays
+  // in the register instead.
+  await page.goto('/#/chang/ky-1');
+  const next = page.locator('.walk__nav.btn--primary');
+  const total = await page.locator('.walk__hit').count();
+  for (let i = 0; i < total; i++) {
+    await expect(page.locator('.station__support')).toHaveCount(0);
+    if (i < total - 1) await next.click();
   }
 });
 
@@ -108,8 +181,16 @@ test('the register publishes every position and every source that was opened', a
   const section = page.locator('#anh-tu-lieu');
   await expect(section).toBeVisible();
 
-  // One row per position: one filled, five still blocked.
-  await expect(section.locator('tbody').first().locator('tr')).toHaveCount(6);
+  // One row per declared position: the opening, five stage anchors and five
+  // supporting positions. The count is derived from the data, not written here,
+  // so adding a position cannot silently drop off this screen.
+  await expect(section.locator('tbody').first().locator('tr')).toHaveCount(11);
+
+  // And the register must agree with what the product displays: four positions
+  // have cleared, so exactly four rows are not NOT YET EVIDENCED.
+  const rows = section.locator('tbody').first().locator('tr');
+  await expect(rows.locator('.chip', { hasText: 'NOT YET EVIDENCED' })).toHaveCount(7);
+  await expect(rows.locator('.chip', { hasText: 'NEED VERIFICATION' })).toHaveCount(4);
 
   // Every source opened, with what it said - including the ones that did not
   // clear a slot, so nobody repeats the search, and including the correction to
@@ -117,7 +198,32 @@ test('the register publishes every position and every source that was opened', a
   await expect(section).toContainText('All rights reserved');
   await expect(section).toContainText('domaine public');
   await expect(section).toContainText('ĐÍNH CHÍNH');
-  await expect(section.locator('tbody').nth(1).locator('tr')).toHaveCount(5);
+
+  /*
+   * Fifteen checks: five from the first search round, four Gallica catalogue
+   * queries from the second, and six from the third - three that cleared a
+   * position and three that record a rejection or an open question.
+   *
+   * The count is explicit rather than derived, because a browser test cannot
+   * import the data module. It is deliberately exact: this register exists to
+   * be complete, so a check quietly disappearing from it should fail. The
+   * content assertions below pin what the newest rows must actually say, so the
+   * number alone cannot drift into meaning nothing.
+   */
+  await expect(section.locator('tbody').nth(1).locator('tr')).toHaveCount(15);
+
+  // The two documents the excerpt itself names, and the rejection that records
+  // a mistake nobody should repeat.
+  await expect(section).toContainText('LA QUESTION INDIGÈNE');
+  await expect(section).toContainText('4-INDOCH PIECE-68');
+  await expect(section).toContainText('tuần dương hạm');
+
+  // The searches that found nothing are published too, so nobody repeats them.
+  await expect(section).toContainText('Thành phố Hồ Chí Minh');
+  await expect(section).toContainText('conditions spécifiques');
+  // And the date discrepancy on the accepted plate is on this page, not buried.
+  await expect(section).toContainText('16 décembre 1920');
+  await expect(section).toContainText('25 đến 30-12-1920');
 });
 
 test('the journey thread draws itself once and ends fully drawn', async ({ page }) => {
@@ -164,7 +270,13 @@ test('with reduced motion the thread is simply already drawn', async ({ page }) 
 
 test('crossing a turning point marks the record without hiding anything', async ({ page }) => {
   await page.goto('/#/chang/ky-2');
-  await page.locator('.walk__phase[data-phase="buoc-ngoat"]').click();
+  // Step to the turn with Next: the phase jump buttons were removed when the
+  // stage stopped carrying a table of contents for itself.
+  const next = page.locator('.walk__nav.btn--primary');
+  const turn = page.locator('.station--turn');
+  const total = await page.locator('.walk__hit').count();
+  for (let i = 0; i < total && !(await turn.isVisible()); i++) await next.click();
+  await expect(turn).toBeVisible();
   await page.locator('.turn__cross').click();
 
   // The row fills in. The mark is a brief highlight on it, so the text it

@@ -1,6 +1,8 @@
+import { auditRef, citeSource } from '../data/source';
 import { COMPARE_AXES } from '../data/interactions';
+import { continueJourney, whatNext } from './whatnext';
 import { STAGES, STAGE_BY_ID } from '../data/stages';
-import type { CompareAxis, StageId } from '../data/types';
+import type { CompareAxis, SourceRef, StageId } from '../data/types';
 import { clear, h } from '../lib/dom';
 import { brief } from './brief';
 import { type EvidenceItem, lensTrigger, readLocator } from './evidence';
@@ -25,10 +27,26 @@ import { compareThread } from './thread';
 const AXIS_NOTE =
   'Bốn trục câu hỏi dưới đây do nhóm đặt ra để đối chiếu năm chặng. Trích đoạn không in sẵn những câu hỏi này, và mỗi câu trả lời là cách nhóm tóm tắt phần mà chặng đó in.';
 
-export function comparePage(): HTMLElement {
+/**
+ * The comparison screen.
+ *
+ * `pair` arrives from the address when the journey invited the learner here -
+ * after stage 2 the invitation compares the two stages just walked. Anything
+ * that is not a real stage id is ignored rather than trusted, and the defaults
+ * stand.
+ */
+export function comparePage(pair?: { left?: string | undefined; right?: string | undefined }): HTMLElement {
+  const known = (id: string | undefined): StageId | null =>
+    id && STAGE_BY_ID.has(id as StageId) ? (id as StageId) : null;
+
   let axis: CompareAxis = COMPARE_AXES[0] as CompareAxis;
-  let left: StageId = 'ky-1';
-  let right: StageId = 'ky-3';
+  let left: StageId = known(pair?.left) ?? 'ky-1';
+  let right: StageId = known(pair?.right) ?? 'ky-3';
+  // Comparing a stage with itself says nothing; fall back rather than render it.
+  if (left === right) {
+    left = 'ky-1';
+    right = 'ky-3';
+  }
 
   const axisRow = h('div', { class: 'duo__axes', role: 'group' });
   const board = h('div', { class: 'duo__board' });
@@ -59,7 +77,7 @@ export function comparePage(): HTMLElement {
 
     const side = (
       stage: typeof a,
-      answer: { text: string; at: string; caution?: string },
+      answer: { text: string; at: SourceRef; caution?: string },
       which: 'a' | 'b',
     ): HTMLElement => {
       const items: EvidenceItem[] = [
@@ -71,8 +89,8 @@ export function comparePage(): HTMLElement {
             'Câu trả lời này là cách nhóm tóm tắt phần mà chặng đó in, không phải câu in nguyên văn trong trích đoạn.',
           tone: 'caution',
         },
-        { label: 'Vị trí trong trích đoạn', value: readLocator(answer.at), tone: 'locator' },
-        { label: 'Vị trí, nguyên dạng lưu trữ', value: answer.at, tone: 'plain' },
+        { label: 'Nguồn', value: citeSource(answer.at), tone: 'locator' },
+        { label: 'Vị trí, nguyên dạng lưu trữ', value: auditRef(answer.at), tone: 'plain' },
         { label: 'Tiêu đề chính thức của chặng', value: stage.heading, tone: 'plain' },
       ];
       if (answer.caution) items.push({ label: 'Lưu ý', value: answer.caution, tone: 'caution' });
@@ -222,6 +240,11 @@ export function comparePage(): HTMLElement {
     ),
     board,
     live,
+    whatNext({
+      lead: 'Cùng một câu hỏi, hai chặng, hai câu trả lời khác nhau — đó là điều trích đoạn ghi lại.',
+      primary: continueJourney(),
+      secondary: { label: 'Nối trải nghiệm với nhận thức', href: '#/noi-ket' },
+    }),
   );
 
   render();

@@ -2,33 +2,37 @@ import {
   AFTER_STAGES,
   CENTRAL_QUESTION,
   CENTRAL_QUESTION_STATUS,
+  PRODUCT_SUBTITLE,
+  PRODUCT_TITLE,
   SECTION_HEADING,
   SECTION_HEADING_AT,
 } from '../data/project';
+import { citeSource } from '../data/source';
 import { FIGURE_SLOTS } from '../data/figures';
 import { STAGES, STAGE_BY_ID } from '../data/stages';
-import { figureSlot } from './figure';
 import { h } from '../lib/dom';
 import { getVisited, motionSuppressed, nextUnvisited } from '../lib/state';
 import { lensTrigger } from './evidence';
+import { figureSlot } from './figure';
 import { openingThread } from './thread';
 
 /**
- * The opening scene.
+ * The opening.
  *
- * One question, one drawing, one way forward. The verification apparatus is not
- * deleted from this screen - it is one keystroke away on the magnifier - but it
- * no longer greets the viewer as a wall of status labels.
+ * What changed and why. The Central Question used to be the first and largest
+ * thing on the screen, set as the page heading, with the five named stages
+ * beside it and the instructions below - 511 words measured in the first
+ * screen at 1440px. A question that long cannot be read at a glance, so the
+ * screen asked for a reading commitment before it had established what the
+ * product is.
  *
- * The drawing is the five-stage thread itself, so the structure of the whole
- * product is legible before the viewer has read a single passage.
+ * Now the first screen carries identity, one photograph, two lines of
+ * introduction and one action. The Central Question keeps every character of
+ * its approved wording and gets a section of its own directly below, where it
+ * has the room to be read as a question rather than skimmed as a wall.
  *
- * Beside the question stands a named list of the five stages. The drawing alone
- * showed that there are five of something and that they descend; it could not
- * say what they are. Someone arriving for the first time needs to know what
- * they are about to explore before they are asked to start, and the five exact
- * headings are the only honest answer to that - so they are here, in the same
- * shortened-label-plus-full-heading form the rail and the overview use.
+ * Nothing about its approval state is softened: the status is one control away
+ * on the same block, exactly as before.
  */
 
 const OPEN_SLOT = FIGURE_SLOTS.find((s) => s.id === 'FS-open') ?? {
@@ -37,107 +41,35 @@ const OPEN_SLOT = FIGURE_SLOTS.find((s) => s.id === 'FS-open') ?? {
   role: 'Ảnh dẫn nhập ở màn mở đầu.',
 };
 
+/**
+ * The two lines that introduce the product.
+ *
+ * `PROJECT DECISION`. They describe what this product is and what the viewer
+ * will do in it. They make no claim about history, so they carry no locator -
+ * and they are kept to two sentences because the measured problem here was
+ * volume, not absence.
+ */
+const INTRO =
+  'Một trích đoạn giáo trình, dựng lại thành hành trình để đi qua. Năm chặng, theo đúng thứ tự và đúng tên gọi mà trích đoạn in ra.';
+
 export function openingPage(): HTMLElement {
   const thread = openingThread();
   const visited = getVisited();
   const resumeAt = visited.length > 0 ? nextUnvisited() : null;
-  // Where the one primary action leads: the first stage not yet opened, or
-  // stage one for someone arriving for the first time.
   const entryStage = (resumeAt ? STAGE_BY_ID.get(resumeAt) : undefined) ?? STAGES[0];
   if (!entryStage) throw new Error('No stages');
 
   const scene = h(
     'section',
     { class: 'scene' },
-    h(
-      'div',
-      { class: 'scene__grid' },
-      h(
-        'div',
-        { class: 'scene__type' },
-        h(
-          'p',
-          { class: 'scene__kicker' },
-          h('span', { text: SECTION_HEADING }),
-          h('span', { class: 'scene__at', text: SECTION_HEADING_AT }),
-        ),
-        centralQuestion(),
-        /*
-         * One concrete first action.
-         *
-         * "Bắt đầu hành trình" named no destination and led to a map, so the
-         * first click bought orientation rather than progress. The primary
-         * action now names the stage it opens and goes there; the map stays,
-         * one step to the side, for anyone who wants to see the shape first.
-         */
-        h(
-          'div',
-          { class: 'scene__act' },
-          h(
-            'a',
-            { class: 'btn btn--primary btn--lg scene__go', href: `#/chang/${entryStage.id}` },
-            h('span', {
-              class: 'scene__go-lead',
-              text: visited.length > 0
-                ? `Tiếp tục · chặng ${String(entryStage.ordinal)}`
-                : `Bắt đầu · chặng ${String(entryStage.ordinal)}`,
-            }),
-            h('span', { class: 'scene__go-name', text: entryStage.headingPeriod }),
-            h('span', { class: 'visually-hidden', text: `. ${entryStage.heading}` }),
-          ),
-          h(
-            'a',
-            { class: 'btn scene__map', href: '#/hanh-trinh' },
-            h('span', { text: 'Xem bản đồ năm chặng' }),
-          ),
-          lensTrigger(
-            {
-              title: 'Câu hỏi trung tâm',
-              items: [
-                { label: 'Trạng thái', value: CENTRAL_QUESTION_STATUS, tone: 'status' },
-                {
-                  label: 'Vì sao',
-                  value:
-                    'Cả hai văn bản quy định đều yêu cầu sản phẩm giải quyết một câu hỏi trung tâm, nhưng không cung cấp sẵn nội dung câu hỏi. Câu trên là đề xuất của nhóm.',
-                  tone: 'plain',
-                },
-                { label: 'Phạm vi nội dung', value: SECTION_HEADING, tone: 'plain' },
-                { label: 'Vị trí', value: SECTION_HEADING_AT, tone: 'locator' },
-              ],
-            },
-            'Câu hỏi này đã được duyệt chưa?',
-          ),
-        ),
-        // Where the viewer left off, offered only once there is somewhere to
-        // return to. It never claims a stage was understood, only opened.
-        // Progress only. Where to go next is the primary action above, so this
-        // no longer repeats it as a second link.
-        visited.length > 0
-          ? h('p', {
-              class: 'scene__resume',
-              text: resumeAt
-                ? `Bạn đã mở ${String(visited.length)} trên ${String(STAGES.length)} chặng.`
-                : `Bạn đã mở cả ${String(STAGES.length)} chặng.`,
-            })
-          : null,
-      ),
-      // On one column the named stages come before the instructions: knowing
-      // what is in the product matters more than knowing how to work it.
-      preview(),
-      howToRead(),
-    ),
+    hero(entryStage, visited.length),
+    question(),
     h('div', { class: 'scene__draw' }, thread),
   );
 
   // The thread draws itself in only when motion is allowed. When it is not, it
   // is already in its final drawn state - nothing here is revealed only by
   // animation.
-  //
-  // The draw is animated directly rather than through a CSS transition on a
-  // `pathLength`-normalised dash: that form rendered the run short in Chrome,
-  // leaving the last stage missing. Here the dash is measured from the path and
-  // removed again once the animation finishes, so the resting state is simply a
-  // solid line with no dash arithmetic left in it.
   if (!motionSuppressed()) {
     scene.dataset['draw'] = 'pending';
     requestAnimationFrame(() => {
@@ -165,9 +97,111 @@ export function openingPage(): HTMLElement {
 }
 
 /**
- * The three moves the product asks of a reader, said before it asks for any of
- * them. `PROJECT DECISION`: it describes this product's own shape, so it needs
- * no locator and makes no claim about the source.
+ * The first screen: who this is, one document, one action.
+ *
+ * One primary action and one secondary beside it, and nothing else competing.
+ * Basis for keeping it to one: `primary-action` in SKILL.md Quick Reference
+ * section 4 - each screen gets one primary call, with secondary actions
+ * visually subordinate.
+ */
+function hero(entryStage: (typeof STAGES)[number], visitedCount: number): HTMLElement {
+  return h(
+    'div',
+    { class: 'hero' },
+    h(
+      'div',
+      { class: 'hero__type' },
+      h('p', { class: 'hero__label', text: PRODUCT_TITLE }),
+      h('h1', { class: 'hero__title', text: PRODUCT_SUBTITLE }),
+      h('p', { class: 'hero__intro', text: INTRO }),
+      h(
+        'div',
+        { class: 'hero__act' },
+        h(
+          'a',
+          { class: 'btn btn--primary btn--lg scene__go', href: `#/chang/${entryStage.id}` },
+          h('span', {
+            class: 'scene__go-lead',
+            text: visitedCount > 0
+              ? `Tiếp tục · chặng ${String(entryStage.ordinal)}`
+              : `Bắt đầu · chặng ${String(entryStage.ordinal)}`,
+          }),
+          h('span', { class: 'scene__go-name', text: entryStage.headingPeriod }),
+          h('span', { class: 'visually-hidden', text: `. ${entryStage.heading}` }),
+        ),
+        h('a', { class: 'btn scene__map', href: '#/hanh-trinh' }, h('span', { text: 'Xem toàn bộ 5 chặng' })),
+      ),
+      visitedCount > 0
+        ? h('p', {
+            class: 'scene__resume',
+            text: `Bạn đã mở ${String(visitedCount)} trên ${String(STAGES.length)} chặng.`,
+          })
+        : null,
+    ),
+    // The documentary anchor for this screen. It holds a photograph once one has
+    // cleared its source and its usage condition, and says so plainly otherwise.
+    h('div', { class: 'hero__figure' }, figureSlot('FS-open', OPEN_SLOT.role)),
+  );
+}
+
+/**
+ * The Central Question, in a room of its own.
+ *
+ * The wording is the approved wording, character for character. The sentence
+ * turns on `mà được`: what the process is NOT, then what it IS, and typography
+ * is allowed to show that hinge. The two spans concatenate back to the stored
+ * string exactly, which a unit test checks, and assistive technology reads the
+ * whole sentence as one heading.
+ */
+const HINGE = 'mà được hình thành';
+
+function question(): HTMLElement {
+  const at = CENTRAL_QUESTION.indexOf(HINGE);
+  const text =
+    at < 0
+      ? h('h2', { class: 'ask__text', text: CENTRAL_QUESTION })
+      : h(
+          'h2',
+          { class: 'ask__text' },
+          h('span', { class: 'ask__lead', text: CENTRAL_QUESTION.slice(0, at) }),
+          h('span', { class: 'ask__rest', text: CENTRAL_QUESTION.slice(at) }),
+        );
+
+  return h(
+    'section',
+    { class: 'ask' },
+    h('p', { class: 'ask__kicker', text: 'Câu hỏi dẫn đường' }),
+    text,
+    h(
+      'div',
+      { class: 'ask__foot' },
+      lensTrigger(
+        {
+          title: 'Câu hỏi trung tâm',
+          items: [
+            { label: 'Trạng thái', value: CENTRAL_QUESTION_STATUS, tone: 'status' },
+            {
+              label: 'Vì sao',
+              value:
+                'Cả hai văn bản quy định đều yêu cầu sản phẩm giải quyết một câu hỏi trung tâm, nhưng không cung cấp sẵn nội dung câu hỏi. Câu trên là đề xuất của nhóm.',
+              tone: 'plain',
+            },
+            { label: 'Phạm vi nội dung', value: SECTION_HEADING, tone: 'plain' },
+            { label: 'Nguồn', value: citeSource(SECTION_HEADING_AT), tone: 'locator' },
+          ],
+        },
+        'Câu hỏi này đã được duyệt chưa?',
+      ),
+    ),
+    stageList(),
+    howToRead(),
+  );
+}
+
+/**
+ * The three moves the product asks of a reader. `PROJECT DECISION`: it
+ * describes this product's own shape, so it needs no locator and makes no claim
+ * about the source.
  */
 const HOW = [
   'Đi qua năm chặng theo đúng thứ tự trích đoạn in chúng.',
@@ -214,11 +248,11 @@ function howToRead(): HTMLElement {
 /**
  * The five stages, named.
  *
- * Each row shows the period part of the exact heading, as the rail and the
- * overview do, and carries the full official heading for assistive technology
- * so the shortened form is never the only name for a stage.
+ * Each row shows the period part of the exact heading and carries the full
+ * official heading for assistive technology, so the shortened form is never the
+ * only name for a stage.
  */
-function preview(): HTMLElement {
+function stageList(): HTMLElement {
   const visited = getVisited();
   const list = h('ol', { class: 'scene__stages' });
 
@@ -244,38 +278,9 @@ function preview(): HTMLElement {
   }
 
   return h(
-    'aside',
-    { class: 'scene__aside', aria: { label: 'Năm chặng bạn sẽ đi qua' } },
+    'div',
+    { class: 'scene__aside', role: 'group', aria: { label: 'Năm chặng bạn sẽ đi qua' } },
     h('p', { class: 'scene__aside-label', text: 'Bạn sẽ đi qua' }),
     list,
-    // The documentary position for this screen, beside the question rather than
-    // under the whole page. It holds a photograph once one has cleared its
-    // source and its usage condition, and says so plainly while none has.
-    h('div', { class: 'scene__figure' }, figureSlot('FS-open', OPEN_SLOT.role)),
-  );
-}
-
-/**
- * The Central Question, set in two movements.
- *
- * The sentence turns on `mà được`: what the process is NOT, then what it IS.
- * Typography is allowed to show that hinge, so the viewer reads a question
- * rather than a wall. The text is never cut, reordered or rewritten - the two
- * spans concatenate back to the stored string exactly, which a unit test
- * checks, and assistive technology reads the whole sentence as one heading.
- */
-const HINGE = 'mà được hình thành';
-
-function centralQuestion(): HTMLElement {
-  const at = CENTRAL_QUESTION.indexOf(HINGE);
-  if (at < 0) {
-    return h('h1', { class: 'scene__question', text: CENTRAL_QUESTION });
-  }
-
-  return h(
-    'h1',
-    { class: 'scene__question' },
-    h('span', { class: 'scene__q-lead', text: CENTRAL_QUESTION.slice(0, at) }),
-    h('span', { class: 'scene__q-rest', text: CENTRAL_QUESTION.slice(at) }),
   );
 }

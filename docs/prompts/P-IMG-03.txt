@@ -1,0 +1,611 @@
+# VISUAL ASSET RESEARCH + INTEGRATION SPRINT
+## HÀNH TRÌNH TƯ TƯỞNG
+
+Before doing anything:
+
+1. Read `AGENTS.md` completely.
+2. Read `HCM202_PROJECT_CONTEXT_v3.0_FORENSIC_FINAL.md` completely.
+3. Verify the hashes of:
+   - `C2-02.pdf`
+   - `LLCT_Fall2026_Student_Guideline_TT_v2.0_FINAL.pdf`
+   - `TT_CamNang_HoSo_ToanDien_Fall2026.pdf`
+4. Read:
+   - `UX_REDESIGN_REPORT.md`
+   - `design-system/hanh-trinh-tu-tuong/MASTER.md`
+   - `docs/08_Image_Source_Register_TEMPLATE.md`
+   - all existing image Prompt Logs
+5. Inspect the current implementation before editing.
+
+Also invoke and actively use `ui-ux-pro-max`.
+Read its full `SKILL.md`.
+
+If the skill is unavailable, report that clearly.
+Do not pretend it was used.
+
+---
+
+# GOAL
+
+This is NOT another general UX redesign.
+
+The current redesign should be preserved.
+
+The task is:
+
+# RESEARCH, VERIFY AND INTEGRATE AUTHENTIC HISTORICAL VISUALS
+# ACROSS ALL FIVE STAGES
+
+while preserving the simplified UX that now exists.
+
+The desired experience is:
+
+**one strong portrait / documentary anchor**
+→
+**story**
+→
+**supporting document or historical image at the moment it becomes relevant**
+→
+**turning point**
+→
+**reflection**
+
+NOT:
+
+**gallery of images at the top of every stage**
+
+and NOT:
+
+**return to dashboard density**
+
+---
+
+# CURRENT CODE REALITY
+
+Inspect and preserve the existing image architecture.
+
+Important files include:
+
+- `web/src/data/figures.ts`
+- `web/src/components/figure.ts`
+- `web/src/components/stagePage.ts`
+- `web/src/components/openingPage.ts`
+- `web/src/components/verifyPage.ts`
+- `web/src/styles/experience.css`
+- `web/src/test/content.test.ts`
+- `web/e2e/figures.spec.ts`
+- `web/tools/bundle-offline.mjs`
+- `web/tools/offline-check.mjs`
+
+Current state:
+
+- `FS-open` is filled.
+- It MUST remain unattached to a stage.
+- Its BnF event is Marseille, December 1921, outside the assigned excerpt.
+- Do NOT reuse it as a Stage 2 or Stage 3 illustration merely because the subject looks appropriate.
+
+Current declared slots:
+
+- `FS-open`
+
+Stage 1:
+- `FS-ky-1`
+- `FS-ky-1-b`
+
+Stage 2:
+- `FS-ky-2`
+- `FS-ky-2-b`
+
+Stage 3:
+- `FS-ky-3`
+- `FS-ky-3-b`
+
+Stage 4:
+- `FS-ky-4`
+- `FS-ky-4-b`
+
+Stage 5:
+- `FS-ky-5`
+- `FS-ky-5-b`
+
+There are therefore currently 11 declared positions.
+
+Do not trust old documentation that still says there are only six.
+Audit and correct documentation drift.
+
+---
+
+# FIRST: AUDIT, DO NOT MODIFY YET
+
+Produce a short:
+
+## IMAGE-INTEGRATION AUDIT
+
+Report:
+
+1. actual current figure slots;
+2. actual filled slots;
+3. current source checks;
+4. which docs/tests still contain outdated counts;
+5. where primary images currently render;
+6. where supporting images currently render;
+7. whether filling every slot today would overload the stage entrance;
+8. exact files that must change.
+
+Then proceed.
+
+Do not stop after the audit.
+
+---
+
+# VISUAL STRATEGY
+
+## PRIMARY IMAGE
+
+Every stage should AIM to have:
+
+### ONE primary authentic visual anchor
+
+Prefer an authentic archival photograph of Hồ Chí Minh that can be legitimately connected to that stage.
+
+Its role is:
+
+- identify the human subject of the journey;
+- create emotional/historical orientation;
+- anchor the chapter visually.
+
+The primary image belongs at the stage entrance.
+
+---
+
+# SUPPORTING VISUALS
+
+Each stage may have:
+
+### 1–3 supporting visuals
+
+Possible forms:
+
+- authentic photograph;
+- document;
+- newspaper/page;
+- location/context image;
+- organization/event material;
+- map/documentary material.
+
+But supporting images must NOT all sit in `walk__portrait`.
+
+They should appear close to the passage / turning point / quotation they actually support.
+
+Example:
+
+stage entrance:
+PRIMARY PORTRAIT
+
+later:
+PASSAGE
+
+then, if verified:
+SUPPORTING IMAGE / DOCUMENT
+
+then:
+TURNING POINT
+
+then:
+another supporting document if it genuinely helps.
+
+---
+
+# REQUIRED ARCHITECTURE CHANGE
+
+Audit the existing `FigureSlot` model.
+
+Currently it knows:
+
+- stage
+- primary/supporting
+- role
+
+but not the exact narrative point where a supporting visual belongs.
+
+Extend the model minimally so a supporting figure can declare a placement such as:
+
+- stage entrance
+- passage ID
+- turning-point ID
+- quotation ID
+
+Choose the smallest clean implementation that fits the current architecture.
+
+Do NOT rewrite the application.
+
+Primary figures remain in the stage opening.
+
+Supporting figures should render near their semantic anchor in the existing station flow.
+
+If no supporting figure is verified:
+
+do NOT add a large empty image placeholder into the reading flow.
+
+Keep missing evidence visible in the verification apparatus, not as repeated blank boxes throughout the learning journey.
+
+---
+
+# IMAGE RESEARCH PROTOCOL
+
+Research each stage separately.
+
+For every candidate:
+
+## A — DOCUMENT IDENTITY
+
+Establish:
+
+- institution / holding archive;
+- item record;
+- collection / identifier where available;
+- creator where the source states one.
+
+A search-result page is NOT evidence.
+
+Open the original item record.
+
+---
+
+## B — SUBJECT / EVENT / DATE / PLACE
+
+Maintain these separately:
+
+### identity
+Who does the source say is in the image?
+
+### event/date
+What event/date does the source itself state?
+
+### location
+What location does the source itself state?
+
+Do not infer one axis from another.
+
+If unknown:
+
+state that it is unknown.
+
+---
+
+## C — USAGE CONDITIONS
+
+Open the actual usage / rights page of the holder.
+
+Record the relevant wording.
+
+Do not convert:
+
+“no reuse information found”
+
+into:
+
+“reuse prohibited”.
+
+Those are different states.
+
+If permission is unclear:
+
+`NEED VERIFICATION`
+
+and do not ship the image.
+
+---
+
+# SOURCE PRIORITY FOR IMAGE RESEARCH
+
+Prefer original holding institutions and archive records.
+
+Continue the research already recorded in `SOURCING_CHECKS`.
+
+Do NOT repeat searches already documented without reason.
+
+Possible directions already identified in the project include:
+
+- Gallica / Bibliothèque nationale de France
+- Bảo tàng Hồ Chí Minh item records
+- archival institutions
+- legitimate institutional collections
+
+A Wikimedia/Google/Bing result may help DISCOVER a candidate.
+
+It must not become the final provenance source unless the actual underlying source is independently verified.
+
+---
+
+# STAGE-BY-STAGE RESEARCH
+
+Use the exact five stage headings and C2 content boundaries.
+
+Do not search for “a nice Hồ Chí Minh photo for stage X”.
+
+Search for documentary material tied to content that C2 actually prints.
+
+For each stage, first produce:
+
+## VISUAL NEED
+
+- what idea needs visual support;
+- which C2 passage / turning point it corresponds to;
+- whether portrait, place, document or event material would best serve it.
+
+Then research candidates.
+
+---
+
+# ABSOLUTE HISTORICAL SAFETY
+
+Never:
+
+- generate Hồ Chí Minh with AI;
+- generate fake historical scenes;
+- restore with generative AI;
+- colorize using AI;
+- face swap;
+- animate eyes or face;
+- lip-sync;
+- synthesize speech;
+- fabricate captions;
+- infer dates;
+- infer locations;
+- attach an image to a stage because “it looks like the right period”.
+
+No image is better than a misleading image.
+
+---
+
+# DO NOT REQUIRE FIVE BAD PORTRAITS
+
+The target is:
+
+one authentic primary portrait per stage.
+
+But accuracy takes precedence over symmetry.
+
+If a stage has no portrait that clears provenance + stage relevance + usage conditions:
+
+DO NOT substitute an unrelated portrait.
+
+Use the existing date / editorial stage anchor as the temporary primary visual.
+
+Record:
+
+`NOT YET EVIDENCED`
+
+in the verification record.
+
+The interface must still look intentional without the image.
+
+---
+
+# DATA RECORD
+
+Every image added to `FIGURES` must preserve the current required fields:
+
+- id
+- file
+- width
+- height
+- alt
+- caption
+- sourceName
+- sourceUrl
+- credit
+- rights
+- rightsUrl
+- identification
+- eventCheck
+- locationCheck
+- offlineCheck
+- stageId
+- status
+
+Do not weaken this model.
+
+If placement metadata is required for supporting visuals, extend it separately.
+
+---
+
+# ORIGINAL + WEB DERIVATIVE
+
+For every accepted image:
+
+1. retain the original archival download in:
+   `docs/anh-tu-lieu-goc/`
+
+2. record SHA-256;
+
+3. create only a non-deceptive web derivative in:
+   `web/public/tu-lieu/`
+
+Allowed processing:
+
+- resize;
+- non-destructive format conversion;
+- compression.
+
+Do not:
+
+- retouch;
+- generatively restore;
+- remove documentary markings;
+- modify faces;
+- alter historical content.
+
+Avoid cropping unless:
+- the source/rights allow it;
+- it does not alter documentary meaning;
+- the decision is recorded.
+
+Default preference: preserve the full document.
+
+---
+
+# DOCUMENTATION
+
+Fix the current drift in:
+
+`docs/08_Image_Source_Register_TEMPLATE.md`
+
+It currently does not fully match the actual slot model.
+
+Update it so:
+
+- slot counts derive from / match current code;
+- real image records remain evidence;
+- empty records remain `TEMPLATE - NOT EVIDENCE`;
+- every opened source is logged;
+- corrections are preserved rather than silently deleted.
+
+Do not rewrite old mistakes out of history.
+
+Document the correction.
+
+---
+
+# UX RULE: DO NOT BREAK THE REDESIGN
+
+Preserve the UX improvements already implemented.
+
+Specifically do not bring back:
+
+- permanent stage rail;
+- phase tab bar;
+- duplicated stage pager;
+- large status dashboards;
+- excessive metadata in the learning canvas.
+
+Maintain the current principle:
+
+# MORE EXPERIENCE, LESS INTERFACE
+
+Images should reduce text fatigue.
+
+They must not create new clutter.
+
+---
+
+# PRIMARY VS SUPPORTING LAYOUT
+
+## Primary
+
+Large enough to act as the stage's visual anchor.
+
+Use the existing editorial/documentary treatment.
+
+## Supporting
+
+Smaller and contextual.
+
+Place near the content it explains.
+
+Do not make every supporting visual the same size.
+
+Do not build a generic card grid.
+
+Do not build a photo carousel solely to fit more images.
+
+---
+
+# MOTION
+
+Preserve the existing rule:
+
+the historical subject does not move.
+
+Allowed motion around imagery:
+
+- frame reveal;
+- opacity reveal;
+- document slide-in;
+- timeline drawing;
+- subtle container movement;
+- line connection;
+- contextual mask reveal.
+
+Do NOT animate:
+
+- face;
+- eyes;
+- mouth;
+- body;
+- fake camera motion implying the photograph is video.
+
+All visual content must remain present when:
+
+`prefers-reduced-motion: reduce`
+
+is active.
+
+---
+
+# OFFLINE SUPPORT
+
+Do not hotlink images.
+
+Final accepted assets must be local.
+
+Preserve the current offline packaging architecture:
+
+`web/public/tu-lieu/`
+→ build
+→ `dist/tu-lieu/`
+→ single-file offline bundle as data URI.
+
+Run the existing offline checker.
+
+Every accepted image must decode offline.
+
+---
+
+# TESTS
+
+Do not delete or weaken provenance tests to make new images pass.
+
+Update tests honestly.
+
+Current tests contain assumptions from the one-image state, including expectations that:
+
+- stages contain no images;
+- only one slot is filled;
+- ten are blocked.
+
+Those expectations must change as real records are added.
+
+Replace brittle fixed counts with either:
+
+- data-derived expectations;
+- or explicit correct counts based on the accepted records.
+
+Preserve tests that enforce:
+
+- original source URLs;
+- no search-result links;
+- all provenance fields;
+- separate identity/event/location/source/rights/offline axes;
+- local image files;
+- non-generated portraits;
+- visible attribution;
+- accessible alt text;
+- keyboard enlargement;
+- reduced-motion behavior;
+- truthful verification register.
+
+---
+
+# REQUIRED TEST RUN
+
+After integration run:
+
+```bash
+npm run typecheck
+npm run lint
+npm run test
+npm run build
+npm run e2e
+npm run build:offline
+npm run check:offline

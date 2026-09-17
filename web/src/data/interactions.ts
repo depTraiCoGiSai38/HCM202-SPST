@@ -1,3 +1,4 @@
+import { ref } from './source.ts';
 import type { CompareAxis, ExperienceLink, PresentationBeat } from './types';
 
 /**
@@ -6,7 +7,7 @@ import type { CompareAxis, ExperienceLink, PresentationBeat } from './types';
  * PROVENANCE. Both halves of this structure are the group's work, not the
  * excerpt's:
  *
- *  - the questions are comparison axes the group designed. C2 does not pose
+ *  - the questions are comparison axes the group designed. Giáo trình 2019 does not pose
  *    them, and no heading or sentence in the excerpt asks them;
  *  - each answer is the group's compression of what that stage prints. Several
  *    draw on more than one passage, which is why some `at` values span a page
@@ -26,23 +27,23 @@ export const COMPARE_AXES: CompareAxis[] = [
     answers: {
       'ky-1': {
         text: 'Chưa xác định. Người khâm phục tinh thần yêu nước của các vị tiền bối nhưng không tán thành, không đi theo phương pháp và khuynh hướng cứu nước của họ, và quyết định đi ra nước ngoài để tìm.',
-        at: 'C2 PDF p.2 / printed p.27',
+        at: ref(28),
       },
       'ky-2': {
         text: 'Được xác định là con đường cách mạng vô sản, sau khi nghiên cứu Sơ thảo luận cương của Lênin vào tháng 7-1920.',
-        at: 'C2 PDF p.3',
+        at: ref(29),
       },
       'ky-3': {
         text: 'Được cụ thể hoá thành đường lối và phương pháp cách mạng Việt Nam, kết tinh trong Cương lĩnh chính trị đầu tiên vào đầu năm 1930.',
-        at: 'C2 PDF p.5',
+        at: ref(31),
       },
       'ky-4': {
         text: 'Bị phê phán trong nội bộ rồi được giữ vững; đến Hội nghị tháng 5-1941 thì nhiệm vụ giải phóng dân tộc được đặt lên hàng đầu.',
-        at: 'C2 PDF pp.6-8',
+        at: ref(31, 33),
       },
       'ky-5': {
         text: 'Được thực hiện trong thực tiễn nhà nước và kháng chiến, rồi mở rộng thành hai nhiệm vụ chiến lược cùng lúc trong những năm 1954-1969.',
-        at: 'C2 PDF pp.8-10',
+        at: ref(33, 34),
       },
     },
   },
@@ -52,24 +53,24 @@ export const COMPARE_AXES: CompareAxis[] = [
     answers: {
       'ky-1': {
         text: 'Trích đoạn chưa nêu một quan niệm về lực lượng cách mạng trong chặng này.',
-        at: 'C2 PDF pp.1-2',
+        at: ref(28),
         caution: 'Không suy luận bổ sung cho ô trống này.',
       },
       'ky-2': {
         text: 'Hình thành nhận thức rằng nhân dân lao động các nước, trong đó có giai cấp công nhân, đều bị bóc lột nên có thể là bạn của nhau.',
-        at: 'C2 PDF p.2 / printed p.27',
+        at: ref(29),
       },
       'ky-3': {
         text: 'Xác định lực lượng cách mạng giải phóng dân tộc là toàn thể nhân dân Việt Nam, trong đó nòng cốt là liên minh công nông.',
-        at: 'C2 PDF p.5 / printed p.29',
+        at: ref(30),
       },
       'ky-4': {
         text: 'Chủ trương lập Mặt trận Việt Minh, thực hiện đại đoàn kết dân tộc trên cơ sở nòng cốt liên minh công nông.',
-        at: 'C2 PDF p.8',
+        at: ref(33),
       },
       'ky-5': {
         text: 'Mặt trận Việt Minh được sáng lập ngày 19-5-1941; Việt Nam tuyên truyền giải phóng quân được sáng lập ngày 22-12-1944; đường lối kháng chiến là toàn dân, toàn diện.',
-        at: 'C2 PDF pp.8-9 / printed p.33',
+        at: ref(33, 34),
       },
     },
   },
@@ -79,24 +80,24 @@ export const COMPARE_AXES: CompareAxis[] = [
     answers: {
       'ky-1': {
         text: 'Trích đoạn chưa đặt vấn đề này trong chặng 1.',
-        at: 'C2 PDF pp.1-2',
+        at: ref(28),
         caution: 'Không suy luận bổ sung cho ô trống này.',
       },
       'ky-2': {
-        text: 'Chủ nghĩa yêu nước kết hợp chặt chẽ với lập trường cách mạng vô sản, theo cách C2 mô tả bước ngoặt cuối năm 1920.',
-        at: 'C2 PDF pp.3-4',
+        text: 'Chủ nghĩa yêu nước kết hợp chặt chẽ với lập trường cách mạng vô sản, theo cách Giáo trình 2019 mô tả bước ngoặt tại Đại hội Tua tháng 12-1920.',
+        at: ref(29),
       },
       'ky-3': {
-        text: 'C2 nhận định Cương lĩnh thể hiện sự vận dụng sáng tạo trong việc giải quyết mối quan hệ giai cấp - dân tộc - quốc tế.',
-        at: 'C2 PDF pp.5-6',
+        text: 'Giáo trình 2019 nhận định Cương lĩnh thể hiện sự vận dụng sáng tạo trong việc giải quyết mối quan hệ giai cấp - dân tộc - quốc tế.',
+        at: ref(31),
       },
       'ky-4': {
         text: 'Quan điểm của Người bị coi là “hữu khuynh”, “dân tộc chủ nghĩa”; đến tháng 5-1941, nghị quyết Hội nghị nêu rằng quyền lợi của bộ phận, của giai cấp phải đặt dưới sự sinh tử, tồn vong của quốc gia, của dân tộc.',
-        at: 'C2 PDF pp.6-7 / printed p.31',
+        at: ref(31, 32),
       },
       'ky-5': {
-        text: 'C2 nhận định tư tưởng Hồ Chí Minh và đường lối của Đảng trong thời kỳ này cơ bản là thống nhất.',
-        at: 'C2 PDF p.8 / printed p.33',
+        text: 'Giáo trình 2019 nhận định tư tưởng Hồ Chí Minh và đường lối của Đảng trong thời kỳ này cơ bản là thống nhất.',
+        at: ref(33),
       },
     },
   },
@@ -106,23 +107,23 @@ export const COMPARE_AXES: CompareAxis[] = [
     answers: {
       'ky-1': {
         text: 'Tình cảnh nước nhà bị giặc ngoại xâm đô hộ, và sự bế tắc của các khuynh hướng cứu nước đương thời mà Người không tán thành.',
-        at: 'C2 PDF p.2 / printed p.27',
+        at: ref(28),
       },
       'ky-2': {
         text: 'Chủ nghĩa thực dân và chế độ thuộc địa, được nhận diện qua cuộc hành trình qua nhiều nước.',
-        at: 'C2 PDF pp.2-3',
+        at: ref(29),
       },
       'ky-3': {
         text: 'Trích đoạn nhấn vào công việc truyền bá và tổ chức; thử thách được đặt thành trọng tâm ở chặng kế tiếp.',
-        at: 'C2 PDF pp.4-6',
+        at: ref(30),
       },
       'ky-4': {
         text: 'Thử thách xuất hiện không chỉ từ phía kẻ thù mà còn từ trong nội bộ những người cách mạng, gồm cả việc bị phê phán và bị đổi tên Đảng.',
-        at: 'C2 PDF p.6 / printed p.31',
+        at: ref(31, 32),
       },
       'ky-5': {
-        text: 'Chính quyền cách mạng non trẻ trải qua thử thách được C2 mô tả là ngàn cân treo sợi tóc, rồi tới hai cuộc kháng chiến.',
-        at: 'C2 PDF p.9',
+        text: 'Chính quyền cách mạng non trẻ trải qua thử thách được Giáo trình 2019 mô tả là ngàn cân treo sợi tóc, rồi tới hai cuộc kháng chiến.',
+        at: ref(34),
       },
     },
   },
@@ -138,7 +139,7 @@ export const COMPARE_AXES: CompareAxis[] = [
  *  - the wording on both sides is the group's compression, not verbatim text;
  *  - several pairs rest on more than one passage - EL-7, EL-8 and EL-12 carry
  *    `at` values spanning a page range. EL-11 is stored as a single page,
- *    `C2 PDF p.9`; an earlier version of this note listed it here in error.
+ *    `Giáo trình 2019 PDF p.9`; an earlier version of this note listed it here in error.
  *    The locator itself is left exactly as recorded, because whether it should
  *    span further has not been checked against the excerpt;
  *  - the excerpt does place these experiences and recognitions together, but
@@ -155,7 +156,7 @@ export const EXPERIENCE_LINKS: ExperienceLink[] = [
       'Theo học các vị túc Nho, tiếp xúc sách báo tiến bộ ở Vinh và kinh đô Huế, tham gia phong trào chống thuế ở Trung Kỳ năm 1908, dạy học ở Trường Dục Thanh năm 1910.',
     recognition:
       'Hình thành tư tưởng yêu nước và thể hiện rõ tư tưởng yêu nước trong hành động.',
-    at: 'C2 PDF p.2 / printed p.27',
+    at: ref(28),
   },
   {
     id: 'EL-2',
@@ -164,7 +165,7 @@ export const EXPERIENCE_LINKS: ExperienceLink[] = [
       'Suy ngẫm về Tổ quốc và thời cuộc, đối chiếu với các khuynh hướng cứu nước của những vị tiền bối cách mạng nổi tiếng.',
     recognition:
       'Không tán thành và không đi theo các phương pháp, khuynh hướng đó; muốn tìm hiểu những gì ẩn giấu sau sức mạnh của kẻ thù và học hỏi kinh nghiệm cách mạng trên thế giới.',
-    at: 'C2 PDF p.2 / printed p.27',
+    at: ref(28),
   },
   {
     id: 'EL-3',
@@ -172,15 +173,15 @@ export const EXPERIENCE_LINKS: ExperienceLink[] = [
     experience: 'Từ năm 1911 đến năm 1917, từ Pháp đi tới nhiều nước trên thế giới.',
     recognition:
       'Hình thành nhận thức mới: nhân dân lao động các nước, trong đó có giai cấp công nhân, đều bị bóc lột nên có thể là bạn của nhau; còn chủ nghĩa đế quốc, bọn thực dân ở đâu cũng là kẻ bóc lột.',
-    at: 'C2 PDF p.2 / printed p.27',
+    at: ref(29),
   },
   {
     id: 'EL-4',
     stageId: 'ky-2',
     experience:
-      'Thay mặt những người Việt Nam yêu nước ở Pháp gửi Yêu sách của nhân dân An Nam tới Hội nghị Vecxay ngày 18-6-1919.',
+      'Thay mặt những người Việt Nam yêu nước ở Pháp gửi Yêu sách của nhân dân An Nam tới Hội nghị Vécxây ngày 18-6-1919.',
     recognition: 'Bước nhận thức mới về quyền tự do, dân chủ của nhân dân.',
-    at: 'C2 PDF p.3',
+    at: ref(29),
   },
   {
     id: 'EL-5',
@@ -189,7 +190,7 @@ export const EXPERIENCE_LINKS: ExperienceLink[] = [
       'Nghiên cứu Sơ thảo luận cương của Lênin và nhiều tài liệu liên quan đến Quốc tế Cộng sản vào tháng 7-1920, cùng với hoạt động thực tế trong Đảng Xã hội Pháp.',
     recognition:
       'Tìm thấy và xác định phương hướng đấu tranh giải phóng dân tộc Việt Nam theo con đường cách mạng vô sản.',
-    at: 'C2 PDF p.3',
+    at: ref(29),
   },
   {
     id: 'EL-6',
@@ -198,7 +199,7 @@ export const EXPERIENCE_LINKS: ExperienceLink[] = [
       'Tổng kết kinh nghiệm các cuộc cách mạng tư sản Anh, Pháp, Mỹ và nhất là kinh nghiệm Cách mạng Tháng Mười Nga.',
     recognition:
       'Vạch rõ cách mạng Việt Nam phải có đảng cộng sản với chủ nghĩa Mác - Lênin làm cốt để lãnh đạo, với lực lượng nòng cốt là liên minh công nông.',
-    at: 'C2 PDF p.5 / printed p.29',
+    at: ref(30),
   },
   {
     id: 'EL-7',
@@ -207,7 +208,7 @@ export const EXPERIENCE_LINKS: ExperienceLink[] = [
       'Hoạt động báo chí và tổ chức: Hội liên hiệp thuộc địa năm 1921, báo Le Paria năm 1922, Hội Việt Nam Thanh niên Cách mạng và báo Thanh niên tháng 6-1925.',
     recognition:
       'Từng bước truyền bá chủ nghĩa Mác - Lênin và lý luận cách mạng trong những người yêu nước và công nhân, chuẩn bị cho việc thành lập Đảng.',
-    at: 'C2 PDF pp.4-5',
+    at: ref(30),
   },
   {
     id: 'EL-8',
@@ -216,8 +217,8 @@ export const EXPERIENCE_LINKS: ExperienceLink[] = [
       'Bị phê phán trong nội bộ, bị hiểu lầm trong những năm 1934-1938, học tập và nghiên cứu ở Liên Xô.',
     recognition:
       'Giữ vững quan điểm đã nêu trong Cương lĩnh chính trị đầu tiên, và đề nghị được trở về nước trực tiếp tham gia lãnh đạo cách mạng.',
-    at: 'C2 PDF pp.6-7',
-    caution: 'Câu dẫn vào bức thư ngày 6-6-1938 chứa xung đột niên đại. Xem C2-R05.',
+    at: ref(32),
+    caution: 'Câu dẫn vào bức thư ngày 6-6-1938 chứa xung đột niên đại. Xem GT-R02.',
   },
   {
     id: 'EL-9',
@@ -225,7 +226,7 @@ export const EXPERIENCE_LINKS: ExperienceLink[] = [
     experience:
       'Về gần biên giới Việt Nam - Trung Quốc tháng 12-1940, mở lớp huấn luyện cán bộ và viết sách Con đường giải phóng vào tháng 1-1941.',
     recognition: 'Nêu ra phương pháp cách mạng giành chính quyền.',
-    at: 'C2 PDF p.7',
+    at: ref(32),
   },
   {
     id: 'EL-10',
@@ -234,7 +235,7 @@ export const EXPERIENCE_LINKS: ExperienceLink[] = [
       'Lãnh đạo Đảng và chính quyền cách mạng non trẻ từ ngày 2-9-1945 đến ngày 19-12-1946, khi thì tạm hoà hoãn với Tưởng, lúc thì tạm hoà hoãn với Pháp.',
     recognition:
       'Giữ vững mục tiêu bằng sách lược linh hoạt, theo phương châm Dĩ bất biến ứng vạn biến.',
-    at: 'C2 PDF p.9',
+    at: ref(33, 34),
   },
   {
     id: 'EL-11',
@@ -242,7 +243,7 @@ export const EXPERIENCE_LINKS: ExperienceLink[] = [
     experience: 'Lãnh đạo cuộc kháng chiến chống thực dân Pháp trong những năm 1946-1954.',
     recognition:
       'Hoàn thiện lý luận cách mạng dân tộc dân chủ nhân dân và từng bước hình thành tư tưởng về xây dựng chủ nghĩa xã hội ở Việt Nam.',
-    at: 'C2 PDF p.9',
+    at: ref(34),
   },
   {
     id: 'EL-12',
@@ -251,7 +252,7 @@ export const EXPERIENCE_LINKS: ExperienceLink[] = [
       'Xác định và lãnh đạo thực hiện hai nhiệm vụ chiến lược cùng một lúc trong những năm 1954-1969.',
     recognition:
       'Bổ sung, hoàn thiện hệ thống quan điểm cơ bản trên các lĩnh vực chính trị, kinh tế, quân sự, văn hoá, đạo đức, đối ngoại.',
-    at: 'C2 PDF pp.9-10',
+    at: ref(34),
   },
 ];
 
@@ -279,12 +280,12 @@ export const PRESENTATION_BEATS: PresentationBeat[] = [
     id: 'PB-2',
     minutes: 1.5,
     kicker: 'Khung',
-    title: 'Năm chặng và hai ranh giới dùng chung',
+    title: 'Năm chặng và bốn ranh giới xác định',
     route: '#/hanh-trinh',
     notes: [
       'Đọc đủ năm tiêu đề đúng nguyên văn tiếng Việt.',
-      'Chỉ vào chỗ chồng lấn ở cuối năm 1920 và đầu năm 1941 trên thanh chỉ dẫn.',
-      'Nói rõ: thanh chỉ dẫn vẽ chồng lấn vì hai tiêu đề liền nhau dùng chung ranh giới.',
+      'Chỉ vào bốn mối nối trên thanh chỉ dẫn, mỗi mối nối là hai ngày kế tiếp nhau.',
+      'Nói rõ: giáo trình 2019 ghi mốc từng ngày, nên các chặng khép vào nhau chứ không chồng lấn.',
     ],
   },
   {
@@ -331,7 +332,7 @@ export const PRESENTATION_BEATS: PresentationBeat[] = [
     route: '#/kiem-chung',
     notes: [
       'Mở sổ ghi nhận: mười ứng viên định vị, ba chú thích dùng “Sđd”.',
-      'Mở xung đột niên đại C2-R05 và giải thích vì sao nhóm không sửa.',
+      'Mở xung đột niên đại GT-R02 và giải thích vì sao nhóm không sửa.',
       'Nêu xuất xứ của tệp được giao vẫn cần đối chiếu bản chính thức.',
     ],
   },

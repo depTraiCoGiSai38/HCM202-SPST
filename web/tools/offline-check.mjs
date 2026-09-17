@@ -50,6 +50,11 @@ await page.waitForTimeout(300);
 const deck = await page.locator('.slide').isVisible();
 console.log(deck ? '  ok   presentation mode opens' : '  FAIL presentation mode');
 
+// Close it again. It is a modal, so leaving it open makes every later click in
+// this script land on its backdrop instead of on the page.
+await page.keyboard.press('p');
+await page.waitForTimeout(300);
+
 /*
  * Documentary images must be bundled too.
  *
@@ -60,24 +65,85 @@ console.log(deck ? '  ok   presentation mode opens' : '  FAIL presentation mode'
  * runs at the Showcase. `naturalWidth` is the only honest test: it is non-zero
  * only if the bytes actually decoded.
  */
-await page.goto(url + '#/');
-await page.waitForTimeout(500);
-const pictures = await page.evaluate(() =>
-  [...document.querySelectorAll('img')].map((img) => ({
-    inlined: img.currentSrc.startsWith('data:'),
-    decoded: img.naturalWidth > 0,
-    alt: (img.getAttribute('alt') ?? '').length,
-  })),
-);
-if (pictures.length === 0) {
-  console.log('  --   no documentary image in this build');
-} else {
+const shotOf = async (label) => {
+  await page.waitForTimeout(500);
+  /*
+   * Scroll every image into view and wait for it to decode before measuring.
+   *
+   * Documentary images are `loading="lazy"`, which is right - a supporting
+   * figure deep inside a stage should not cost anything until it is reached.
+   * But it means `naturalWidth` is 0 until the image enters the viewport, so a
+   * checker that measures without scrolling reports a perfectly good bundle as
+   * broken. Scrolling first is what a reader does anyway.
+   */
+  await page.evaluate(async () => {
+    const imgs = [...document.querySelectorAll('img')];
+    for (const img of imgs) {
+      if (img.complete && img.naturalWidth > 0) continue;
+      /*
+       * Force the load rather than wait for one.
+       *
+       * `decode()` on a `loading="lazy"` image that has not entered the
+       * viewport returns a promise that need never settle, which hangs the
+       * whole checker. Flipping the attribute to eager starts the fetch, and
+       * the race gives up rather than blocking if anything goes wrong - a
+       * timeout here should be reported as a failed image, not as a dead run.
+       */
+      img.loading = 'eager';
+      img.scrollIntoView({ block: 'center', behavior: 'instant' });
+      await Promise.race([
+        img.decode().catch(() => undefined),
+        new Promise((r) => setTimeout(r, 4000)),
+      ]);
+    }
+    window.scrollTo(0, 0);
+  });
+  await page.waitForTimeout(300);
+  const pictures = await page.evaluate(() =>
+    [...document.querySelectorAll('img')].map((img) => ({
+      inlined: img.currentSrc.startsWith('data:'),
+      decoded: img.naturalWidth > 0,
+      alt: (img.getAttribute('alt') ?? '').length,
+      src: img.getAttribute('src') ?? '',
+    })),
+  );
+  if (pictures.length === 0) {
+    console.log(`  --   no documentary image on ${label}`);
+    return 0;
+  }
   for (const p of pictures) {
     const ok = p.inlined && p.decoded && p.alt > 10;
-    if (!ok) problems.push(`image not usable offline: inlined=${String(p.inlined)} decoded=${String(p.decoded)} alt=${String(p.alt)}`);
-    console.log((ok ? '  ok   ' : '  FAIL ') + 'documentary image inlined and decoded');
+    if (!ok) {
+      problems.push(
+        `image not usable offline on ${label}: src=${p.src.slice(0, 40)} inlined=${String(p.inlined)} decoded=${String(p.decoded)} alt=${String(p.alt)}`,
+      );
+    }
+    console.log((ok ? '  ok   ' : '  FAIL ') + `documentary image inlined and decoded (${label})`);
   }
+  return pictures.length;
+};
+
+let seen = 0;
+await page.goto(url + '#/');
+seen += await shotOf('opening');
+
+/*
+ * A supporting figure sits inside a stage, beside the station it supports, so
+ * the opening screen alone cannot prove the build is sound. Continuous reading
+ * puts every station of a stage on one page, which is the cheapest way to put
+ * every figure of that stage in the DOM at once.
+ */
+for (const id of ['ky-1', 'ky-2', 'ky-3', 'ky-4', 'ky-5']) {
+  await page.goto(url + `#/chang/${id}`);
+  await page.waitForTimeout(300);
+  const read = page.locator('.walk__read');
+  if (await read.count()) {
+    await read.click();
+    await page.waitForTimeout(400);
+  }
+  seen += await shotOf(`chặng ${id}`);
 }
+console.log('  images checked:', seen);
 
 // Fonts must be bundled, not fetched.
 const fonts = await page.evaluate(() => document.fonts.size);

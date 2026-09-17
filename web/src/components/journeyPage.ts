@@ -120,7 +120,7 @@ export function journeyPage(): HTMLElement {
       h('h1', { class: 'atlas__title', text: 'Một sợi, năm chặng' }),
       h('p', {
         class: 'atlas__lede',
-        text: 'Chọn một chặng để đi vào. Chỗ hai đường cùng chạy là chỗ hai tiêu đề liền nhau dùng chung một ranh giới.',
+        text: 'Chọn một chặng để đi vào. Chỗ hai đường gặp nhau là ngày mà một tiêu đề khép lại và tiêu đề kế tiếp mở ra.',
       }),
     ),
     h('div', { class: 'atlas__stage' }, thread, overlay),
@@ -131,15 +131,15 @@ export function journeyPage(): HTMLElement {
       { class: 'atlas__foot' },
       h('p', {
         class: 'atlas__caption',
-        text: 'Bản vẽ thể hiện thứ tự, độ dài tương đối và chỗ chồng lấn. Nó không phải một thước đo thời gian.',
+        text: 'Bản vẽ thể hiện thứ tự, độ dài tương đối và vị trí các mối nối. Nó không phải một thước đo thời gian.',
       }),
       lensTrigger(
         {
           title: 'Bản vẽ này đọc như thế nào',
           items: [
             { label: 'Chiều ngang của một đường', value: 'Khoảng railStart–railEnd của chặng đó. Đây là lựa chọn trình bày của nhóm, không phải số đo lấy từ trích đoạn.', tone: 'plain' },
-            { label: 'Hai đường cùng chạy', value: 'Hai tiêu đề liền nhau dùng chung một ranh giới, đúng như bản in.', tone: 'plain' },
-            { label: 'Mối nối đứt nét', value: 'Ranh giới mờ giữa chặng 1 và chặng 2. Xem C2-R01.', tone: 'caution' },
+            { label: 'Hai đường nối nhau', value: 'Hai tiêu đề liền nhau khép kín vào nhau bằng hai ngày kế tiếp, đúng như bản in.', tone: 'plain' },
+            { label: 'Mối nối', value: 'Mốc ngày mà giáo trình 2019 dùng để khép chặng trước và mở chặng sau.', tone: 'plain' },
             { label: 'Một chấm trên đường', value: 'Một bước ngoặt do chính trích đoạn ghi nhận.', tone: 'plain' },
             { label: 'Một vạch dưới đường', value: 'Một mốc thời gian được in trong chặng, giữ nguyên độ chính xác đã in.', tone: 'plain' },
             { label: 'Vị trí cụ thể của vạch và chấm', value: 'Chia đều trong chặng. Đây là cách vẽ, không phải thời điểm chính xác.', tone: 'caution' },
@@ -208,10 +208,17 @@ function chain(visited: readonly string[]): HTMLElement {
         { class: 'chain__joint', dataset: { kind: boundary.kind } },
         h('span', {
           class: 'chain__joint-kind',
-          text: boundary.kind === 'blurred' ? 'Ranh giới in mờ' : 'Ranh giới dùng chung',
+          text: 'Ranh giới xác định',
         }),
         h('span', { class: 'chain__joint-label', text: boundary.label }),
-        risk ? h('span', { class: 'chain__joint-risk', text: risk.id }) : null,
+        risk
+          ? h(
+              'span',
+              { class: 'chain__joint-risk' },
+              h('span', { text: risk.title }),
+              h('span', { class: 'visually-hidden', text: ` (${risk.id})` }),
+            )
+          : null,
       ),
     );
   });

@@ -61,12 +61,6 @@
   opacity: 0.4;
 }
 
-/* The one boundary the excerpt leaves blurred is drawn as a broken joint. */
-.thread__joint[data-kind='blurred'] {
-  stroke-dasharray: 3 4;
-  opacity: 0.55;
-}
-
 .thread__tick {
   stroke: var(--ink-faint);
   stroke-width: 1;
@@ -94,11 +88,165 @@
 .scene {
   position: relative;
   display: grid;
-  grid-template-rows: 1fr auto;
-  align-content: center;
-  min-block-size: calc(100svh - 9rem);
+  gap: var(--space-2xl);
   padding-block: var(--space-m) 0;
   overflow: clip;
+}
+
+/* ---- Opening: the first screen ------------------------------------------
+ *
+ * Identity, one document, two lines, one action. Measured before the change,
+ * the first screen at 1440px carried 511 words and five competing blocks; the
+ * question that ran across it is now a section of its own below, at full
+ * approved wording.
+ *
+ * The hero is allowed to take the screen because it is holding one image and
+ * one sentence, not a table of contents.
+ */
+.hero {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: var(--space-xl);
+  align-items: center;
+  inline-size: 100%;
+  max-inline-size: 78rem;
+  min-block-size: calc(100svh - 13rem);
+  padding-inline: var(--space-s);
+  margin-inline: auto;
+}
+
+@media (min-width: 64rem) {
+  .hero {
+    grid-template-columns: minmax(0, 1.1fr) minmax(min(19rem, 100%), 0.9fr);
+    column-gap: var(--space-2xl);
+  }
+}
+
+.hero__type {
+  min-inline-size: 0;
+  max-inline-size: 46ch;
+}
+
+.hero__label {
+  margin: 0 0 var(--space-s);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.hero__title {
+  margin: 0;
+  font-size: var(--step-5);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.hero__intro {
+  max-inline-size: 44ch;
+  margin: var(--space-m) 0 0;
+  font-family: var(--font-apparatus);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.hero__act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-m);
+  margin-block-start: var(--space-l);
+}
+
+.hero__figure {
+  min-inline-size: 0;
+}
+
+/* ---- Opening: the guiding question --------------------------------------
+ *
+ * The Central Question in a room of its own, under its own heading, so it is
+ * met as a question rather than as the wall of type that opened the product.
+ * Not one character of it is cut.
+ */
+.ask {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: var(--space-l);
+  inline-size: 100%;
+  max-inline-size: 78rem;
+  padding-block-start: var(--space-xl);
+  padding-inline: var(--space-s);
+  margin-inline: auto;
+  border-block-start: var(--hairline) solid var(--rule);
+}
+
+@media (min-width: 64rem) {
+  .ask {
+    grid-template-columns: minmax(0, 1.35fr) minmax(min(16rem, 100%), 0.95fr);
+    grid-template-areas:
+      'kicker aside'
+      'text   aside'
+      'foot   aside'
+      'how    aside';
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: var(--space-2xl);
+    row-gap: var(--space-m);
+    align-items: start;
+  }
+
+  .ask__kicker { grid-area: kicker; }
+  .ask__text { grid-area: text; }
+  .ask__foot { grid-area: foot; }
+  .ask .scene__aside { grid-area: aside; }
+  .ask .scene__how { grid-area: how; }
+}
+
+.ask__kicker {
+  margin: 0;
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--son);
+}
+
+.ask__text {
+  max-inline-size: 46ch;
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+
+.ask__lead {
+  display: block;
+  font-size: var(--step-3);
+  line-height: 1.22;
+}
+
+.ask__rest {
+  display: block;
+  max-inline-size: 62ch;
+  margin-block-start: var(--space-s);
+  padding-inline-start: var(--space-m);
+  border-inline-start: 2px solid var(--son);
+  font-family: var(--font-apparatus);
+  font-size: var(--step-0);
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.ask__foot {
+  margin: 0;
 }
 
 .scene__draw {
@@ -143,116 +291,6 @@
   opacity: 0.55;
 }
 
-/*
- * The opening holds two things side by side above the drawing: the question,
- * and the named list of what the viewer is about to walk through. On one column
- * the list follows the question; from the two-column width it stands beside it,
- * which also stops the type block from floating alone in the middle of a wide
- * screen with equal voids either side of it.
- */
-.scene__grid {
-  position: relative;
-  z-index: 1;
-  align-self: center;
-  display: grid;
-  gap: var(--space-l);
-  inline-size: 100%;
-  max-inline-size: 78rem;
-  padding-inline: var(--space-s);
-  margin-inline: auto;
-}
-
-@media (min-width: 64rem) {
-  .scene__grid {
-    grid-template-columns: minmax(0, 1.35fr) minmax(min(16rem, 100%), 0.95fr);
-    grid-template-areas:
-      'type aside'
-      'how  aside';
-    grid-template-rows: auto 1fr;
-    column-gap: var(--space-2xl);
-    row-gap: var(--space-l);
-    align-items: start;
-  }
-
-  .scene__type {
-    grid-area: type;
-  }
-
-  .scene__aside {
-    grid-area: aside;
-  }
-
-  .scene__how {
-    grid-area: how;
-  }
-}
-
-.scene__type {
-  position: relative;
-  z-index: 1;
-  min-inline-size: 0;
-  max-inline-size: 52ch;
-}
-
-.scene__kicker {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2xs) var(--space-s);
-  margin: 0 0 var(--space-m);
-  font-family: var(--font-apparatus);
-  font-size: var(--step--2);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-
-.scene__at {
-  font-family: var(--font-marker);
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-/*
- * The question is never cut or rewritten. Type shows where it turns: the first
- * movement states what the process is not, at full size; the second states what
- * it is, one step down and in the apparatus face, so the eye has somewhere to
- * rest instead of eleven equal lines.
- */
-.scene__question {
-  margin: 0;
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  text-wrap: pretty;
-}
-
-.scene__q-lead {
-  display: block;
-  font-size: var(--step-4);
-  line-height: 1.18;
-}
-
-.scene__q-rest {
-  display: block;
-  max-inline-size: 62ch;
-  margin-block-start: var(--space-s);
-  padding-inline-start: var(--space-m);
-  border-inline-start: 2px solid var(--son);
-  font-family: var(--font-apparatus);
-  font-size: var(--step-0);
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
-
-.scene__act {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-m);
-  margin-block-start: var(--space-m);
-}
-
 .btn--lg {
   min-block-size: 3.25rem;
   padding-inline: var(--space-l);
@@ -290,22 +328,6 @@
 
 .scene__map {
   align-self: center;
-}
-
-.scene__count {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2xs);
-  margin-block: var(--space-m) 0;
-  font-family: var(--font-apparatus);
-  font-size: var(--step--1);
-  color: var(--ink-faint);
-}
-
-.scene__count-n {
-  font-family: var(--font-marker);
-  font-size: var(--step-1);
-  color: var(--son);
 }
 
 /* ---- Opening: orientation ----------------------------------------------- */
@@ -456,14 +478,6 @@
   text-wrap: pretty;
 }
 
-.scene__figure {
-  margin-block-start: var(--space-m);
-  padding-block-start: var(--space-m);
-  border-block-start: var(--hairline) solid var(--rule);
-}
-
-/* The drawing draws itself once, then stays drawn. With motion switched off the
-   data-draw attribute is never set, so the thread is simply already there. */
 /* The thread draws itself once, from its origin, then stays drawn. With motion
    switched off data-draw is never set, so it is simply already there. */
 .scene[data-draw] .thread__origin {
@@ -582,15 +596,11 @@
   padding: 0.05rem 0.4rem;
   background-color: var(--paper);
   font-family: var(--font-marker);
-  font-size: 0.625rem;
+  font-size: var(--step--3);
   line-height: 1.5;
   color: var(--ink-faint);
   white-space: nowrap;
   pointer-events: none;
-}
-
-.atlas__boundary[data-kind='blurred'] {
-  color: var(--verify);
 }
 
 /* ---- Journey: the chain written out ------------------------------------- */
@@ -684,7 +694,7 @@
 .chain__turns {
   grid-column: 2;
   font-family: var(--font-marker);
-  font-size: 0.625rem;
+  font-size: var(--step--3);
   color: var(--ink-faint);
   white-space: nowrap;
 }
@@ -695,7 +705,7 @@
   }
 }
 
-/* The joint between two rows, named. Dotted where the excerpt leaves it blurred. */
+/* The joint between two rows, named with the two dates on either side of it. */
 .chain__joint {
   display: flex;
   flex-wrap: wrap;
@@ -705,22 +715,12 @@
   padding: var(--space-3xs) 0 var(--space-3xs) var(--space-m);
   border-inline-start: 2px solid var(--rule-strong);
   font-family: var(--font-marker);
-  font-size: 0.625rem;
+  font-size: var(--step--3);
   color: var(--ink-faint);
-}
-
-.chain__joint[data-kind='blurred'] {
-  border-inline-start-style: dotted;
-  border-inline-start-color: var(--verify);
-  color: var(--verify);
 }
 
 .chain__joint-label {
   color: var(--cham);
-}
-
-.chain__joint[data-kind='blurred'] .chain__joint-label {
-  color: var(--verify);
 }
 
 .chain__joint-risk {
@@ -866,10 +866,188 @@
   padding-block-end: var(--space-2xl);
 }
 
+/*
+ * The entrance to a stage is a chapter opening: position, the printed heading,
+ * the question that leads in - and, beside them, the documentary anchor. On a
+ * wide screen the anchor takes the half of the width that the reading measure
+ * cannot use, which is where an editorial page would put the plate.
+ */
 .walk__head {
   display: grid;
   gap: var(--space-xs);
+  align-items: start;
+}
+
+.walk__head-main {
+  min-inline-size: 0;
   max-inline-size: 54ch;
+}
+
+.walk__head[data-mode='full'] {
+  gap: var(--space-m) var(--space-2xl);
+  padding-block: var(--space-m) var(--space-s);
+}
+
+.walk__head[data-mode='full'] .walk__head-main {
+  display: grid;
+  gap: var(--space-m);
+  max-inline-size: 52ch;
+}
+
+@media (min-width: 64rem) {
+  .walk__head[data-mode='full'] {
+    grid-template-columns: minmax(0, 1.25fr) minmax(min(18rem, 100%), 0.85fr);
+  }
+}
+
+.walk__head-side {
+  display: grid;
+  gap: var(--space-m);
+  min-inline-size: 0;
+}
+
+/* ---- Stage entrance on a phone -----------------------------------------
+ *
+ * The brief sets an explicit reading order for a stage on a narrow screen:
+ * portrait, then date, then hook, then context, then interaction, then
+ * evidence, then bridge. Stacking the desktop layout gave the opposite at the
+ * top - the portrait position was seventh of seven and the printed dates sixth,
+ * arriving after the question they are supposed to orient.
+ *
+ * The two wrappers step out of the way with `display: contents`, so all seven
+ * parts become children of one grid and `order` can put them in the order the
+ * brief asks for. The wrappers carry no semantics, so nothing is lost from the
+ * accessibility tree by dissolving them; the DOM order still reads correctly if
+ * the property is unsupported, and the compact-mode rules still hide the side
+ * as a unit because they are more specific.
+ */
+@media (max-width: 63.999rem) {
+  .walk__head[data-mode='full'] > .walk__head-main,
+  .walk__head[data-mode='full'] > .walk__head-side {
+    display: contents;
+  }
+
+  .walk__head[data-mode='full'] {
+    display: grid;
+    gap: var(--space-m);
+  }
+
+  .walk__head[data-mode='full'] .walk__chapter { order: 1; }
+  .walk__head[data-mode='full'] .walk__portrait { order: 2; }
+  .walk__head[data-mode='full'] .walk__dates { order: 3; }
+  .walk__head[data-mode='full'] .walk__heading { order: 4; }
+  .walk__head[data-mode='full'] .walk__context { order: 5; }
+  .walk__head[data-mode='full'] .walk__ask { order: 6; }
+  .walk__head[data-mode='full'] .guess { order: 7; }
+  .walk__head[data-mode='full'] .walk__apparatus { order: 8; }
+
+  /* The dates run across the phone rather than down a narrow column. */
+  .walk__head[data-mode='full'] .walk__dates-list {
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    gap: var(--space-s);
+    overflow-x: auto;
+    padding-block-end: var(--space-2xs);
+  }
+
+  .walk__head[data-mode='full'] .walk__date {
+    font-size: var(--step-0);
+    white-space: nowrap;
+  }
+}
+
+/*
+ * Arriving at a chapter.
+ *
+ * The entrance settles in from below once, on arrival: the chapter number, then
+ * the heading, then the anchor beside it - the order a reader takes them in.
+ * It is the only thing that moves on arriving at a stage.
+ *
+ * What it must not do, and does not: it never scales, rotates, bounces or
+ * loops, it never delays reading (the longest wait before the last element is
+ * settled is 240ms), and it never animates the contents of a figure. The
+ * portrait rule holds: a photograph's frame may be revealed, its subject never
+ * moves. Nothing here is revealed by animation alone - with motion switched off
+ * the whole block is simply already in place, because the rule lives inside
+ * `prefers-reduced-motion: no-preference`.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .walk__head[data-mode='full'] > * > .walk__chapter,
+  .walk__head[data-mode='full'] > * > .walk__heading,
+  .walk__head[data-mode='full'] > .walk__head-side {
+    animation: chapter-open var(--dur-slow) var(--ease-out) both;
+  }
+
+  .walk__head[data-mode='full'] > * > .walk__heading {
+    animation-delay: 60ms;
+  }
+
+  .walk__head[data-mode='full'] > .walk__head-side {
+    animation-delay: 120ms;
+  }
+}
+
+@keyframes chapter-open {
+  from {
+    opacity: 0;
+    translate: 0 0.6rem;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* Past the entrance the anchor stands down with the rest of the chapter
+   opening: the stage itself is what the screen is for. */
+.walk__head[data-mode='compact'] .walk__head-side,
+/* The chapter number is part of the chapter opening. Past the entrance the
+   strip under the masthead is what says which stage this is. */
+.walk__head[data-mode='compact'] .walk__chapter {
+  display: none;
+}
+
+/*
+ * The time markers the excerpt prints under this stage, at the precision it
+ * prints them. They are set large because on a historical stage the dates are
+ * what orient a reader, and because they carry the entrance where no
+ * photograph has cleared its source and its usage condition.
+ *
+ * Nothing here is derived: no range is compressed, no year is inferred from a
+ * phrase, and the list is not reordered.
+ */
+.walk__dates {
+  min-inline-size: 0;
+}
+
+.walk__dates-label {
+  margin: 0 0 var(--space-xs);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.walk__dates-list {
+  display: grid;
+  gap: var(--space-3xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Every marker at the same weight. Emphasising one of them would be this
+   product deciding which printed date matters most, which is a claim the
+   excerpt does not make. */
+.walk__date {
+  font-family: var(--font-marker);
+  font-size: var(--step-1);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+  color: var(--ink);
 }
 
 /*
@@ -994,7 +1172,7 @@
 
 .guess__toggle-note {
   font-weight: 400;
-  font-size: 0.6875rem;
+  font-size: var(--step--3);
   color: var(--ink-faint);
 }
 
@@ -1120,7 +1298,7 @@
 .guess__locators {
   margin: var(--space-2xs) 0 0;
   font-family: var(--font-marker);
-  font-size: 0.6875rem;
+  font-size: var(--step--3);
   line-height: 1.6;
   color: var(--cham);
 }
@@ -1164,12 +1342,6 @@
   margin: 0;
 }
 
-.walk__context-ord {
-  font-family: var(--font-marker);
-  font-size: var(--step--1);
-  color: var(--son);
-}
-
 .walk__context-period {
   font-family: var(--font-apparatus);
   font-size: var(--step-1);
@@ -1178,39 +1350,86 @@
   color: var(--ink);
 }
 
-.walk__kicker {
+/*
+ * `CHẶNG 02 / 05`. Position in the journey, said once, in the place a chapter
+ * number belongs. It replaced a circled ordinal followed by the words `Chặng 2
+ * trong năm chặng`, which said the same thing twice at the top of every stage.
+ */
+.walk__chapter {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: var(--space-2xs);
-  margin: 0;
+  margin: 0 0 var(--space-2xs);
+  font-family: var(--font-marker);
+  color: var(--son);
+}
+
+.walk__chapter-word {
   font-family: var(--font-apparatus);
   font-size: var(--step--2);
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-weight: 700;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--ink-faint);
 }
 
-.walk__ord {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: 1.6rem;
-  block-size: 1.6rem;
-  border: var(--hairline) solid var(--son);
-  border-radius: 50%;
-  font-family: var(--font-marker);
-  font-size: var(--step--1);
-  color: var(--son);
+.walk__chapter-n {
+  font-size: var(--step-1);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
 }
 
-/* The exact printed heading. Never shortened, never replaced by a label. */
+.walk__chapter-of {
+  font-size: var(--step--1);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-faint);
+}
+
+/*
+ * The exact printed heading, never shortened and never replaced by a label.
+ *
+ * It is set in two movements: the period phrase carries the weight, because on
+ * a stage entrance the date is what orients a reader, and the claim follows one
+ * step down. Both halves are the stored wording; the accessible name is the
+ * whole heading, from the hidden copy.
+ */
 .walk__heading {
   margin: 0;
-  font-size: var(--step-1);
+  /* The two halves set their own size; this is what the colon between them
+     inherits. Without it the element kept the user agent's `h1 { font-size:
+     2em }`, which put a size in the document that nothing visible used. */
+  font-size: var(--step-0);
   font-weight: 400;
   line-height: var(--leading-tight);
   text-wrap: pretty;
+}
+
+.walk__heading-period {
+  display: block;
+  font-size: var(--step-4);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.walk__heading-claim {
+  display: block;
+  max-inline-size: 46ch;
+  margin-block-start: var(--space-s);
+  font-family: var(--font-apparatus);
+  font-size: var(--step-0);
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+/* Once the traverse moves past the entrance the heading steps back down to a
+   single line, so the stage content is what carries the screen. */
+.walk__head[data-mode='compact'][data-expanded='true'] .walk__heading-period {
+  font-size: var(--step-1);
+}
+
+.walk__head[data-mode='compact'][data-expanded='true'] .walk__heading-claim {
+  margin-block-start: var(--space-2xs);
+  font-size: var(--step--1);
 }
 
 .walk__apparatus {
@@ -1221,26 +1440,18 @@
 /* ---- Stage: the phases of the stage, and how to read it ----------------- */
 
 /*
- * `1 / 11` says how far along a viewer is and nothing else. This bar says what
- * the stage is made of, how much of each kind is in it, which kind is on screen
- * now, and lets the viewer go straight to any of them - and it carries the
- * choice between the guided traverse and continuous reading.
+ * What is left of the bar across the top of a stage: the choice between the
+ * guided traverse and continuous reading, and the offer to resume. It is two
+ * offers about how to read, not a way to move.
  */
 .walk__bar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: var(--space-s);
   padding-block: var(--space-2xs);
   border-block: var(--hairline) solid var(--rule);
-}
-
-.walk__map {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3xs);
-  min-inline-size: 0;
 }
 
 .walk__bar-acts {
@@ -1249,61 +1460,36 @@
   gap: var(--space-2xs);
 }
 
-.walk__phase {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2xs);
-  min-block-size: var(--target-min);
-  padding: 0.35rem 0.6rem;
-  border: var(--hairline) solid transparent;
-  border-radius: var(--radius-m);
-  background: none;
-  color: var(--ink-faint);
+/*
+ * The name of the phase the viewer is standing in, printed on the thread.
+ *
+ * It replaced a row of five buttons. Nothing here is clickable: the caption
+ * says what this part of the stage is, the thread underneath shows where the
+ * part begins and ends, and the traverse controls move.
+ */
+.walk__phase-now {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2xs) var(--space-s);
+  margin: 0 0 var(--space-2xs);
+  min-block-size: 1.5rem;
+}
+
+.walk__phase-name {
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.walk__phase-lead {
   font-family: var(--font-apparatus);
   font-size: var(--step--2);
-  font-weight: 500;
-  text-align: start;
-  cursor: pointer;
-  transition:
-    color var(--dur-fast) var(--ease-out),
-    border-color var(--dur-fast) var(--ease-out),
-    background-color var(--dur-fast) var(--ease-out);
-}
-
-.walk__phase:hover {
-  color: var(--cham);
-  border-color: var(--rule);
-}
-
-/*
- * The phase the viewer is standing in. Marked by weight and a rule as well as
- * by colour, so the current position is not carried by colour alone.
- */
-.walk__phase[data-state='here'] {
-  color: var(--ink);
-  font-weight: 600;
-  border-color: var(--son);
-  background-color: var(--son-wash);
-}
-
-/*
- * `--ink-faint` is rated against `--paper`; on the sunk tint it falls to about
- * 4.2:1, which is under the minimum for text this size. The soft ink clears it
- * in both themes.
- */
-.walk__phase-n {
-  flex: none;
-  padding: 0 0.3rem;
-  border-radius: var(--radius-s);
-  background-color: var(--paper-sunk);
-  font-family: var(--font-marker);
-  font-size: 0.625rem;
-  color: var(--ink-soft);
-}
-
-.walk__phase[data-state='here'] .walk__phase-n {
-  background-color: var(--paper);
-  color: var(--son);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
 }
 
 .walk__read,
@@ -1453,7 +1639,7 @@
 .figure__cap-credit,
 .figure__cap-source {
   font-family: var(--font-marker);
-  font-size: 0.6875rem;
+  font-size: var(--step--3);
   line-height: 1.5;
   color: var(--cham);
   overflow-wrap: anywhere;
@@ -1500,14 +1686,47 @@
  * ship it. This reads as a documented gap, in the same amber the product uses
  * everywhere else for "not yet evidenced".
  */
+/*
+ * A blocked documentary position.
+ *
+ * It must stay visible: AGENTS.md requires an empty evidence field to be
+ * visibly blocked rather than quietly absent, and that is not negotiable. What
+ * it does not have to be is the loudest thing on the screen. A dashed box with
+ * a tinted fill was the most dashboard-like element on a phone, arriving second
+ * in the reading order; a single ochre rule with the same badge and the same
+ * explanation says the same thing at the weight of an annotation.
+ */
 .figure--blocked {
   display: grid;
   gap: var(--space-2xs);
   justify-items: start;
-  padding: var(--space-s);
-  border: var(--hairline) dashed var(--verify);
-  border-radius: var(--radius-m);
-  background-color: color-mix(in oklab, var(--verify-wash) 45%, transparent);
+  padding-inline-start: var(--space-m);
+  padding-block: var(--space-2xs);
+  border-inline-start: 2px solid var(--verify);
+}
+
+/* ---- A supporting document, beside what it supports ---------------------
+ *
+ * Deliberately not the size of the stage anchor. The primary figure opens the
+ * chapter; this one sits inside the reading, under the station it belongs to,
+ * at the width of the reading measure. Making both the same size would turn a
+ * stage into a gallery, which is the thing the brief for this pass rules out.
+ */
+.station__support {
+  max-inline-size: var(--measure);
+  margin-block-start: var(--space-l);
+  padding-block-start: var(--space-m);
+  border-block-start: var(--hairline) solid var(--rule);
+}
+
+/* The turning point is wider than the measure and sits on its own surface, so
+   a document beneath it lines up with it rather than with the reading column. */
+.station--turn + .station__support {
+  max-inline-size: min(56rem, 100%);
+}
+
+.station__support .figure__frame {
+  max-inline-size: 34rem;
 }
 
 .figure__blocked-line {
@@ -1579,7 +1798,7 @@
 
 .shade__cap-source {
   font-family: var(--font-marker);
-  font-size: 0.6875rem;
+  font-size: var(--step--3);
   line-height: 1.6;
   color: var(--cham);
 }
@@ -1704,24 +1923,6 @@
 }
 
 /* Where this stage sits in the five. The plain "Step n of N" indicator. */
-.gained__where {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2xs);
-  margin: var(--space-s) 0 0;
-  padding-block-start: var(--space-s);
-  border-block-start: var(--hairline) solid var(--rule);
-  font-family: var(--font-apparatus);
-  font-size: var(--step--2);
-  color: var(--ink-faint);
-}
-
-.gained__where-n {
-  font-family: var(--font-marker);
-  font-size: var(--step-0);
-  color: var(--son);
-}
-
 .walk__track {
   position: relative;
   inline-size: 100%;
@@ -1776,6 +1977,18 @@
 .track__tick[data-state='current'] {
   stroke: var(--son);
   stroke-width: 2.5;
+}
+
+/*
+ * Where one phase of the stage gives way to the next. The tick grows taller
+ * rather than changing colour, so the break survives greyscale and does not
+ * compete with the current-position mark, which is the only thing on the
+ * thread that uses the accent.
+ */
+.track__tick[data-phase-start='true'] {
+  transform: scaleY(2.1);
+  transform-origin: center;
+  stroke: var(--rule-strong);
 }
 
 .track__node {
@@ -1901,6 +2114,123 @@
     translate var(--dur-base) var(--ease-out);
 }
 
+/* ---- Stage: a turning point breaks the rhythm ---------------------------
+ *
+ * Every other stop is one column at the reading measure. This one is wider,
+ * sits on its own surface, and opens on the printed marker at display size.
+ * The brief asks a turning point to break the normal rhythm; this is the break,
+ * and it is the only station that gets one, so it still means something.
+ */
+.station--turn {
+  max-inline-size: min(56rem, 100%);
+  padding: var(--space-l) var(--space-m) var(--space-m);
+  background-color: var(--paper-sunk);
+  border-block-start: 2px solid var(--son);
+}
+
+.turn__head {
+  display: grid;
+  gap: var(--space-s);
+  align-items: center;
+}
+
+@media (min-width: 52rem) {
+  .turn__head {
+    grid-template-columns: auto minmax(6rem, 14rem) minmax(0, 1fr);
+    gap: var(--space-l);
+  }
+}
+
+.turn__stamp {
+  display: grid;
+  gap: var(--space-3xs);
+  justify-items: start;
+}
+
+.turn__stamp-label {
+  margin: 0;
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* The marker exactly as the excerpt prints it, at display size. Never a year
+   compressed out of a printed range. */
+.turn__date {
+  margin: 0;
+  font-family: var(--font-marker);
+  font-size: var(--step-3);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--son);
+  text-wrap: balance;
+}
+
+.turn__title {
+  margin: 0;
+}
+
+/* Two strands running in and meeting. The stem past the meeting point is not
+   drawn until the viewer has crossed. */
+.turn__converge {
+  display: block;
+  inline-size: 100%;
+  block-size: 3.5rem;
+  overflow: visible;
+}
+
+.turn__strand,
+.turn__stem {
+  fill: none;
+  stroke: var(--rule-strong);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.turn__meet {
+  fill: var(--paper);
+  stroke: var(--rule-strong);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Crossed. The strands and the meeting point take the accent, and the stem
+   appears - one line continuing where two arrived. */
+.station--turn:has(.turn__pair) .turn__strand,
+.station--turn:has(.turn__pair) .turn__stem {
+  stroke: var(--son);
+}
+
+.station--turn:has(.turn__pair) .turn__meet {
+  fill: var(--son);
+  stroke: var(--son);
+}
+
+.turn__stem {
+  stroke-dasharray: 132;
+  stroke-dashoffset: 132;
+}
+
+.station--turn:has(.turn__pair) .turn__stem {
+  stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .turn__stem {
+    transition: stroke-dashoffset var(--dur-slow) var(--ease-out), stroke var(--dur-base) var(--ease-out);
+  }
+
+  .turn__strand,
+  .turn__meet {
+    transition: stroke var(--dur-base) var(--ease-out), fill var(--dur-base) var(--ease-out);
+  }
+}
+
 .station__kicker {
   display: flex;
   flex-wrap: wrap;
@@ -1928,7 +2258,7 @@
   border: var(--hairline) solid var(--verify);
   border-radius: var(--radius-s);
   font-family: var(--font-marker);
-  font-size: 0.625rem;
+  font-size: var(--step--3);
   letter-spacing: 0;
   text-transform: none;
   color: var(--verify);
@@ -1980,7 +2310,7 @@
 
 .station__part {
   font-family: var(--font-marker);
-  font-size: 0.6875rem;
+  font-size: var(--step--3);
   color: var(--ink-faint);
 }
 
@@ -2179,6 +2509,115 @@
  * half of the next stage's own heading, and the label the two headings share at
  * their boundary.
  */
+/* ---- Stage: the beat before the hand-off --------------------------------
+ *
+ * What to notice, set as two positions of the excerpt with an arrow between
+ * them. The two texts are stored, sourced wording; the arrow and the question
+ * are the layout. It reads as a spread, not as a card, because it is the one
+ * moment in a stage that asks the learner to stop rather than to move.
+ */
+.reflect {
+  display: grid;
+  gap: var(--space-m);
+  max-inline-size: var(--measure);
+  margin-block-start: var(--space-xl);
+  padding-block: var(--space-l);
+  border-block: var(--hairline) solid var(--rule);
+}
+
+.reflect__kicker {
+  margin: 0;
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cham);
+}
+
+.reflect__pair {
+  display: grid;
+  gap: var(--space-m);
+  align-items: start;
+}
+
+@media (min-width: 48rem) {
+  .reflect__pair {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: var(--space-l);
+  }
+}
+
+.reflect__side {
+  min-inline-size: 0;
+}
+
+.reflect__side-label {
+  margin: 0 0 var(--space-2xs);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  color: var(--ink-faint);
+}
+
+.reflect__side-text {
+  margin: 0;
+  font-size: var(--step-0);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.reflect__side-at {
+  margin: var(--space-2xs) 0 0;
+  font-family: var(--font-marker);
+  font-size: var(--step--2);
+  color: var(--son);
+}
+
+.reflect__arrow {
+  align-self: center;
+  font-family: var(--font-marker);
+  font-size: var(--step-2);
+  color: var(--son);
+}
+
+/* On one column the arrow turns down, because that is the direction the two
+   positions now read in. */
+@media (max-width: 47.999rem) {
+  .reflect__arrow {
+    rotate: 90deg;
+    inline-size: 1.5rem;
+  }
+}
+
+.reflect__ask {
+  max-inline-size: 54ch;
+  margin: 0;
+  padding-inline-start: var(--space-m);
+  border-inline-start: 2px solid var(--cham);
+  font-size: var(--step-1);
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+.reflect__note {
+  margin: 0;
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  color: var(--ink-faint);
+}
+
+.reflect__invite-lead {
+  max-inline-size: 54ch;
+  margin: var(--space-s) 0 0;
+  font-family: var(--font-apparatus);
+  font-size: var(--step-0);
+  color: var(--ink-soft);
+}
+
+.reflect__invite {
+  justify-self: start;
+}
+
 .bridge {
   display: grid;
   gap: var(--space-2xs);
@@ -2216,10 +2655,6 @@
 .bridge__joint-label {
   font-family: var(--font-marker);
   color: var(--cham);
-}
-
-.bridge__joint[data-kind='blurred'] .bridge__joint-label {
-  color: var(--verify);
 }
 
 .bridge__period {
@@ -2266,47 +2701,6 @@
 
 .bridge__go {
   margin-block-start: var(--space-m);
-}
-
-.walk__pager {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-s);
-  justify-content: space-between;
-  padding-block-start: var(--space-m);
-  border-block-start: var(--hairline) solid var(--rule);
-}
-
-.walk__pager-link {
-  display: grid;
-  gap: 0.1rem;
-  padding: var(--space-2xs) var(--space-xs);
-  color: var(--ink);
-  text-decoration: none;
-  border-radius: var(--radius-s);
-}
-
-.walk__pager-link--next {
-  text-align: end;
-}
-
-.walk__pager-link:hover {
-  background-color: var(--paper-raised);
-}
-
-.walk__pager-dir {
-  font-family: var(--font-apparatus);
-  font-size: var(--step--2);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--son);
-}
-
-.walk__pager-name {
-  font-family: var(--font-apparatus);
-  font-size: var(--step--1);
-  color: var(--ink-soft);
 }
 
 .walk__epilogue {
@@ -2392,7 +2786,7 @@
 
 .lens__value[data-tone='status'] {
   font-family: var(--font-marker);
-  font-size: 0.6875rem;
+  font-size: var(--step--3);
   color: var(--verify);
 }
 
@@ -2472,7 +2866,7 @@
   border: var(--hairline) solid var(--verify);
   border-radius: var(--radius-s);
   font-family: var(--font-marker);
-  font-size: 0.75rem;
+  font-size: var(--step--2);
   letter-spacing: 0;
   text-transform: none;
   color: var(--verify);
@@ -2567,7 +2961,7 @@
 .present__notes-minutes {
   margin: var(--space-s) 0 0;
   font-family: var(--font-marker);
-  font-size: 0.6875rem;
+  font-size: var(--step--3);
   color: var(--ink-faint);
 }
 
@@ -2575,24 +2969,8 @@
    7. Route-level layout
    ====================================================================== */
 
-/*
- * The opening scene is the one view with no rail beside it: it has a single
- * question and a single way forward, and the five stages are already drawn
- * across it. Every other view keeps the rail.
- */
-.app[data-route='opening'] .rail,
-/* The overview's diagram already names all five stages and is how they are
-   chosen; a second list of the same five beside it is just a duplicate. */
-.app[data-route='journey'] .rail {
-  display: none;
-}
-
-.app[data-route='opening'] .shell,
-.app[data-route='journey'] .shell {
-  grid-template-columns: minmax(0, 1fr);
-  gap: 0;
-}
-
+/* The opening runs edge to edge: it is one photograph, one sentence and one
+   way forward, and a gutter around it would make it a page about a page. */
 .app[data-route='opening'] .shell {
   padding-inline: 0;
 }
@@ -2604,84 +2982,6 @@
 
 .app[data-route='opening'] .colophon {
   border-block-start: var(--hairline) solid var(--rule);
-}
-
-/* ======================================================================
-   8. Rail as progress indicator
-   ====================================================================== */
-
-/*
- * On a stage screen the rail steps back. It keeps the five marks and the
- * current position - it is still the journey indicator - but drops the labels
- * so it cannot compete with the thread and the stop being read. The toggle
- * opens it again, and every other screen gets it open by default.
- */
-.rail__bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2xs);
-}
-
-.rail__toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3xs);
-  min-block-size: var(--target-min);
-  padding-inline: var(--space-2xs);
-  border: 0;
-  background: none;
-  color: var(--ink-faint);
-  font-family: var(--font-apparatus);
-  font-size: var(--step--2);
-  cursor: pointer;
-}
-
-.rail__toggle:hover {
-  color: var(--cham);
-}
-
-.rail__toggle svg {
-  rotate: 180deg;
-  transition: rotate var(--dur-fast) var(--ease-out);
-}
-
-.rail[data-compact='true'] .rail__toggle svg {
-  rotate: 0deg;
-}
-
-@media (min-width: 64rem) {
-  .rail[data-compact='true'] .rail__heading,
-  .rail[data-compact='true'] .rail__aside-heading,
-  .rail[data-compact='true'] .rail__period,
-  .rail[data-compact='true'] .rail__toggle-text,
-  .rail[data-compact='true'] .rail__boundary-mark > span:not(.visually-hidden) {
-    position: absolute;
-    inline-size: 1px;
-    block-size: 1px;
-    padding: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  .rail[data-compact='true'] .rail__ordinal {
-    font-size: var(--step--2);
-  }
-
-  .rail[data-compact='true'] .rail__bar {
-    justify-content: center;
-  }
-
-  .app[data-route='stage'] .shell {
-    grid-template-columns: 7rem minmax(0, 1fr);
-  }
-}
-
-@media (min-width: 90rem) {
-  .app[data-route='stage'] .shell {
-    grid-template-columns: 7.5rem minmax(0, 1fr);
-  }
 }
 
 /* ======================================================================

@@ -24,7 +24,7 @@
   border: var(--hairline) solid currentcolor;
   border-radius: var(--radius-s);
   font-family: var(--font-marker);
-  font-size: 0.625rem;
+  font-size: var(--step--3);
   line-height: 1.5;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -105,10 +105,21 @@
   padding-inline: 0.5rem;
 }
 
+/*
+ * A pressed control is not a turning point.
+ *
+ * Every selected state in the product used to be red, which is the colour the
+ * token file reserves for four things: turning points, where you are on the
+ * journey, the focus ring and the single primary action, and the thread. On the
+ * comparison screen a selected axis, a selected stage and the thread segments
+ * were red at once, and the accent stopped meaning anything. Selected states
+ * now use the indigo apparatus colour, which is what the rest of the interface
+ * already uses for "this control is doing something".
+ */
 .btn[aria-pressed='true'] {
-  border-color: var(--son);
-  color: var(--son);
-  background-color: var(--son-wash);
+  border-color: var(--cham);
+  color: var(--cham);
+  background-color: var(--cham-wash);
 }
 
 /* ---- Opening / hero ----------------------------------------------------- */
@@ -732,4 +743,37 @@
   .pager__link--next {
     text-align: start;
   }
+}
+
+
+/* ---- Where to go from here ----------------------------------------------
+ *
+ * One grammar shared by the three activity screens and the verification
+ * register, which used to end with no link of any kind. A line about what has
+ * just been done, one primary action, at most one secondary.
+ */
+.whatnext {
+  display: grid;
+  gap: var(--space-s);
+  max-inline-size: var(--measure);
+  margin-block-start: var(--space-2xl);
+  padding-block-start: var(--space-l);
+  border-block-start: var(--hairline) solid var(--rule);
+}
+
+.whatnext__lead {
+  margin: 0;
+  max-inline-size: 54ch;
+  font-family: var(--font-apparatus);
+  font-size: var(--step-0);
+  line-height: 1.55;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.whatnext__acts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-s);
 }

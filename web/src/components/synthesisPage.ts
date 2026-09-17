@@ -1,4 +1,5 @@
 import { CENTRAL_QUESTION, CORE_MESSAGE, CORE_MESSAGE_STATUS } from '../data/project';
+import { whatNext } from './whatnext';
 import { BOUNDARIES, STAGES } from '../data/stages';
 import type { Stage, StageId } from '../data/types';
 import { clear, h } from '../lib/dom';
@@ -20,11 +21,9 @@ import { synthesisThread } from './thread';
 /** A fixed presentation order, chosen once so the screen is reproducible. */
 const BANK_ORDER: StageId[] = ['ky-3', 'ky-1', 'ky-5', 'ky-2', 'ky-4'];
 
-/** The labels of the boundaries two consecutive headings actually share. */
-function sharedLabels(): string {
-  return BOUNDARIES.filter((b) => b.kind === 'shared')
-    .map((b) => b.label)
-    .join(' và ');
+/** The dated joints between consecutive headings, as the 2019 edition prints them. */
+function boundaryLabels(): string {
+  return BOUNDARIES.map((b) => b.label).join(', ');
 }
 
 export function synthesisPage(): HTMLElement {
@@ -199,7 +198,7 @@ export function synthesisPage(): HTMLElement {
           h('p', { class: 'atlas__kicker', text: 'Vì sao năm đoạn là một đường' }),
           h('p', {
             class: 'weave__why',
-            text: `Hai cặp tiêu đề liền nhau không cắt rời mà dùng chung một ranh giới — ${sharedLabels()} — nên chỗ nối giữa chúng là chỗ chồng lấn, không phải chỗ đứt.`,
+            text: `Bốn mối nối giữa năm chặng đều là hai ngày kế tiếp nhau — ${boundaryLabels()} — nên mỗi chỗ nối là một vết cắt xác định, không phải một khoảng chồng lấn.`,
           }),
           h('p', { class: 'atlas__kicker', text: 'Trở lại câu hỏi trung tâm' }),
           // Focusable so the keyboard lands on the result, not past it.
@@ -261,6 +260,11 @@ export function synthesisPage(): HTMLElement {
     bank,
     h('div', { class: 'weave__actions' }, reset),
     outcome,
+    whatNext({
+      lead: 'Năm chặng đã dựng lại thành một đường. Câu hỏi trung tâm ở màn mở đầu là nơi hành trình này bắt đầu và kết thúc.',
+      primary: { label: 'Trở về câu hỏi dẫn đường', href: '#/' },
+      secondary: { label: 'Xem điểm cần kiểm chứng', href: '#/kiem-chung' },
+    }),
   );
 
   render();

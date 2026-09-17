@@ -25,6 +25,11 @@ import { lensTrigger } from './evidence';
  * photograph instead. Nothing else in the product changes.
  */
 
+/** Whether a position currently holds a cleared photograph. */
+export function hasFigure(slotId: string): boolean {
+  return figureFor(slotId) !== undefined;
+}
+
 function figureFor(slotId: string): DocumentaryFigure | undefined {
   return FIGURES.find((f) => f.id === slotId);
 }
@@ -59,9 +64,13 @@ function sourceItems(fig: DocumentaryFigure): { label: string; value: string; to
     { label: 'Điều kiện sử dụng, nguyên văn', value: fig.rights, tone: 'plain' },
     { label: 'Trang đã đọc điều kiện', value: fig.rightsUrl, tone: 'locator' },
     { label: 'Chú thích', value: fig.caption, tone: 'plain' },
-    // Kept as its own entry: who the subject is said to be, and by whom, is a
-    // different claim from what the document is.
+    // The six checks the brief requires to be maintained separately, each as its
+    // own row: identity, event/date, location, source, rights, offline. Merging
+    // any two of them would let a cleared one carry an uncleared one.
     { label: 'Nhận diện người trong ảnh', value: fig.identification, tone: 'caution' },
+    { label: 'Sự kiện và niên đại', value: fig.eventCheck, tone: 'caution' },
+    { label: 'Địa điểm', value: fig.locationCheck, tone: 'caution' },
+    { label: 'Đóng gói ngoại tuyến', value: fig.offlineCheck, tone: 'plain' },
     { label: 'Mô tả cho trình đọc màn hình', value: fig.alt, tone: 'plain' },
     { label: 'Trạng thái', value: fig.status, tone: 'status' },
   ];
@@ -93,7 +102,7 @@ function blocked(role: string): HTMLElement {
           {
             label: 'Vì sao trống',
             value:
-              'Chưa có ảnh nào qua được hai điều kiện: nguồn mở được để kiểm, và điều kiện sử dụng cho phép dùng lại. Những nguồn đã kiểm và lý do từng nguồn chưa dùng được nằm ở trang Kiểm chứng.',
+              'Chưa có ảnh nào vừa mở được trang nguồn để kiểm, vừa có điều kiện sử dụng cho phép dùng lại, VÀ có căn cứ gắn vào đúng chặng này. Một ảnh đã qua được nguồn và điều kiện sử dụng và đang ở màn mở đầu, nhưng sự kiện trong bản ghi của nó nằm ngoài phạm vi trích đoạn, nên nó không được gắn vào chặng nào. Những nguồn đã kiểm và kết quả từng nguồn nằm ở trang Kiểm chứng.',
             tone: 'caution',
           },
           ...FIGURE_REQUIREMENTS.map((r, i) => ({
@@ -107,6 +116,7 @@ function blocked(role: string): HTMLElement {
     ),
   );
 }
+
 
 /**
  * A figure slot.
