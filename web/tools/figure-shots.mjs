@@ -76,7 +76,7 @@ await shot('35-figure-dark', atKy3, 1440, 900, { dark: true });
  *
  * The selector here was `.walk__figure`, which no element has ever carried, so
  * this shot had been silently capturing the top of the page instead of the
- * thing it is named after. Fixed 18-9-2026 along with the shots below.
+ * thing it is named after.
  */
 await shot('36-stage-blocked', async (p) => {
   // ky-3 was the blocked example until 19-9-2026, when it got the plate. ky-2
@@ -86,7 +86,7 @@ await shot('36-stage-blocked', async (p) => {
   await p.waitForTimeout(400);
 });
 
-/* ---- Added 18-9-2026, with the documentary pass ------------------------ */
+/* ---- The documentary pass --------------------------------------------- */
 
 // The first filled stage entrance: the plate above, the document below it.
 for (const [name, w, h] of [
@@ -168,10 +168,12 @@ await shot(
   844,
 );
 
-/* ---- Added 19-9-2026, with the three project rulings ------------------- */
+/* ---- The opening, stage 3 and the register ---------------------------- */
 
-// The opening after its picture moved to stage 3: the position stays declared
-// and visibly blocked, and the screen is carried by title, action and thread.
+// The opening: a front door carried by title, action and thread. The
+// documentary position for it is declared in the data and reported on
+// `#/kiem-chung`, not on this screen. Regenerate these shots after any change
+// to the opening before using them as evidence of the current build.
 for (const [name, w, h] of [
   ['49-open-empty-laptop', 1440, 900],
   ['49-open-empty-mobile', 390, 844],

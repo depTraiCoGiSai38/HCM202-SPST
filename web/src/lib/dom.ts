@@ -108,6 +108,27 @@ export function clear(el: Element): void {
   while (el.firstChild) el.removeChild(el.firstChild);
 }
 
+/**
+ * A label with every `D-M-YYYY` date pinned to one line.
+ *
+ * A browser wraps a sentence at its ordinary space-and-hyphen break points,
+ * and a hyphen inside a date (`5-6-1911`) is one of those points: a period
+ * label was breaking as "ngay 5-" / "6-1911 tro ve truoc", which splits one
+ * printed date across two lines. The label still has to wrap normally when it
+ * runs long - only the date tokens themselves must stay whole - so each token
+ * gets its own `white-space: nowrap` span instead of the label being set
+ * `nowrap` as a whole. The text content is untouched, so the heading is
+ * still stored, announced and copied exactly as the 2019 edition prints it.
+ *
+ * Spread the result into `h()`: `h('span', { class: 'x' }, ...wholeDates(s))`.
+ */
+export function wholeDates(text: string): (string | HTMLElement)[] {
+  return text
+    .split(/(\d{1,2}-\d{1,2}-\d{4})/g)
+    .map((part, i) => (i % 2 === 1 ? h('span', { class: 'date-nowrap', text: part }) : part))
+    .filter((part) => part !== '');
+}
+
 /** Status chip. The label text is the provenance label itself, verbatim. */
 export function chip(label: string, tone: 'verify' | 'conflict' | 'source' | 'project'): HTMLElement {
   return h('span', { class: `chip chip--${tone}`, text: label });

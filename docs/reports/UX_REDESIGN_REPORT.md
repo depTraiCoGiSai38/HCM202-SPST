@@ -1,9 +1,31 @@
 # UX_REDESIGN_REPORT — HÀNH TRÌNH TƯ TƯỞNG
 
+> ## ĐÍNH CHÍNH 18-9-2026, 21:15 (+0700) — SỐ ĐO TRONG BÁO CÁO NÀY ĐÃ LỖI THỜI
+>
+> Báo cáo này **không bị sửa**. Nội dung phân tích giữ nguyên. Chỉ các **con số đo**
+> là đã lỗi thời, và đây là cách đọc chúng:
+>
+> | Ghi trong báo cáo | Giá trị hiện hành, đo 18-9-2026 20:47-20:55 |
+> |---|---|
+> | kiểm thử đơn vị 113 / 115 / 116 | **136 đạt** (content 88, places 48) |
+> | kiểm thử trình duyệt 183 / 213 / 228, hoặc "chưa chạy" | **255 đạt**, mã thoát 0 |
+>
+> Nguồn duy nhất cho số đo hiện hành: [`docs/MEASURED_STATE_2026-09-18.md`](../MEASURED_STATE_2026-09-18.md).
+>
+> Mọi con số cũ **đều đúng tại thời điểm chúng được ghi**. Bản ghi cũ không bị viết lại.
+>
+> **Về buổi Showcase:** báo cáo này được viết khi chưa biết buổi Showcase của Nhóm 2
+> đã diễn ra **ngày 17-9-2026, Slot 4** (lịch do giảng viên sở hữu, sheet
+> `SHOWCASE / PRESENTATION SCHEDULE`). Mọi câu trong báo cáo này hàm ý buổi ấy
+> *chưa diễn ra* đều phải đọc lại theo nghĩa hẹp: **chưa có bản ghi nào của buổi ấy
+> trong kho mã**. Bản ghi sự kiện: Folder 06, `..._06_ShowcaseDefenseRecord_2026-09-17_v1.0`.
+
+---
+
 > **Trạng thái chung của dự án:** `REQUIRES HUMAN VERIFICATION AND REAL PROJECT EVIDENCE`
 > **Trạng thái của đợt thiết kế lại này:** `UX REDESIGN IMPLEMENTED — REQUIRES HUMAN VERIFICATION AND REAL PROJECT EVIDENCE`
 >
-> Ngày: 17-9-2026 · Phiên: P-UX-12 · Prompt nguyên văn: [`docs/prompts/P-UX-12.txt`](docs/prompts/P-UX-12.txt)
+> Ngày: 17-9-2026 · Phiên: P-UX-12 · Prompt nguyên văn: [`docs/prompts/P-UX-12.txt`](../prompts/P-UX-12.txt)
 >
 > Mọi lựa chọn trong tệp này là `PROJECT DECISION`. Không mục nào là yêu cầu lấy từ ba tệp PDF
 > của học phần. Không mục nào là bằng chứng người dùng thật.

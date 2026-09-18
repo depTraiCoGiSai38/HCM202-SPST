@@ -1,0 +1,93 @@
+PROMPT NGUYÊN VĂN — đợt P-HERO-01, ngày 18-9-2026
+Công cụ: Claude Code (Claude Opus 5, cửa sổ ngữ cảnh 1M / Claude Sonnet 5 ở một đoạn giữa phiên)
+
+Ghi chú về cách lưu: đây là một phiên làm việc liên tục, người dùng gõ tiếng Việt, nhiều
+lượt kèm ảnh chụp màn hình. Các prompt CHỈ HỎI VỊ TRÍ MÃ NGUỒN (không sửa gì) được ghi lại
+ở cuối tệp để bản ghi đủ, nhưng chúng không tạo ra thay đổi nào trong sản phẩm.
+Không cắt, không sửa chính tả, không dịch.
+
+================================================================================
+A. CÁC PROMPT DẪN ĐẾN THAY ĐỔI THẬT TRONG SẢN PHẨM
+================================================================================
+
+--------------------------------------------------------------------------------
+A1. (kèm ảnh chụp vùng nhãn mối nối trên biểu đồ tổng quan, và một lượt trước đó
+     người dùng bôi chọn mảng BOUNDARIES trong web/src/data/stages.ts dòng 761-790)
+
+giờ tớ muốn xóa chỗ đó đi thì sao ?
+
+--- Trả lời của người dùng cho câu hỏi làm rõ phạm vi (AskUserQuestion) ---
+Câu hỏi: "Bạn muốn xoá cái gì cụ thể: chỉ nhãn nhỏ trên biểu đồ overview, hay toàn bộ
+tính năng 'ranh giới mối nối' ở mọi nơi?"
+Người dùng chọn: "Chỉ nhãn trên biểu đồ overview"
+
+--------------------------------------------------------------------------------
+A2. (kèm ảnh chụp danh sách 5 chặng, các dòng "Thời kỳ từ ngày 5-" xuống dòng
+     thành "6-1911 trở về trước")
+
+hãy để ngày - tháng - năm trên một hàng đừng làm kiểu ngày - xuống hàng - tháng - năm bạn ạ
+
+--------------------------------------------------------------------------------
+A3. (kèm ảnh chụp khối "CHƯA CÓ NGUỒN" ở cột phải màn mở đầu)
+
+bây giờ ở nội dung đó, bạn hãy xóa chỗ này đi nhé, và kéo dài tiêu đề ra
+
+--------------------------------------------------------------------------------
+A4. (kèm ảnh chụp màn mở đầu sau khi đã nới tiêu đề)
+
+bạn xem, cách lên xuống dòng như này có chấp nhận được không?
+"Một trích đoạn giáo trình, dựng lại thành hành trình để đi qua. Năm chặng, theo đúng thứ tự và đúng tên gọi mà trích đoạn in ra." viết thành 1 dòng thôi
+
+"5 chặng đường,
+một quá trình hình thành và phát triển" cụm này in đậm và viết thành 2 dòng như này nè
+
+================================================================================
+B. CÁC PROMPT CHỈ HỎI VỊ TRÍ / CHẨN ĐOÁN — KHÔNG SỬA GÌ
+================================================================================
+
+B1. (kèm ảnh chụp một mốc trong chặng 3) cái này nằm ở đâu ?
+
+B2. (kèm ảnh chụp biểu đồ "Một sợi, năm chặng") phần này nằm ở đâu vậy bạn?
+
+B3. (kèm ảnh chụp nhãn "5-6-1911 › 6-6-1911") tớ muốn tìm mấy chỗ nhỏ nhỏ như này nè
+
+B4. bạn xóa đi cái gì vậy ?
+
+B5. (kèm ảnh chụp biểu đồ vẫn còn nhãn cũ) nó vẫn còn nè ?
+
+B6. (kèm ảnh chụp) nó vẫn vậy mà bạn ?
+
+B7. tớ tắt đi và mở lại bằng npm run dev có thấy thay đổi gì đâu ?
+
+B8. (kèm ảnh chụp màn mở đầu) vị trí phần này nằm ở đâu
+
+B9. bạn chưa làm gì mà ?
+
+================================================================================
+C. PROMPT DO CHÍNH TRỢ LÝ SOẠN, GỬI CHO CÁC AGENT KHẢO SÁT
+================================================================================
+
+Trước khi gỡ khối `FS-open` khỏi màn mở đầu, trợ lý tự soạn và chạy một workflow khảo sát
+gồm 8 agent (4 agent khảo sát + 4 agent kiểm chứng đối chất). Toàn bộ script và prompt
+được lưu tự động tại:
+
+  C:\Users\deptr\.claude\projects\D--SPST\<session>\workflows\scripts\
+      hero-figure-removal-survey-wf_6adad8a5-89a.js
+
+Bốn góc khảo sát: (1) tham chiếu mã và mã chết; (2) CSS bố cục hero; (3) kiểm thử nào vỡ;
+(4) rà soát control dự án đã ghi trong AGENTS.md và các báo cáo đã commit.
+
+Mọi prompt ấy là prompt VỀ MÃ NGUỒN VÀ QUY ĐỊNH DỰ ÁN, không phải prompt sinh nội dung
+học thuật. Không agent nào được phép sửa tệp; tất cả đều chạy ở chế độ chỉ đọc.
+
+================================================================================
+D. PHIÊN TIẾP THEO — 19-9-2026 (mã P-HERO-02)
+================================================================================
+
+--------------------------------------------------------------------------------
+D1. (kèm 2 ảnh chụp: chip "NEED VERIFICATION" dưới chú thích ảnh chân dung
+     Marseille và dưới ảnh trang báo L'Humanité, đều ở trang chặng 3)
+
+1. Trừ phần Kiểm chứng, những chỗ khác có chữ NEED VERIFICATION. Ví dụ như hình 1, thì bạn hãy xóa ngay cho tớ.
+
+2. Chỗ nào có câu "Trích đoạn không in địa điểm cho mốc này." thì hãy xóa câu ấy cho tớ nhé.

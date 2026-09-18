@@ -34,15 +34,132 @@
 }
 
 /*
- * Land, not territory. No borders are drawn: the excerpt spans 1911-1969 and
- * present-day boundaries would be an anachronism sitting under the content.
+ * ---- the basemap, in the order it must be read ------------------------
+ *
+ * Four layers sit under the narrative, and the whole point of the weights below
+ * is that none of them can out-shout it. The hierarchy the cartography brief
+ * asks for, from quietest to loudest:
+ *
+ *   coastline        quiet structural  0.6px  --rule-strong        1.97:1
+ *   country border   clearer line      1.0px  --ink-faint at 0.75  3.09:1
+ *   island symbol    a mark, not land  r3.6   --ink-faint
+ *   historical route narrative         1.4px  --son at 0.70        3.61:1
+ *   turning point    highest           r7     --son, solid
+ *
+ * Contrast is measured against the land fill and composited, not read off the
+ * token table, because every one of these is part transparent.
+ *
+ * An earlier revision had the border QUIETER than the coastline and in the same
+ * token, on the reasoning that ui-ux-pro-max's `gridline-subtle` keeps a grid
+ * from competing with data. That analogy was pushed too far: a gridline can be
+ * near-invisible because the chart still reads without it, whereas a national
+ * border IS the information here. It composited to 1.56:1, below the coastline's
+ * 1.97:1, and a viewer could not tell one country from the next. Restraint below
+ * the route still holds; invisibility does not count as restraint.
+ *
+ * Every width is in SCREEN pixels, via `vector-effect: non-scaling-stroke` in
+ * atlas.ts, so the ranking holds at a 26-degree window and at a 348-degree one
+ * alike rather than only at the framing it was tuned on.
  */
+
+/* Land. The coastline is the one basemap line that carries real information: it
+ * separates land from sea. It stays the strongest thing in the basemap. */
 .plate__land {
   fill: var(--paper);
   stroke: var(--rule-strong);
   stroke-width: 0.6;
   stroke-linejoin: round;
 }
+
+/*
+ * National boundaries, Admin-0 only.
+ *
+ * A DIFFERENT INK FROM THE COASTLINE, and that is the whole correction here.
+ *
+ * The first implementation drew this in `--rule-strong` at 0.5px and 0.68
+ * opacity - the coastline's own colour, thinner and part transparent. Measured
+ * against the land fill that composites to 1.56:1, while the coastline sits at
+ * 1.97:1. So the border was the FAINTEST line on the plate and identical in hue
+ * to the line it had to be distinguished from. It passed every structural test
+ * and was invisible, which is the only kind of failure a test cannot catch.
+ *
+ * The brief's ranking is coastline < border < route, so:
+ *
+ *   coastline  --rule-strong  0.6px  @1.00  ->  1.97:1
+ *   border     --ink-faint    0.8px  @0.70  ->  2.83:1
+ *   route      --son          1.4px  @0.70  ->  3.61:1, and chromatic
+ *
+ * The border also has to work harder than those numbers suggest, because the
+ * coastline gets a second cue for free - land and sea are different fills, so it
+ * reads as a tonal step as well as a line. A border separates land from land and
+ * has the line alone. Hence more contrast, not less.
+ *
+ * Still neutral, still thin, still well under a 1.4px red line. Solid rather
+ * than dashed on purpose: dashed reads as `uncertain`, which would be this
+ * product making a claim about the boundary rather than drawing the source.
+ */
+.plate__border {
+  fill: none;
+  stroke: var(--ink-faint);
+  /*
+   * A FULL pixel, not a hairline. A sub-pixel stroke is spread across two pixel
+   * rows by antialiasing and never reaches its nominal colour in either: at
+   * 0.8px this measured 2.15:1 on the painted result against 4.53:1 nominal.
+   * That gap is most of why the first pass was invisible, and it is invisible to
+   * every check that reads computed style instead of pixels. `carto-audit.mjs`
+   * now rasterises the plate and measures the ink that actually lands.
+   */
+  stroke-width: 1;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  opacity: 0.75;
+}
+
+/*
+ * An islet of one of the offshore island groups.
+ *
+ * `r` is in CANVAS units, and the plate is only about 536 CSS px wide inside a
+ * stage's reading column - so one canvas unit is roughly half a pixel. At the
+ * original r 2.4 these rendered at 1.29px RADIUS in the palest line token on the
+ * page: geometrically present, visually absent. Both numbers were measured in
+ * the browser, not estimated.
+ *
+ * So: the ink token, which is legible, and a radius set from the measured
+ * scale rather than from the canvas abstraction. Still a SYMBOL and still small
+ * - no island's true area is enlarged, and the group ring below is what actually
+ * carries the orientation.
+ */
+.plate__isle {
+  fill: var(--ink-faint);
+  stroke: none;
+  r: 3.6;
+}
+
+/*
+ * Vietnam's coastal islands. Real polygons at true scale, so they get the land's
+ * own treatment - they ARE land, drawn from a finer source than the world layer
+ * because the world layer does not resolve them at all.
+ */
+.plate__vn-islands {
+  fill: var(--paper);
+  stroke: var(--rule-strong);
+  stroke-width: 0.6;
+  stroke-linejoin: round;
+}
+
+/* ---- what the excerpt itself puts on the plate ------------------------- */
+
+/*
+ * RESTORED 18-9-2026.
+ *
+ * The basemap rewrite above replaced the whole head of this file and took the
+ * narrative layer's rules out with it. Every one of these shapes then fell back
+ * to its SVG default: a placed mark painted solid BLACK instead of ink, a
+ * country wash inheriting the page's own text colour instead of `--ink-faint`,
+ * and a route and an open ring with no stroke at all - present in the DOM,
+ * counted by the tests, and invisible on screen. The five-layer ranking
+ * documented at the top of this file assumes these rules exist. They are them.
+ */
 
 /* A mark the excerpt actually places. */
 .plate__mark {
@@ -51,6 +168,7 @@
   stroke-width: 1.5;
 }
 
+/* A turning point: the loudest thing on the plate, solid and chromatic. */
 .plate__mark--turn {
   fill: var(--son);
 }
@@ -60,9 +178,24 @@
   stroke-width: 2.5;
 }
 
-/* A country is not a point, so it gets a wash instead of a pin. */
+/*
+ * A country is not a point, so it gets a wash instead of a pin.
+ *
+ * The token goes on the GRADIENT, not on the circle: `currentColor` inside a
+ * stop resolves against the gradient element's own computed colour. Left
+ * unset, the wash inherits whatever the page's text colour happens to be -
+ * which is exactly how it came out white on a dark background.
+ */
 .plate__wash-grad {
   color: var(--ink-faint);
+}
+
+/* Drawn only between two ends the excerpt names. */
+.plate__move {
+  stroke: var(--son);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  opacity: 0.7;
 }
 
 /*
@@ -76,14 +209,6 @@
   stroke: var(--son);
   stroke-width: 1.1;
   opacity: 0.5;
-}
-
-/* Drawn only between two ends the excerpt names. */
-.plate__move {
-  stroke: var(--son);
-  stroke-width: 1.4;
-  stroke-linecap: round;
-  opacity: 0.7;
 }
 
 /* ---- the text beside the drawing ------------------------------------- */
@@ -211,14 +336,6 @@
   color: var(--ink);
 }
 
-.atlas-space__note {
-  margin: var(--space-s) 0 0;
-  max-inline-size: var(--measure);
-  font-family: var(--font-apparatus);
-  font-size: var(--step--1);
-  line-height: 1.55;
-  color: var(--ink-soft);
-}
 
 .atlas-space__stats {
   margin: var(--space-s) 0 0;
@@ -286,6 +403,53 @@
   .atlas-space__stats {
     gap: var(--space-s) var(--space-m);
   }
+
+  /*
+   * The plate is roughly a third of its desktop width here, and the island
+   * symbol and its label are both sized in CANVAS units - so both shrink with
+   * it and both fall under a legible size at exactly the widths the brief names.
+   * They are scaled back up in canvas units to hold a constant apparent size.
+   *
+   * Nothing about the geography changes: the marks stay on the same
+   * coordinates, and a bigger symbol still says `islands are here` rather than
+   * asserting a bigger island. The symbol was never at true scale to begin with,
+   * which is why enlarging it costs no accuracy.
+   */
+  /*
+   * The plate is about 356 CSS px wide here, so one canvas unit is roughly a
+   * third of a pixel. Anything sized in canvas units has to grow to hold a
+   * constant apparent size; nothing about the geography changes, and the symbol
+   * was never at true scale to begin with, so enlarging it costs no accuracy.
+   */
+  .plate__isle {
+    r: 5.6;
+  }
+
+  /*
+   * The border is NOT quietened here, though a first pass did exactly that.
+   *
+   * It carries `vector-effect: non-scaling-stroke`, so its width is in SCREEN
+   * pixels and does not thin when the plate shrinks - there is no faintness to
+   * compensate for. Dropping its opacity on the narrowest screen only made the
+   * width where borders are hardest to read the one where they are also weakest.
+   * Density at a whole-world framing on a phone is real and is recorded as a
+   * limitation; the answer to it is not to make the layer invisible.
+   */
+}
+
+/*
+ * ---- motion -----------------------------------------------------------
+ *
+ * The basemap's orientation layers never animate. Only `.plate__land` carries
+ * the single settle above; a border that drew itself in, an outline that glowed,
+ * or a label that arrived late would all be motion spent on the layer that is
+ * meant to be the quietest thing on the plate.
+ */
+.plate__border,
+.plate__vn-islands,
+.plate__isle {
+  animation: none;
+  transition: none;
 }
 
 /* ---- the spatial consequence of walking a stage ----------------------- */

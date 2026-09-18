@@ -12,7 +12,7 @@ import {
   slotStatus,
   SOURCING_CHECKS,
 } from '../data/figures';
-import { placeSection } from './placeRegister';
+import { cartographySection, placeSection } from './placeRegister';
 import { chipForStatus, h } from '../lib/dom';
 import { RISK_BY_ID } from '../data/locators';
 import { motionSuppressed } from '../lib/state';
@@ -55,6 +55,8 @@ export function verifyPage(): HTMLElement {
   wrap.appendChild(anchor('anh-tu-lieu', figureSection()));
   wrap.appendChild(h('hr', { class: 'rule' }));
   wrap.appendChild(anchor('noi-chon', placeSection()));
+  wrap.appendChild(h('hr', { class: 'rule' }));
+  wrap.appendChild(anchor('nen-ban-do', cartographySection()));
   wrap.appendChild(h('hr', { class: 'rule' }));
   wrap.appendChild(anchor('khai-bao', statementsSection()));
   wrap.appendChild(h('hr', { class: 'rule' }));
@@ -114,7 +116,7 @@ function figureSection(): HTMLElement {
         h('th', { text: 'Dùng để' }),
         h('th', { text: 'Trạng thái chứng cứ' }),
         /*
-         * Added 19-9-2026. Evidence status and reuse decision are two different
+         * Evidence status and reuse decision are two different
          * questions and the register has to show both: a document can be fully
          * traced and still carry an unresolved question about what may be done
          * with it. Merging them into one column is exactly the conflation the
@@ -204,6 +206,7 @@ const SECTIONS: [string, string][] = [
   ['chu-in', 'Đối chiếu dạng chữ in'],
   ['anh-tu-lieu', 'Ảnh tư liệu: vị trí đã điền và vị trí còn trống'],
   ['noi-chon', 'Nơi chốn và toạ độ'],
+  ['nen-ban-do', 'Nền bản đồ: nguồn, quy ước và giới hạn'],
   ['khai-bao', 'Sản phẩm tự khai báo'],
   ['thiet-ke', 'Căn cứ của các lựa chọn thiết kế'],
 ];

@@ -20,7 +20,7 @@ import {
   SOURCING_CHECKS,
 } from '../data/figures';
 import { splitForReading } from '../components/stagePage';
-import { figureSlot, hasFigure } from '../components/figure';
+import { figureSlot, hasFigure, sourceItems } from '../components/figure';
 import {
   LOCATORS,
   PRINTED_FORM_NOTES,
@@ -102,7 +102,7 @@ describe('locator candidates', () => {
   /**
    * The count the Verify screen publishes, against the data it is drawn from.
    *
-   * Added 18-9-2026 after the register was found publishing `0` here. The
+   * The register was once found publishing `0` here. The
    * summary filtered on the normalised spelling `Sđd`, which AGENTS.md forbids
    * the product from writing, so it matched none of the three printed `Sdd`
    * notes. The test below had asserted the 3 in the data the whole time;
@@ -495,11 +495,6 @@ describe('the question that opens each stage', () => {
 
 describe('documentary photographs', () => {
   /**
-   * CORRECTED 18-9-2026. This said "the registry is empty on purpose", which was
-   * true when it was written and had not been touched since eight records
-   * cleared. A maintainer reading it would have concluded the block below
-   * guarded an empty list; it does the opposite.
-   *
    * Eight of the thirteen declared positions hold a record and five are still
    * blocked. These tests keep both halves honest: a record may not appear
    * without every provenance field filled, and the reasons the remaining slots
@@ -635,13 +630,9 @@ describe('documentary photographs', () => {
   /**
    * The evidence axes stay separate.
    *
-   * CORRECTED 19-9-2026: this said "the six evidence axes stay six" while the
-   * body compared four. The heading was describing an intention, the body an
-   * implementation, and they had drifted - which is the same class of error the
-   * test itself exists to catch. The sweep now covers all SEVEN text axes that
-   * are supposed to be answered independently: identity, event/date, place,
-   * offline packaging, the holder's own statement, the holder's published
-   * condition, and the maker's position.
+   * The sweep covers all SEVEN text axes that must be answered independently:
+   * identity, event/date, place, offline packaging, the holder's own statement,
+   * the holder's published condition, and the maker's position.
    *
    * They exist to be answered separately because they have different evidence
    * behind them. Copying a cleared answer from one field into another would let
@@ -703,19 +694,13 @@ describe('documentary photographs', () => {
   });
 
   /**
-   * The Marseille plate, after it moved.
+   * The Marseille plate.
    *
-   * REWRITTEN 19-9-2026. This test used to be called "carries the opening
-   * photograph, sourced and deliberately unattached to any stage" and asserted
-   * `stageId === null`. The project reversed that placement (`SC-24`): the
-   * record's own date, 26-12-1921, falls inside stage 3, so the picture does a
-   * stage-specific job there instead of a generic one at the front door.
-   *
-   * The assertion that mattered is not dropped, only moved to where it belongs.
-   * The reason the plate was held back was never its date - it was its EVENT,
-   * the Marseille congress, which the excerpt does not cover. That boundary is
-   * still absolute, and it is what this test now guards: the picture may sit in
-   * stage 3, and it may never be used to illustrate that congress.
+   * The record's own date, 26-12-1921, falls inside stage 3, so the picture sits
+   * there and does a stage-specific job (`SC-24`). What this test guards is the
+   * boundary that has nothing to do with its date: its EVENT, the Marseille
+   * congress, is not covered by the excerpt, so the picture may sit in stage 3
+   * and may never be used to illustrate that congress.
    */
   it('keeps the Marseille plate on the stage its own date belongs to, and off the event it records', () => {
     const plate = FIGURES.find((f) => f.id === 'FS-ky-3');
@@ -754,18 +739,20 @@ describe('documentary photographs', () => {
    * When its document moved to stage 3 the position could have been deleted.
    * It was not: AGENTS.md section 4 requires an empty evidence field to stay
    * visibly blocked, and a slot that vanishes takes its gap with it.
+   *
+   * The position is reported on `#/kiem-chung`, not on the opening screen, so
+   * this data-level check is one of the two things standing between "reported
+   * elsewhere" and "quietly deleted". The other is in `e2e/figures.spec.ts`.
    */
   it('keeps the opening position declared and empty after its document moved', () => {
     expect(FIGURES.find((f) => f.id === 'FS-open')).toBeUndefined();
     const slot = FIGURE_SLOTS.find((s) => s.id === 'FS-open');
     expect(slot, 'the opening position must stay declared').toBeDefined();
     /*
-     * REPLACED 19-9-2026: this line asserted slotStatus('FS-open') is
-     * NOT YET EVIDENCED, which the line above already entails by that
-     * function's definition - it restated the data it had just read. What is
-     * worth pinning instead is that the slot is still a PRIMARY position at the
-     * entrance, so a later edit cannot quietly demote the opening's gap into a
-     * supporting position nobody renders.
+     * Pinned here: the slot is still a PRIMARY position at the entrance, so a
+     * later edit cannot quietly demote the opening's gap into a supporting
+     * position nobody renders. (Its NOT YET EVIDENCED status is already
+     * entailed by the assertion above, so restating it would add nothing.)
      */
     expect(slot?.kind, 'the opening position stays a primary anchor').toBe('primary');
     expect(slot?.anchor.where, 'and it stays at the entrance').toBe('entrance');
@@ -1049,8 +1036,13 @@ describe('documentary photographs', () => {
       expect(img?.getAttribute('alt'), slot.id).toBe(fig.alt);
       // The credit is a licence condition, so it is on the surface, not behind a control.
       expect(el.textContent, `${slot.id} must show its required credit`).toContain(fig.credit);
-      // And the evidence status travels with it, in words rather than by colour.
-      expect(el.textContent, `${slot.id} must show its evidence status`).toContain(fig.status);
+
+      // The evidence status is not in the caption; it is checked where it
+      // lives, in this figure's own `Nguồn và điều kiện` panel.
+      const statuses = sourceItems(fig)
+        .filter((row) => row.label === 'Trạng thái')
+        .map((row) => row.value);
+      expect(statuses, `${slot.id} must still carry its evidence status`).toContain(fig.status);
     }
   });
 
@@ -1280,9 +1272,29 @@ describe('the migrated base source', () => {
     expect(SOURCE.firstPage).toBe(28);
     expect(SOURCE.lastPage).toBe(35);
     expect(SOURCE.pdfPages).toBe(8);
-    // The supplied file is an unauthenticated scan. Migrating the source does
-    // not upgrade its provenance.
-    expect(SOURCE.provenance).toBe('NEED VERIFICATION');
+    /*
+     * The scan was compared against the official printed edition, so provenance
+     * is no longer open. What is pinned here is that the claim never stands on
+     * its own: whatever `provenance` says, `provenanceCheck` must name the
+     * edition, the pages compared and the result, so the check can be repeated.
+     */
+    expect(SOURCE.provenance).not.toBe('NEED VERIFICATION');
+    expect(SOURCE.provenanceCheck).toContain('Bộ Giáo dục và Đào tạo');
+    expect(SOURCE.provenanceCheck).toContain('2019');
+    expect(SOURCE.provenanceCheck).toContain('tr.28-35');
+  });
+
+  /*
+   * The excerpt being authentic does not make its footnotes checked. Each of
+   * the ten cites a different book, and none of those has been opened, so the
+   * locators keep their own status - see `locators.ts`.
+   */
+  it('does not let the authenticated excerpt promote its own footnotes', () => {
+    for (const l of LOCATORS) {
+      expect(l.status, `${l.id} cites another work and is not checked by the excerpt`).toBe(
+        'NEED VERIFICATION',
+      );
+    }
   });
 
   it('maps every printed page onto a sheet of the supplied file', () => {

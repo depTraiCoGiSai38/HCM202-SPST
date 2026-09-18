@@ -95,20 +95,13 @@
 
 /* ---- Opening: the first screen ------------------------------------------
  *
- * Identity, one document, two lines, one action. Measured before the change,
- * the first screen at 1440px carried 511 words and five competing blocks; the
- * question that ran across it is now a section of its own below, at full
- * approved wording.
+ * Identity, two lines, one action. The hero is allowed to take the screen
+ * because it is holding one sentence, not a table of contents; the Central
+ * Question is a section of its own below, at full approved wording.
  *
- * The hero is allowed to take the screen because it is holding one sentence and
- * one declared documentary position, not a table of contents.
- *
- * CORRECTED 18-9-2026: this said "one image and one sentence". The opening no
- * longer carries an image - `FS-open` was emptied when its photograph moved to
- * the stage 3 anchor - so the second column now holds the blocked line for that
- * position rather than a picture. The reservation is deliberate and stays: the
- * position is still declared, and a document that genuinely opens the whole
- * journey would render here.
+ * One column. The measure sits on each text element rather than on
+ * `.hero__type`, which is what lets the title run wide while the intro keeps a
+ * readable prose width.
  */
 .hero {
   position: relative;
@@ -123,16 +116,8 @@
   margin-inline: auto;
 }
 
-@media (min-width: 64rem) {
-  .hero {
-    grid-template-columns: minmax(0, 1.1fr) minmax(min(19rem, 100%), 0.9fr);
-    column-gap: var(--space-2xl);
-  }
-}
-
 .hero__type {
   min-inline-size: 0;
-  max-inline-size: 46ch;
 }
 
 .hero__label {
@@ -145,17 +130,32 @@
   color: var(--ink-faint);
 }
 
+/*
+ * No measure of its own: `heroTitle()` decides the shape by setting the two
+ * clauses as two block lines, and a cap here would fight that. The line is
+ * bounded by `.hero`'s own 78rem; on a narrow screen each clause wraps inside
+ * itself, which is what `text-wrap: balance` is left here for.
+ */
 .hero__title {
   margin: 0;
   font-size: var(--step-5);
-  font-weight: 400;
+  font-weight: 700;
   line-height: 1.08;
   letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
+.hero__title-line {
+  display: block;
+}
+
+/*
+ * Uncapped, so the standfirst runs as one line on a wide screen. A deliberate
+ * exception for this one sentence: at about 128 characters it is well past the
+ * 60-75 the house measure uses, and every other prose block keeps its cap.
+ * Below roughly 1200px it simply wraps again.
+ */
 .hero__intro {
-  max-inline-size: 44ch;
   margin: var(--space-m) 0 0;
   font-family: var(--font-apparatus);
   font-size: var(--step-0);
@@ -169,10 +169,6 @@
   align-items: center;
   gap: var(--space-m);
   margin-block-start: var(--space-l);
-}
-
-.hero__figure {
-  min-inline-size: 0;
 }
 
 /* ---- Opening: the guiding question --------------------------------------
@@ -544,9 +540,19 @@
   block-size: clamp(20rem, 52vh, 33rem);
 }
 
+/*
+ * The labels' containing block, and their query container.
+ *
+ * `container-type: inline-size` is what lets a label state its own room in
+ * `cqw` and compare that room against its own width - see the `translate`
+ * on `.atlas__stage-link`. Containment is safe here because this box is
+ * `inset: 0` on a positioned parent: its size already comes from its
+ * containing block and never from its contents.
+ */
 .atlas__overlay {
   position: absolute;
   inset: 0;
+  container-type: inline-size;
 }
 
 /*
@@ -561,9 +567,28 @@
   inline-size: max-content;
   /* `--atlas-room` is the space left between this label and the right edge of
      the drawing; see stageMark in journeyPage.ts. */
-  max-inline-size: min(26ch, 34vw, var(--atlas-room, 100%));
+  max-inline-size: min(26ch, 34vw, var(--atlas-room, 100cqw));
   padding: 0.25rem 0.5rem;
-  translate: 0 -100%;
+  /*
+   * Y: sit the label above its own line. X: normally nothing, and a pull to the
+   * LEFT when the label is wider than the room it has.
+   *
+   * `max-inline-size` alone cannot keep a label inside the drawing, because no
+   * box can be narrower than its own min-content - and a date carries
+   * `white-space: nowrap`, so an unbreakable `29-1-1941` IS this label's
+   * min-content. At small sizes with large text, stage 5 - the label with the
+   * least room to its right - therefore grew past the drawing and pushed the
+   * whole page into horizontal scroll, which `carto-audit.mjs` check 3 caught
+   * and which is a WCAG 1.4.10 reflow failure.
+   *
+   * So when the label does not fit, it slides left by exactly the excess and
+   * its right edge lands on the drawing's right edge. `min()` makes that a
+   * no-op whenever it does fit, so nothing moves at ordinary sizes. This holds
+   * at any text size, which a media query could not: `rem` and `em` in a
+   * media query resolve against the browser's INITIAL font size and are blind
+   * to page-set text scaling.
+   */
+  translate: min(0px, calc(var(--atlas-room, 100cqw) - 100%)) -100%;
   margin-block-start: -0.8rem;
   border-radius: var(--radius-s);
   color: var(--ink);
@@ -597,56 +622,34 @@
   color: var(--ink);
 }
 
-.atlas__boundary {
-  position: absolute;
-  translate: -50% -50%;
-  /*
-   * PRE-EXISTING FIX, found by `tools/ux-audit.mjs` while checking this pass.
-   *
-   * The mark is centred on its joint, so half of it sits to the right of that
-   * point. At 200% text on a 390px screen the last joint's label grew to 303px
-   * and pushed the page to 426px - a reflow failure that predates this work and
-   * shows in the baseline build too. Capping the box lets the label wrap onto a
-   * second line instead. At normal text size the label is narrower than the cap,
-   * so nothing changes there.
-   *
-   * Same idea as `--atlas-room` on `.atlas__stage-link`, which got this
-   * treatment in the previous pass while the joint marks did not.
-   */
-  /*
-   * Viewport-relative on purpose, NOT in `ch`. A `ch` cap scales with the text
-   * and so constrains identically at 100% and at 200%, which is useless here;
-   * a `vw` cap stays put while the text grows, so it is slack at normal size
-   * and only engages when the text is enlarged. A first attempt used `24ch`
-   * and made two labels wrap at ordinary size - caught by measuring, not by eye.
-   */
-  /*
-   * Absolutely positioned from its left edge only, so the space available to it
-   * is whatever is left to the right of its joint - which for the last joint is
-   * a quarter of the screen. Without `max-content` the label wraps there at
-   * ordinary size; with it, the label stays on one line until the cap below
-   * actually bites.
-   */
-  inline-size: max-content;
-  max-inline-size: 46vw;
-  text-align: center;
-  padding: 0.05rem 0.4rem;
-  background-color: var(--paper);
-  font-family: var(--font-marker);
-  font-size: var(--step--3);
-  line-height: 1.5;
-  color: var(--ink-faint);
-  /*
-   * Wrapping is allowed between the two dates and forbidden inside either one:
-   * a date broken at its own hyphens would be unreadable, which is what the
-   * blanket `nowrap` here was protecting against.
-   */
-  white-space: normal;
-  pointer-events: none;
-}
-
-.atlas__boundary-part {
-  white-space: nowrap;
+/*
+ * The one place a printed date is allowed to break.
+ *
+ * The pull-back on `.atlas__stage-link` keeps the label's BOX inside the
+ * drawing at any size. It cannot keep the label's text inside that box: an
+ * unbreakable `29-1-1941` is 114px at 200% text, and stage 5's box is 83px,
+ * so the token overflows the box it was just pulled into and the page scrolls
+ * sideways again. Below the width where the token can fit at all, it therefore
+ * goes back to breaking. A date on two lines is a worse reading of a date; a
+ * page that scrolls sideways is a WCAG 1.4.10 reflow failure, and that is the
+ * one to avoid.
+ *
+ * A CONTAINER query, not a media query, and that distinction is the whole
+ * reason this works: `em` in a container size query resolves against the query
+ * container's own font size, so this threshold moves with the text. `rem` and
+ * `em` in a MEDIA query resolve against the browser's initial font size and
+ * cannot see page-set text scaling at all - an earlier attempt at exactly this
+ * rule, written as `@media (max-width: 18rem)`, never once matched.
+ *
+ * 17em is measured, not chosen: across 390-1920px at 100-200% text the overflow
+ * appears at and below 15.92em of overlay width and is absent at and above
+ * 17.29em. Only the diagram's labels are affected - the chain list below has a
+ * full column and never reaches its min-content width.
+ */
+@container (max-width: 17em) {
+  .atlas__period .date-nowrap {
+    white-space: normal;
+  }
 }
 
 /* ---- Journey: the chain written out ------------------------------------- */
@@ -728,6 +731,15 @@
   font-size: var(--step--1);
   font-weight: 600;
   line-height: 1.35;
+}
+
+/*
+ * A `D-M-YYYY` date inside any period label, pinned to one line so the
+ * label's own wrap never lands inside a date and splits one printed date
+ * across two lines. See `wholeDates()` in lib/dom.ts.
+ */
+.date-nowrap {
+  white-space: nowrap;
 }
 
 .chain__claim {
@@ -894,13 +906,14 @@
 
   .atlas__stage-link {
     inline-size: auto !important;
-    max-inline-size: min(60vw, var(--atlas-room, 100%));
+    max-inline-size: min(60vw, var(--atlas-room, 100cqw));
   }
 
   .atlas__period {
     font-size: var(--step--2);
   }
 }
+
 
 /* ======================================================================
    4. Stage traverse
@@ -1753,7 +1766,7 @@
 
 /* ---- A filled primary anchor, beside the plate --------------------------
  *
- * Added 18-9-2026, when the first stage entrance actually got a picture.
+ * For a stage entrance that holds a picture.
  *
  * Until then `.walk__portrait` only ever rendered one quiet line, so it needed
  * no size of its own. A document does. The side column already carries the
@@ -3233,7 +3246,7 @@
 /*
  * The reuse decision, which is NOT a status.
  *
- * Added 19-9-2026. `status` would paint `USE` and `USE WITH CAUTION` in the same
+ * `status` would paint `USE` and `USE WITH CAUTION` in the same
  * amber, so a settled decision and an open one would look alike in the only
  * place a stage reader meets either. `figure.ts` picks `status` for the value
  * that says CAUTION and this quieter marker face for the one that does not, so

@@ -3,7 +3,7 @@ import {
   FIGURES,
   FIGURE_REQUIREMENTS,
 } from '../data/figures';
-import { ICONS, chipForStatus, clear, h, icon } from '../lib/dom';
+import { ICONS, clear, h, icon } from '../lib/dom';
 import { motionSuppressed } from '../lib/state';
 import { lensTrigger } from './evidence';
 
@@ -62,7 +62,7 @@ function picture(fig: DocumentaryFigure): HTMLElement {
   return img;
 }
 
-function sourceItems(fig: DocumentaryFigure): { label: string; value: string; tone: 'plain' | 'locator' | 'status' | 'caution' | 'decision' }[] {
+export function sourceItems(fig: DocumentaryFigure): { label: string; value: string; tone: 'plain' | 'locator' | 'status' | 'caution' | 'decision' }[] {
   return [
     { label: 'Nơi giữ tài liệu', value: fig.sourceName, tone: 'plain' },
     { label: 'Trang gốc', value: fig.sourceUrl, tone: 'locator' },
@@ -194,7 +194,10 @@ export function figureSlot(slotId: string, role: string): HTMLElement {
       // keeping this line a condition of free reuse, so it is not something the
       // design gets to tuck away.
       h('span', { class: 'figure__cap-credit', text: fig.credit }),
-      h('span', { class: 'figure__cap-status' }, chipForStatus(fig.status)),
+      // No status chip here by design: the evidence status is carried by the
+      // `Trạng thái` row of the `Nguồn và điều kiện` panel below, and by the
+      // register on `#/kiem-chung`. The credit line above is a licence
+      // condition, not a design choice, and must stay on the surface.
     ),
     h('div', { class: 'figure__acts' }, open, lensTrigger({ title: fig.caption, items: sourceItems(fig) }, 'Nguồn và điều kiện')),
   );

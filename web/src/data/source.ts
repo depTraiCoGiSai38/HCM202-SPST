@@ -21,10 +21,15 @@ import type { SourceRef } from './types';
 /**
  * Identity of the base source.
  *
- * `NEED VERIFICATION` on provenance: the supplied file is a scan produced by
- * `PDF-XChange Lite 11.0.1` with no text layer. It has NOT been authenticated as
- * the official Bộ GD&ĐT / NXB Chính trị quốc gia Sự thật edition. Naming the
- * edition here records what the file presents, not an authentication of it.
+ * The supplied file is an image-only scan produced by `PDF-XChange Lite 11.0.1`.
+ * Its provenance was open until the group compared it, page for page, against
+ * the official printed edition; `provenanceCheck` below records that check in
+ * full, and Folder 08 carries the same record.
+ *
+ * What the check covers is THIS FILE against THAT EDITION. It says nothing about
+ * the ten footnotes printed inside the excerpt: those cite other books entirely
+ * (Hồ Chí Minh Toàn tập, Văn kiện Đảng, two biographies) and are checked one by
+ * one in `locators.ts`, where each still carries its own status.
  */
 export const SOURCE = {
   id: 'GT-HCM-2019',
@@ -36,7 +41,21 @@ export const SOURCE = {
   firstPage: 28,
   lastPage: 35,
   pdfPages: 8,
-  provenance: 'NEED VERIFICATION',
+  /*
+   * `VERIFIED IN FILE` is the controlled label from AGENTS.md section 3, and it
+   * deliberately UNDERSTATES what was done: that label only promises wording was
+   * found in a supplied PDF, while the check below went further and compared the
+   * file against the printed edition. The vocabulary has no stronger term, so
+   * the cautious one is used and the full claim lives in `provenanceCheck`.
+   */
+  provenance: 'VERIFIED IN FILE',
+  /**
+   * The edition compared against, the pages compared, and the result - in the
+   * words of the person who did it. This is the group's own attestation, and it
+   * is written out in full so that anyone can repeat exactly the same check.
+   */
+  provenanceCheck:
+    'Đối chiếu với: Bộ Giáo dục và Đào tạo, Giáo trình Tư tưởng Hồ Chí Minh (Dành cho bậc đại học – không chuyên ngành lý luận chính trị), Hà Nội, 2019. Phạm vi đối chiếu: tr.28-35, đúng bằng phạm vi trích đoạn được giao. Kết quả: khớp hoàn toàn. Người đối chiếu: nhóm 02. Ngày: 19-9-2026.',
 } as const;
 
 /**

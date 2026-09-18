@@ -8,12 +8,10 @@ import {
   SECTION_HEADING_AT,
 } from '../data/project';
 import { citeSource } from '../data/source';
-import { FIGURE_SLOTS } from '../data/figures';
 import { STAGES, STAGE_BY_ID } from '../data/stages';
-import { h } from '../lib/dom';
+import { h, wholeDates } from '../lib/dom';
 import { getVisited, motionSuppressed, nextUnvisited } from '../lib/state';
 import { lensTrigger } from './evidence';
-import { figureSlot } from './figure';
 import { openingThread } from './thread';
 
 /**
@@ -26,30 +24,18 @@ import { openingThread } from './thread';
  * screen asked for a reading commitment before it had established what the
  * product is.
  *
- * Now the first screen carries identity, two lines of introduction, one action,
- * and a documentary position. That position held a photograph from 17-9-2026
- * until 19-9-2026, when the record moved to stage 3, where its own date puts it
- * (`SC-24`); it is now declared and visibly blocked, because a slot that
- * disappears takes its gap with it. The Central Question keeps every character
- * of its approved wording and gets a section of its own directly below, where
- * it has the room to be read as a question rather than skimmed as a wall.
+ * Now the first screen carries identity, two lines of introduction and one
+ * action. The Central Question keeps every character of its approved wording
+ * and gets a section of its own directly below, where it has the room to be
+ * read as a question rather than skimmed as a wall.
  *
  * Nothing about its approval state is softened: the status is one control away
  * on the same block, exactly as before.
+ *
+ * The screen carries no documentary figure. `FS-open` stays declared in
+ * `data/figures.ts` and is reported on `#/kiem-chung`, the same arrangement the
+ * product uses for an unfilled supporting slot.
  */
-
-/*
-  * The fallback exists only so a missing declaration cannot crash the opening.
-  * Its role text must match the declared slot's, or a dropped declaration would
-  * silently restore the pre-19-9 framing - an introductory photograph - on a
-  * screen that no longer has one. `content.test.ts` asserts the slot stays
-  * declared, so this branch should never run.
-  */
-const OPEN_SLOT = FIGURE_SLOTS.find((s) => s.id === 'FS-open') ?? {
-  id: 'FS-open',
-  stageId: null,
-  role: 'Một tư liệu mở ra CẢ hành trình, không phải tư liệu của riêng một chặng. Trống từ 19-9-2026, khi tấm ảnh ở đây chuyển sang đúng chặng mà niên đại của nó thuộc về.',
-};
 
 /**
  * The two lines that introduce the product.
@@ -107,12 +93,16 @@ export function openingPage(): HTMLElement {
 }
 
 /**
- * The first screen: who this is, one document, one action.
+ * The first screen: who this is, one action.
  *
  * One primary action and one secondary beside it, and nothing else competing.
  * Basis for keeping it to one: `primary-action` in SKILL.md Quick Reference
  * section 4 - each screen gets one primary call, with secondary actions
  * visually subordinate.
+ *
+ * Since 18-9-2026 this is a single column. The documentary position that used
+ * to sit beside it is gone from this screen - see the note at the top of the
+ * file - and the title takes the width instead of the picture.
  */
 function hero(entryStage: (typeof STAGES)[number], visitedCount: number): HTMLElement {
   return h(
@@ -122,7 +112,7 @@ function hero(entryStage: (typeof STAGES)[number], visitedCount: number): HTMLEl
       'div',
       { class: 'hero__type' },
       h('p', { class: 'hero__label', text: PRODUCT_TITLE }),
-      h('h1', { class: 'hero__title', text: PRODUCT_SUBTITLE }),
+      heroTitle(),
       h('p', { class: 'hero__intro', text: INTRO }),
       h(
         'div',
@@ -136,7 +126,7 @@ function hero(entryStage: (typeof STAGES)[number], visitedCount: number): HTMLEl
               ? `Tiếp tục · chặng ${String(entryStage.ordinal)}`
               : `Bắt đầu · chặng ${String(entryStage.ordinal)}`,
           }),
-          h('span', { class: 'scene__go-name', text: entryStage.headingPeriod }),
+          h('span', { class: 'scene__go-name' }, ...wholeDates(entryStage.headingPeriod)),
           h('span', { class: 'visually-hidden', text: `. ${entryStage.heading}` }),
         ),
         h('a', { class: 'btn scene__map', href: '#/hanh-trinh' }, h('span', { text: 'Xem toàn bộ 5 chặng' })),
@@ -148,9 +138,37 @@ function hero(entryStage: (typeof STAGES)[number], visitedCount: number): HTMLEl
           })
         : null,
     ),
-    // The documentary anchor for this screen. It holds a photograph once one has
-    // cleared its source and its usage condition, and says so plainly otherwise.
-    h('div', { class: 'hero__figure' }, figureSlot('FS-open', OPEN_SLOT.role)),
+  );
+}
+
+/**
+ * The subtitle, broken at its own comma.
+ *
+ * The sentence is two clauses - what the product covers, then what that adds up
+ * to - and the comma is where it hinges. Left to wrap on its own the break
+ * landed mid-clause (`... một quá trình` / `hình thành và phát triển`), which
+ * splits the second idea across two lines. So the two clauses are set as two
+ * block spans and each takes its own line.
+ *
+ * This is the same device `question()` uses on the Central Question below, for
+ * the same reason, and it keeps the same guarantee: the two slices concatenate
+ * back to the stored `PRODUCT_SUBTITLE` character for character, so nothing is
+ * rewritten to make it fit and assistive technology reads one heading. No `<br>`
+ * and no non-breaking space is used - `heading-line-balance` in the UI skill
+ * rules both out - and each clause still wraps inside itself on a narrow screen
+ * rather than overflowing.
+ */
+function heroTitle(): HTMLElement {
+  const at = PRODUCT_SUBTITLE.indexOf(',');
+  if (at < 0) return h('h1', { class: 'hero__title', text: PRODUCT_SUBTITLE });
+
+  return h(
+    'h1',
+    { class: 'hero__title' },
+    h('span', { class: 'hero__title-line', text: PRODUCT_SUBTITLE.slice(0, at + 1) }),
+    // Keeps the separating space at the head of the second line, where it
+    // collapses, so the heading's text content is unchanged.
+    h('span', { class: 'hero__title-line', text: PRODUCT_SUBTITLE.slice(at + 1) }),
   );
 }
 
@@ -278,7 +296,11 @@ function stageList(): HTMLElement {
           h(
             'span',
             { class: 'scene__stage-text' },
-            h('span', { class: 'scene__stage-period', aria: { hidden: 'true' }, text: stage.headingPeriod }),
+            h(
+              'span',
+              { class: 'scene__stage-period', aria: { hidden: 'true' } },
+              ...wholeDates(stage.headingPeriod),
+            ),
             h('span', { class: 'scene__stage-claim', aria: { hidden: 'true' }, text: stage.headingClaim }),
             h('span', { class: 'visually-hidden', text: stage.heading }),
           ),

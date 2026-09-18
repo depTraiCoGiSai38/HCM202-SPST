@@ -3,7 +3,7 @@ import { COMPARE_AXES } from '../data/interactions';
 import { continueJourney, whatNext } from './whatnext';
 import { STAGES, STAGE_BY_ID } from '../data/stages';
 import type { CompareAxis, SourceRef, StageId } from '../data/types';
-import { clear, h } from '../lib/dom';
+import { clear, h, wholeDates } from '../lib/dom';
 import { brief } from './brief';
 import { type EvidenceItem, lensTrigger, readLocator } from './evidence';
 import { compareThread } from './thread';
@@ -102,7 +102,7 @@ export function comparePage(pair?: { left?: string | undefined; right?: string |
           'p',
           { class: 'duo__side-head' },
           h('span', { class: 'duo__ord', text: String(stage.ordinal) }),
-          h('span', { class: 'duo__period', text: stage.headingPeriod }),
+          h('span', { class: 'duo__period' }, ...wholeDates(stage.headingPeriod)),
           h('span', { class: 'visually-hidden', text: stage.heading }),
         ),
         h('p', { class: 'duo__answer', text: answer.text }),

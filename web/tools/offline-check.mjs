@@ -78,6 +78,92 @@ console.log(
 );
 if (!plate.ok) problems.push('plate did not draw offline');
 
+/*
+ * The basemap's orientation layers have to survive the bundling too.
+ *
+ * Same reasoning as the coastline above, and the same failure mode: the border
+ * layer is another 31 KB string in a script the bundler rewrites by string
+ * replacement, and the archipelago marks are a small array inside it. Neither
+ * would throw if a replacement went wrong - the plate would simply come up on
+ * the Showcase computer with no country borders, or with the offshore islands
+ * silently missing, and nothing else would report it. Measuring the rendered
+ * geometry is the only honest test.
+ *
+ * This is a rendering check, not a claim about anything the drawing depicts.
+ */
+const basemap = await page.evaluate(() => {
+  const border = document.querySelector('.plate-block .plate__border');
+  const d = border?.getAttribute('d') ?? '';
+  const vn = document.querySelector('.plate-block .plate__vn-islands');
+  const vnd = vn?.getAttribute('d') ?? '';
+  const isles = document.querySelectorAll('.plate-block .plate__isle').length;
+  const labels = [...document.querySelectorAll('.plate-block .plate__isle-label')].map(
+    (el) => el.textContent ?? '',
+  );
+  const box = border?.getBoundingClientRect();
+  return {
+    border: d.length,
+    closed: /[Zz]/.test(d),
+    drawn: Boolean(box && box.width > 0),
+    vnIslands: (vnd.match(/M/g) ?? []).length,
+    isles,
+    labels,
+  };
+});
+const borderOk = basemap.border > 10000 && basemap.drawn && !basemap.closed;
+console.log(
+  borderOk
+    ? `  ok   national boundaries draw offline (${String(basemap.border)} chars, open polylines)`
+    : `  FAIL national boundaries: ${JSON.stringify(basemap)}`,
+);
+if (!borderOk) problems.push('national boundaries did not draw offline');
+
+// 19 offshore island marks on a Vietnam frame, and NO name anywhere: the
+// product does not inscribe these groups' names (PROJECT DECISION, 2026-09-18).
+const islesOk = basemap.isles === 19 && basemap.labels.length === 0;
+console.log(
+  islesOk
+    ? `  ok   offshore island marks draw offline (${String(basemap.isles)}, unnamed)`
+    : `  FAIL offshore islands: ${JSON.stringify({ isles: basemap.isles, labels: basemap.labels })}`,
+);
+if (!islesOk) problems.push('the offshore island representation did not survive bundling');
+
+// Vietnam's 24 coastal islands, which the 1:110m world layer cannot draw at all.
+const vnOk = basemap.vnIslands === 24;
+console.log(
+  vnOk
+    ? `  ok   Vietnam coastal islands draw offline (${String(basemap.vnIslands)} polygons)`
+    : `  FAIL Vietnam coastal islands: ${String(basemap.vnIslands)} polygons, expected 24`,
+);
+if (!vnOk) problems.push("Vietnam's coastal islands did not survive bundling");
+
+// The cartographic source record has to reach the Showcase too - a drawing whose
+// provenance page did not bundle is a drawing with no citation behind it.
+await page.goto(url + '#/kiem-chung');
+await page.waitForTimeout(400);
+const carto = await page.evaluate(() => {
+  const sec = document.getElementById('nen-ban-do');
+  const text = sec?.textContent ?? '';
+  return {
+    present: Boolean(sec),
+    sources: sec?.querySelectorAll('.register__item').length ?? 0,
+    standard: text.includes('QCVN 80:2024/BTNMT'),
+    pov: text.includes('quan điểm Việt Nam'),
+    limits: text.includes('KHÔNG tự nhận là đạt'),
+  };
+});
+const cartoOk =
+  carto.present && carto.sources >= 4 && carto.standard && carto.pov && carto.limits;
+console.log(
+  cartoOk
+    ? `  ok   cartographic source record bundles (${String(carto.sources)} entries, standard and limits stated)`
+    : `  FAIL cartographic source record: ${JSON.stringify(carto)}`,
+);
+if (!cartoOk) problems.push('the cartographic source record did not bundle');
+
+await page.goto(url + '#/chang/ky-1');
+await page.waitForTimeout(400);
+
 await page.keyboard.press('p');
 await page.waitForTimeout(300);
 const deck = await page.locator('.slide').isVisible();

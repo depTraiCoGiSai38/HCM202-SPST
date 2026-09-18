@@ -2,7 +2,7 @@ import { BOUNDARIES, STAGES } from '../data/stages';
 import { AFTER_STAGES } from '../data/project';
 import { RISK_BY_ID } from '../data/locators';
 import type { Stage } from '../data/types';
-import { h } from '../lib/dom';
+import { h, wholeDates } from '../lib/dom';
 import { getVisited, motionSuppressed, nextUnvisited } from '../lib/state';
 import { lensTrigger } from './evidence';
 import { VB_H, journeyThread, levelFor } from './thread';
@@ -85,45 +85,8 @@ export function journeyPage(): HTMLElement {
     overlay.appendChild(stageMark(stage, thread));
   }
 
-  STAGES.forEach((stage, i) => {
-    const next = STAGES[i + 1];
-    const boundary = BOUNDARIES[i];
-    if (!next || !boundary) return;
-
-    const mid = (stage.railEnd + next.railStart) / 2;
-    // Sit high on the joint, not at its midpoint: the midpoint is exactly where
-    // the next stage's label grows upward from its own line.
-    const top = levelFor(stage.ordinal);
-    const y = top + (levelFor(next.ordinal) - top) * 0.16;
-    const risk = boundary.riskId ? RISK_BY_ID.get(boundary.riskId) : undefined;
-
-    const mark = h(
-      'span',
-      {
-        class: 'atlas__boundary',
-        dataset: { kind: boundary.kind },
-        ...(risk ? { title: `${risk.id} — ${risk.title}` } : {}),
-      },
-      /*
-       * The joint's two dates, split so the label can wrap BETWEEN them and
-       * never inside one. A date broken across lines at its own hyphens would
-       * be unreadable, which is why this whole mark used to be `nowrap` - but
-       * that made it run off the page at 200% text. Each date keeps `nowrap`
-       * individually instead. The element's text is unchanged.
-       */
-      h(
-        'span',
-        { class: 'atlas__boundary-label' },
-        ...boundary.label.split(' › ').flatMap((part, i) => [
-          ...(i > 0 ? [' › '] : []),
-          h('span', { class: 'atlas__boundary-part', text: part }),
-        ]),
-      ),
-    );
-    mark.style.insetInlineStart = `${String(mid * 100)}%`;
-    mark.style.insetBlockStart = `${String((y / VB_H) * 100)}%`;
-    overlay.appendChild(mark);
-  });
+  // The diagram carries no joint-date labels: the same dates are printed per
+  // boundary in the "Ranh giới xác định" rows of the chain list below.
 
   return h(
     'section',
@@ -203,7 +166,11 @@ function chain(visited: readonly string[]): HTMLElement {
           h(
             'span',
             { class: 'chain__text' },
-            h('span', { class: 'chain__period', aria: { hidden: 'true' }, text: stage.headingPeriod }),
+            h(
+              'span',
+              { class: 'chain__period', aria: { hidden: 'true' } },
+              ...wholeDates(stage.headingPeriod),
+            ),
             h('span', { class: 'chain__claim', aria: { hidden: 'true' }, text: stage.headingClaim }),
             h('span', { class: 'visually-hidden', text: stage.heading }),
           ),
@@ -306,7 +273,11 @@ function stageMark(stage: Stage, thread: SVGSVGElement): HTMLElement {
     'a',
     { class: 'atlas__stage-link', href: `#/chang/${stage.id}`, dataset: { stage: stage.id } },
     h('span', { class: 'atlas__ordinal', text: String(stage.ordinal) }),
-    h('span', { class: 'atlas__period', text: stage.headingPeriod, aria: { hidden: 'true' } }),
+    h(
+      'span',
+      { class: 'atlas__period', aria: { hidden: 'true' } },
+      ...wholeDates(stage.headingPeriod),
+    ),
     // The exact heading is what assistive technology announces, so the short
     // period label is never the only name for the stage.
     h('span', { class: 'visually-hidden', text: stage.heading }),
@@ -319,8 +290,13 @@ function stageMark(stage: Stage, thread: SVGSVGElement): HTMLElement {
    * the drawing. The stylesheet takes the smaller of this and its own maximum,
    * so a label near the end of the thread cannot run off the page - which is
    * what happened to stage 5 once the text was scaled up.
+   *
+   * In `cqw`, not `%`. As a percentage this is only usable where a percentage
+   * means "of the overlay" - in `max-inline-size` it does, but in `translate`
+   * a percentage means "of the label itself", and the label has to compare the
+   * two. `cqw` is the overlay's width in both places, so one value serves both.
    */
-  link.style.setProperty('--atlas-room', `${String((1 - stage.railStart) * 100)}%`);
+  link.style.setProperty('--atlas-room', `${String((1 - stage.railStart) * 100)}cqw`);
 
   const highlight = (on: boolean): void => {
     const line = thread.querySelector<SVGPathElement>(`.thread__line[data-stage="${stage.id}"]`);

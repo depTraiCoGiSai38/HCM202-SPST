@@ -1,5 +1,21 @@
 # CREATIVE TRANSFORMATION AUDIT
 
+> ## ĐÍNH CHÍNH 18-9-2026, 21:15 (+0700) — SỐ ĐO TRONG BÁO CÁO NÀY ĐÃ LỖI THỜI
+>
+> Báo cáo này **không bị sửa**. Nội dung phân tích giữ nguyên. Chỉ các **con số đo**
+> là đã lỗi thời, và đây là cách đọc chúng:
+>
+> | Ghi trong báo cáo | Giá trị hiện hành, đo 18-9-2026 20:47-20:55 |
+> |---|---|
+> | kiểm thử đơn vị 113 / 115 / 116 | **136 đạt** (content 88, places 48) |
+> | kiểm thử trình duyệt 183 / 213 / 228, hoặc "chưa chạy" | **255 đạt**, mã thoát 0 |
+>
+> Nguồn duy nhất cho số đo hiện hành: [`docs/MEASURED_STATE_2026-09-18.md`](../MEASURED_STATE_2026-09-18.md).
+>
+> Mọi con số cũ **đều đúng tại thời điểm chúng được ghi**. Bản ghi cũ không bị viết lại.
+
+---
+
 > **Date:** 2026-09-17
 > **Scope:** the state of the product immediately before the spatial-journey work
 > **Status:** `PROJECT DECISION` — an engineering/design audit. No item here is a requirement from the three rule PDFs.

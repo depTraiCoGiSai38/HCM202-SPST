@@ -1,7 +1,7 @@
 import { AFTER_STAGES } from '../data/project';
 import { BOUNDARIES, STAGES } from '../data/stages';
 import type { StageId } from '../data/types';
-import { ICONS, h, icon } from '../lib/dom';
+import { ICONS, h, icon, wholeDates } from '../lib/dom';
 import { getVisited } from '../lib/state';
 
 /**
@@ -49,7 +49,11 @@ function stageRow(id: StageId, activeStage: StageId | null, visited: readonly St
       h(
         'span',
         { class: 'menu__stage-text' },
-        h('span', { class: 'menu__stage-period', aria: { hidden: 'true' }, text: stage.headingPeriod }),
+        h(
+          'span',
+          { class: 'menu__stage-period', aria: { hidden: 'true' } },
+          ...wholeDates(stage.headingPeriod),
+        ),
         h('span', { class: 'menu__stage-claim', aria: { hidden: 'true' }, text: stage.headingClaim }),
         // The exact official heading is what assistive technology announces, so
         // the shortened form is never the only name for a stage.

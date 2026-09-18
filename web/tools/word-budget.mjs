@@ -41,7 +41,7 @@ async function count(label, route, prep) {
       '.station__where',
       /*
        * A figure's required credit line, its status chip, its two controls, and
-       * the one-line note a blocked position shows. Added 18-9-2026.
+       * the one-line note a blocked position shows.
        *
        * These are still counted and still printed: they move from the `prose`
        * column to the `signage` column, they do not vanish. The reason is the
@@ -72,28 +72,21 @@ async function count(label, route, prep) {
        *      opening to `OK` again, and it had already been quietly moving
        *      `stage 2 - passage stop` from `prose 141` to `prose 121`, a shift
        *      the 18-9 notes attributed to the credit/status/controls entries.
-       * Both were reverted. The opening is `over, close` at prose 104 and stage
-       * 2's passage stop is `OVER` at prose 141, which is where they belong.
+       * Both were reverted. Stage 2's passage stop is `OVER` at prose 141,
+       * which is where it belongs.
+       *
+       * The opening later dropped to `prose 69 + signage 0 OK` because the
+       * blocked figure line left that screen - less to read, not a
+       * reclassification. The selector list below is unchanged.
        */
       '.figure__cap-credit', '.figure__cap-status', '.figure__acts',
       /*
-       * NARROWED 19-9-2026, after the measurement caught itself flattering the
-       * product for the third time.
-       *
-       * This entry used to be the whole `.figure__blocked-line`, which holds two
-       * different things: the `CHƯA CÓ NGUỒN` badge, which is signage, and the
-       * role sentence, which is a sentence somebody reads. While the opening
-       * carried a photograph that did not matter, because no blocked line was in
-       * its first viewport. When the photograph moved to stage 3 on 19-9 the
-       * opening got a blocked line, its ~28-word role went into the signage
-       * column, and the opening's verdict read `OK` on a classification rather
-       * than on less reading.
-       *
-       * Only the badge is signage now, and it needs no entry here at all:
-       * `.station__flag` is already in this list above. So the line is simply
-       * gone, and the role sentence counts as prose, which is what it is. If
-       * that pushes the opening back over budget, the answer is to cut the
-       * sentence, not to move the line again.
+       * `.figure__blocked-line` deliberately has NO entry here. It holds two
+       * different things - the `CHƯA CÓ NGUỒN` badge, which is signage and is
+       * already covered by `.station__flag` above, and the role sentence, which
+       * is prose. Listing the whole line moves the role sentence into the
+       * signage column and buys an `OK` on a classification rather than on less
+       * reading. If a screen goes over budget, cut the sentence.
        */
     ];
 

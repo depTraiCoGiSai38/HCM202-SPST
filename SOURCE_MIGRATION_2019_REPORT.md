@@ -1,5 +1,28 @@
 # SOURCE MIGRATION REPORT — `SOURCE_MIGRATION_2021_TO_2019`
 
+> ## ĐÍNH CHÍNH 18-9-2026, 21:15 (+0700) — DỮ KIỆN MỚI VỀ ẤN BẢN GIÁO TRÌNH
+>
+> Báo cáo này **không bị sửa**. Nhưng kết luận của nó về việc "chưa thoả mãn yêu cầu
+> Nguồn 1 của Student Guideline" được viết khi chưa biết một dữ kiện sau:
+>
+> Bảng tính **do giảng viên sở hữu** (`HCM202_SE1810_Fall2026_Half 1`, chủ sở hữu
+> `hieunt328@fpt.edu.vn`), sheet `HCM202 — RESOURCE REGISTRY · FALL 2026`, liệt kê tài
+> liệu số 1 của học phần là:
+>
+> > `1. Giáo trình TTHCM` … **(Phiên bản PDF năm 2019 của Bộ Giáo dục và Đào tạo)**
+> > tệp `GT học phần Tư tưởng HCM_2019.pdf`, 27.127.799 byte
+>
+> **Ấn bản 2019 là ấn bản giảng viên công bố cho học phần này.** Rủi ro "dùng sai ấn bản"
+> và nguy cơ dính cờ `CAM01` vì vậy **giảm mạnh**.
+>
+> Vẫn còn một khác biệt văn bản chưa được giải quyết: Cẩm nang do giảng viên cập nhật
+> 13-9-2026, mục 3, vẫn ghi Nguồn 1 là bản *"áp dụng 2021-2026"*. Theo AGENTS.md §5,
+> giữ nguyên cả hai, không chọn bên. Trạng thái: `DOCUMENT CONFLICT`.
+>
+> Việc **vẫn chưa làm**: đối chiếu trích đoạn 8 trang của nhóm với bản đầy đủ của giảng viên
+> ở trang in 28-35. Tệp ấy nay đã nằm trong Drive được chia sẻ cho nhóm, nên đây là việc
+> nhóm tự làm được. Chi tiết: Folder 08 `..._08_SourceVerificationLog_v1.2`.
+
 > **Date:** 2026-09-17
 > **Scope:** the primary academic content source of the HCM202 creative product
 > **Project status after this migration:** `REQUIRES HUMAN VERIFICATION AND REAL PROJECT EVIDENCE`

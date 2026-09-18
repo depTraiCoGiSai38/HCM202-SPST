@@ -415,18 +415,19 @@ test('the evidence magnifier carries the printed locator, unexpanded', async ({ 
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   await expect(lens).toBeVisible();
 
-  // The stage's location in the excerpt and its verification status are both
-  // reachable without leaving the stage.
-  await expect(lens.getByText('NEED VERIFICATION', { exact: false })).toBeVisible();
   /*
-   * Locator L6 must still show the unexpanded abbreviation - in the form the
-   * 2019 edition prints it.
-   *
-   * CORRECTED 18-9-2026: this asserted `Sđd`, the NORMALISED form, which
-   * AGENTS.md says must never stand in for what the edition prints. It passed,
-   * but only off L6's caution sentence, which names both forms in order to
-   * contrast them - so it would have gone on passing if the printed form had
-   * been silently normalised, which is the one thing it exists to prevent.
+   * The stage's location in the excerpt and its verification status are both
+   * reachable without leaving the stage. The status now names the edition the
+   * excerpt was compared against, so that is what is checked - a status row
+   * that said nothing about WHICH edition would not be evidence of anything.
+   */
+  await expect(lens.getByText('Đã đối chiếu với bản in chính thức', { exact: false })).toBeVisible();
+  await expect(lens.getByText('tr.28-35', { exact: false }).first()).toBeVisible();
+  /*
+   * Locator L6 must show the unexpanded abbreviation in the form the 2019
+   * edition prints it: `Sdd`, never the normalised `Sđd`. Asserting the
+   * normalised form would pass off L6's caution sentence, which names both in
+   * order to contrast them, and so would not catch a silent normalisation.
    */
   await expect(lens.getByText('Sdd', { exact: false }).first()).toBeVisible();
 

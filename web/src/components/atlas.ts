@@ -1,4 +1,11 @@
-import { LAND_MIN_WINDOW_DEGREES, LAND_PATH } from '../data/land';
+import {
+  ARCHIPELAGOS,
+  ARCHIPELAGO_MIN_SPREAD_UNITS,
+  BORDER_PATH,
+  LAND_MIN_WINDOW_DEGREES,
+  LAND_PATH,
+  VN_ISLANDS_PATH,
+} from '../data/land';
 import {
   type Movement,
   type Place,
@@ -35,6 +42,17 @@ import { type EvidenceItem, lensTrigger } from './evidence';
  *                                point somewhere, and pointing somewhere is
  *                                naming a destination there is none of
  *   a mark NOT on the land    -> a dated event the excerpt does not place
+ *
+ * THE BASEMAP UNDER ALL THAT IS ORIENTATION, NOT EVIDENCE.
+ *
+ * Coastline, national boundaries and the two offshore archipelagos come from
+ * cartographic datasets and carry no locator. They are a different evidence
+ * class from the excerpt and from the coordinate records, and the register keeps
+ * the three apart. A border on this plate tells a reader which country a mark
+ * sits in; it does not validate anything the excerpt says, and it is not a claim
+ * that today's boundaries existed at every date between 1911 and 1969. The
+ * drawing order below is what keeps that subordination visible: basemap first
+ * and quietest, narrative last and loudest.
  *
  * THE DRAWING IS DECORATIVE AND SAYS SO.
  *
@@ -261,6 +279,90 @@ function openAnchors(movements: readonly Movement[], proj: Projection): [number,
   return [...seen.values()];
 }
 
+/**
+ * The two offshore archipelagos, drawn as SYMBOLS and never as land.
+ *
+ * Why they are here at all: `QCVN 80:2024/BTNMT` clause 1.1 requires that a map
+ * representing Vietnam show `đất liền, biển, đảo, quần đảo` - mainland, sea,
+ * islands AND archipelagos. A plate that stopped at the mainland coastline would
+ * be leaving out something the Vietnamese standard treats as part of showing the
+ * country at all. The 1:110m dataset the rest of this plate is built from cannot
+ * show them: it contains no geometry anywhere in their extent, at any zoom. They
+ * therefore come from a second, separately cited source, and `land.ts` records
+ * which edition of it and why.
+ *
+ * Why they are points and not polygons: the islets are 0.3-1.7 km across. At the
+ * closest framing this plate allows, that is a fraction of one pixel. Drawing
+ * the real polygon would draw nothing; enlarging it until it showed would draw a
+ * landmass that does not exist. A small symbol says `islands are here` without
+ * asserting an area, which is the ordinary cartographic answer at this scale.
+ * The extent each group really covers is published in the register instead.
+ *
+ * Why the label comes and goes: at a whole-world framing the two clusters are a
+ * few pixels apart and a name set beside them would be unreadable, so the marks
+ * stay and the label is dropped. A label nobody can read is clutter, not
+ * information - and the text beside the plate carries the same fact for every
+ * reader either way, which is where it actually lives.
+ */
+function archipelagoLayer(proj: Projection): SVGElement[] {
+  const out: SVGElement[] = [];
+
+  for (const group of ARCHIPELAGOS) {
+    const points = group.islets.map(([lon, lat]) => proj.project(lon, lat));
+    if (points.length === 0) continue;
+
+    /*
+     * How wide this cluster actually lands on the canvas. Everything below
+     * turns on it, and it is measured rather than inferred from the framing,
+     * because the two groups are different sizes.
+     */
+    const xs = points.map((p) => p[0]);
+    const ys = points.map((p) => p[1]);
+    const spread = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys));
+
+    /*
+     * Below the resolution threshold, DRAW NOTHING.
+     *
+     * The islets sit within a few canvas units of one another there, so drawn
+     * individually they merge into a solid mass darker than the land beside them
+     * - an island that does not exist. Earlier revisions tried a single ring
+     * instead, and that was worse: a circle carries nothing about a group's
+     * distribution, shape or orientation, so it was a large mark asserting a
+     * presence without saying anything true about it.
+     *
+     * At a world framing the honest answer is silence. These features are below
+     * the drawable size at that scale, the 1:110m dataset the rest of the plate
+     * is built from does not contain them at all, and the register says so in
+     * words. Nothing is hidden; there is simply nothing this scale can show.
+     */
+    if (spread < ARCHIPELAGO_MIN_SPREAD_UNITS) continue;
+
+    /*
+     * At an in-country framing the cluster resolves, so each islet gets its own
+     * mark at its own position - which is what carries the group's distribution.
+     *
+     * No name is drawn. PROJECT DECISION, 2026-09-18: this product is about the
+     * formation of Hồ Chí Minh's thought, and labelling these groups on its
+     * plate made a sovereignty statement it has no need and no standing to make.
+     * The geometry stays because a map of Vietnam that stopped at the mainland
+     * coastline would be leaving out what the source actually contains.
+     */
+    for (const [cx, cy] of points) {
+      out.push(
+        s('circle', {
+          class: 'plate__isle',
+          // `r` is set in the stylesheet so it can grow on a narrow screen,
+          // where the same canvas radius would fall below a visible pixel. The
+          // attribute is the fallback for anything that ignores the CSS
+          // geometry property, so the mark can never vanish entirely.
+          attrs: { cx: Math.round(cx), cy: Math.round(cy), r: 2.4 },
+        }),
+      );
+    }
+  }
+  return out;
+}
+
 export interface PlateOptions {
   /** A stage, or `null` for the whole excerpt. */
   stageId: StageId | null;
@@ -288,7 +390,17 @@ export function plate(opts: PlateOptions): HTMLElement {
 
   const children: SVGElement[] = [];
 
-  // The land, transformed from degrees into canvas units.
+  /*
+   * The basemap, transformed from degrees into canvas units.
+   *
+   * Land and boundaries share one transform because they share one source file
+   * and one projection; putting them in the same group is also what guarantees
+   * a border can never drift away from the coastline it ends on.
+   *
+   * Both use `non-scaling-stroke`, so their widths are in screen pixels and the
+   * hierarchy between them holds at every framing rather than only at the one it
+   * was tuned on.
+   */
   children.push(
     s(
       'g',
@@ -303,8 +415,26 @@ export function plate(opts: PlateOptions): HTMLElement {
         class: 'plate__land',
         attrs: { d: LAND_PATH, 'vector-effect': 'non-scaling-stroke' },
       }),
+      /*
+       * Vietnam's coastal islands, drawn with the land's own fill because that
+       * is what they are: real polygons at true scale, from a finer source.
+       * `QCVN 80:2024/BTNMT` clause 1.1 names `đảo` beside `quần đảo`, and the
+       * 1:110m world layer above resolves none of them - it has no geometry at
+       * Phú Quốc, Côn Đảo or the Hạ Long group at all.
+       */
+      s('path', {
+        class: 'plate__vn-islands',
+        attrs: { d: VN_ISLANDS_PATH, 'vector-effect': 'non-scaling-stroke' },
+      }),
+      // Admin-0 only, and quieter than the coastline above it. See atlas.css.
+      s('path', {
+        class: 'plate__border',
+        attrs: { d: BORDER_PATH, fill: 'none', 'vector-effect': 'non-scaling-stroke' },
+      }),
     ),
   );
+
+  for (const el of archipelagoLayer(proj)) children.push(el);
 
   for (const m of movements) {
     for (const el of movementPath(m, proj)) children.push(el);
@@ -502,7 +632,18 @@ export function stagePlate(stageId: StageId): HTMLElement {
         'Toạ độ không có trong giáo trình. Chúng được dẫn từ bản ghi Wikidata của từng địa danh, kèm mã, đường dẫn, giá trị và độ chính xác do chính bản ghi công bố. Xem trang Kiểm chứng.',
       tone: 'plain',
     },
-    { label: 'Nền bản đồ', value: 'Đường bờ biển Natural Earth 1:110m, miền công cộng. Không vẽ đường biên giới quốc gia: trích đoạn trải từ năm 1911 đến năm 1969, nên biên giới ngày nay sẽ là một mốc thời gian sai đặt dưới chân nội dung.', tone: 'plain' },
+    {
+      label: 'Nền bản đồ',
+      value:
+        'Đường bờ biển và đường biên giới quốc gia lấy từ Natural Earth 1:110m, miền công cộng, chỉ ở cấp quốc gia và không có ranh giới tỉnh. Đảo ven bờ và các nhóm đảo ngoài khơi lấy từ bản Natural Earth dựng theo quan điểm Việt Nam, vẽ bằng ký hiệu và không kèm tên. Nền bản đồ là lớp định hướng, không phải bằng chứng cho bất kỳ điều gì trích đoạn nói. Xem trang Kiểm chứng.',
+      tone: 'plain',
+    },
+    {
+      label: 'Biên giới ngày nay dưới nội dung 1911-1969',
+      value:
+        'Biên giới trên nền bản đồ là biên giới hiện nay, vẽ ra để người đọc biết một dấu nằm trong nước nào. Đó KHÔNG phải là khẳng định rằng biên giới ngày nay đã tồn tại y như vậy ở mọi mốc thời gian mà trích đoạn nêu.',
+      tone: 'caution',
+    },
     { label: 'Trạng thái', value: 'NEED VERIFICATION', tone: 'status' },
   ];
   if (movements.length > 0) {
@@ -562,19 +703,29 @@ export function stationWhere(
   );
   if (nodes.length === 0) return null;
 
+  /*
+   * Only a stop the excerpt actually places says anything here; one with no
+   * printed place renders nothing, exactly as a purely analytical stop does.
+   * Unplaced events are still reported by the place register on
+   * `#/kiem-chung` and counted by `stageTurnPlacement()` below.
+   */
+  const placed = nodes
+    .map((node) => ({ node, place: placeOf(node) }))
+    .filter((n): n is { node: (typeof nodes)[number]; place: NonNullable<ReturnType<typeof placeOf>> } =>
+      n.place !== null && n.place !== undefined,
+    );
+  if (placed.length === 0) return null;
+
   return h(
     'p',
     { class: 'station__where' },
-    ...nodes.map((node) => {
-      const place = placeOf(node);
-      return h(
+    ...placed.map(({ node, place }) =>
+      h(
         'span',
         { class: 'station__where-item', dataset: { kind: node.kind } },
-        place
-          ? h('span', { text: `Nơi chốn: ${place.printed}` })
-          : h('span', { text: 'Trích đoạn không in địa điểm cho mốc này.' }),
-      );
-    }),
+        h('span', { text: `Nơi chốn: ${place.printed}` }),
+      ),
+    ),
   );
 }
 
@@ -641,13 +792,17 @@ export function excerptPlate(): HTMLElement {
     { class: 'atlas-space' },
     h('p', { class: 'atlas__kicker', text: 'Cùng năm chặng ấy, đọc theo nơi chốn' }),
     /*
-     * A question, not a statement. The stage entrances follow the same rule for
-     * the same reason: it is the one shape a sentence of the group's can take
-     * in front of source material without adding a claim to it.
+     * `NEED VERIFICATION`, recorded rather than silently repaired: the plate
+     * also carries marks the eight pages do not describe as travel. Đông Dương
+     * is where Le Paria was SENT, Vécxây is where the Yêu sách was RECEIVED, and
+     * Trung Kỳ, miền Bắc and miền Nam are where events happened. "Những nơi Bác
+     * Hồ đã đi qua" is therefore wider than what every mark beneath it supports.
+     * The wording is the owner's to rule on; this note is here so the gap is not
+     * lost.
      */
     h('p', {
       class: 'atlas-space__lead',
-      text: 'Trích đoạn đặt hành trình ấy ở những đâu — và ở đâu thì nó không nói?',
+      text: 'Trích đoạn đặt hành trình ở những nơi Bác Hồ đã đi qua',
     }),
     plate({ stageId: null, className: 'plate--wide' }),
     h(
@@ -659,11 +814,11 @@ export function excerptPlate(): HTMLElement {
         turns.placed + turns.unplaced + turns.region,
       )}`),
     ),
-    h('p', {
-      class: 'atlas-space__note',
-      text:
-        'Bản khắc chỉ đi xa đúng bằng chỗ trích đoạn đi. Nơi nào tám trang được giao không in ra địa điểm thì ở đây để trống đúng như vậy, không suy ra từ hiểu biết bên ngoài.',
-    }),
+    /*
+     * No standing note here: that a place the excerpt does not print is left
+     * empty rather than filled from outside knowledge is already stated twice
+     * on this screen - by the middle statistic and by the reading key below.
+     */
     lensTrigger(
       {
         title: 'Bản khắc này đọc như thế nào',
@@ -702,10 +857,22 @@ export function excerptPlate(): HTMLElement {
             tone: 'caution',
           },
           {
-            label: 'Nền bản đồ',
+            label: 'Đường biên giới',
             value:
-              'Đường bờ biển Natural Earth 1:110m, miền công cộng, đóng gói sẵn trong sản phẩm. Không vẽ biên giới quốc gia: trích đoạn trải từ năm 1911 đến năm 1969, nên biên giới ngày nay đặt dưới chân nội dung sẽ là một mốc thời gian sai.',
+              'Biên giới quốc gia, chỉ cấp quốc gia, lấy từ Natural Earth 1:110m, miền công cộng, đóng gói sẵn trong sản phẩm. Không vẽ ranh giới tỉnh: tệp nguồn không chứa hình học cấp tỉnh nào. Biên giới vẽ mảnh hơn đường bờ biển và mảnh hơn đường nối lịch sử, vì nó chỉ để định hướng chứ không phải là nội dung.',
             tone: 'plain',
+          },
+          {
+            label: 'Đảo ngoài khơi',
+            value:
+              'Các nhóm đảo ngoài khơi được vẽ bằng ký hiệu đảo, không phải bằng hình khối đất liền: đảo thật chỉ rộng 0,3-1,7 km, nhỏ hơn ngưỡng vẽ theo tỷ lệ rất nhiều, nên vẽ to lên sẽ là vẽ ra một diện tích đất không có thật. Bản khắc KHÔNG ghi tên nhóm đảo nào: đề tài ở đây là quá trình hình thành tư tưởng Hồ Chí Minh. Ở khung nhìn rộng, các đảo sẽ dính thành một khối nên bản khắc không vẽ gì cả. Xem trang Kiểm chứng để biết nguồn nào, vì sao chọn bản ấy, và giới hạn của cách làm này.',
+            tone: 'plain',
+          },
+          {
+            label: 'Biên giới ngày nay dưới nội dung 1911-1969',
+            value:
+              'Biên giới trên nền bản đồ là biên giới hiện nay. Nó ở đây để định hướng, KHÔNG phải để nói rằng biên giới ngày nay đã tồn tại y như vậy ở mọi mốc thời gian trích đoạn nêu. Nền bản đồ là một lớp bằng chứng khác hẳn với trích đoạn và với bản ghi toạ độ; trang Kiểm chứng giữ ba lớp ấy tách rời nhau.',
+            tone: 'caution',
           },
           { label: 'Trạng thái', value: 'NEED VERIFICATION', tone: 'status' },
         ],

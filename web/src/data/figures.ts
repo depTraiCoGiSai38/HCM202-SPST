@@ -3,11 +3,10 @@ import type { Provenance, StageId } from './types';
 /**
  * Documentary photographs and printed documents.
  *
- * CORRECTED 18-9-2026: this file was titled "Documentary photographs" alone.
- * Four of the eight records are not photographs - a 1909 printed map, two
- * newspaper sheets and a pamphlet cover - and the whole reuse logic below turns
- * on exactly that distinction, because a printed document raises no separate
- * photographic-authorship question and a photograph does.
+ * Both words matter. Four of the eight records are not photographs - a 1909
+ * printed map, two newspaper sheets and a pamphlet cover - and the whole reuse
+ * logic below turns on that distinction, because a printed document raises no
+ * separate photographic-authorship question and a photograph does.
  *
  * HOW A SLOT IS CLEARED.
  *
@@ -73,8 +72,6 @@ import type { Provenance, StageId } from './types';
  * master - seven from the BnF, one from Humazur: nothing cropped, retouched or
  * colourised, and where a document carries plate edges or a pencilled reference
  * number they are left in place because they are part of the document.
- * (CORRECTED 18-9-2026: this said "the one delivered file" and "the BnF
- * master", written when a single record existed.)
  */
 
 /**
@@ -95,11 +92,10 @@ import type { Provenance, StageId } from './types';
  *                        NOT been independently established - whether or not a
  *                        maker is actually named, because an absent credit
  *                        settles nothing either.
- *                        CORRECTED 18-9-2026: this said the unresolved position
- *                        is "published beside the picture". It is not. Beside a
- *                        filled picture a reader meets the caption, the required
- *                        credit line and the evidence-status chip; both `reuse`
- *                        and `creatorRightsCheck` are one control away, in the
+ *                        Where the unresolved position is published: beside a
+ *                        filled picture a reader meets the caption and the
+ *                        required credit line; both `reuse` and
+ *                        `creatorRightsCheck` are one control away, in the
  *                        "Nguồn và điều kiện" panel, and on the register at
  *                        `#/kiem-chung`. Published, and one click from the
  *                        picture - not on the same surface as it.
@@ -142,13 +138,11 @@ export interface DocumentaryFigure {
    * be read as though it settled the maker's own position, which it does not.
    * A photograph carries two rights questions - the digitised copy's, which the
    * holder speaks for, and the photographer's, which the holder does not. For
-   * the two 1946 sheets the second question is live. CORRECTED 18-9-2026: the
-   * reason used to read "because the magazine prints a photographer credit on
-   * the page", which is true of ONE of them. The n° 41 cover prints "Phot.
-   * France-Illustration (Parnotte)."; p.295 of n° 52 prints no photographer
-   * line at all and its `printedCreatorCredit` is `null`. That sheet takes the
-   * cautious decision precisely because an ABSENT credit settles nothing
-   * either - the point the old wording lost.
+   * the two 1946 sheets the second question is live, and for different
+   * reasons: the n° 41 cover prints "Phot. France-Illustration (Parnotte).",
+   * while p.295 of n° 52 prints no photographer line at all and its
+   * `printedCreatorCredit` is `null`. That sheet takes the cautious decision
+   * precisely because an ABSENT credit settles nothing either.
    *
    * So: four fields that each answer one question, and `reuse`, which is the
    * decision that follows from them and may never be stronger than they are.
@@ -437,12 +431,11 @@ export const FIGURES: DocumentaryFigure[] = [
   },
 
   /* ====================================================================
-   * Added 18-9-2026.
    *
    * Four documents, from two holding institutions, found by opening item
    * records rather than by recognising a picture. Nothing below was taken from
    * the reference repository's image folder: that sweep is recorded in
-   * REFERENCE_IMAGE_AUDIT.md and produced no asset that could clear the
+   * docs/reports/REFERENCE_IMAGE_AUDIT.md and produced no asset that could clear the
    * conditions in `FIGURE_REQUIREMENTS`, because that repository records a
    * publisher line and never an archive item record or a usage condition.
    * ==================================================================== */
@@ -734,7 +727,7 @@ export type FigureAnchor =
 
 export const FIGURE_SLOTS: FigureSlot[] = [
   /*
-   * EMPTIED 19-9-2026, and deliberately kept declared.
+   * Emptied, and deliberately kept declared.
    *
    * The document that filled this position moved to stage 3, where its own
    * recorded date puts it and where it does a stage-specific job instead of a
@@ -749,6 +742,10 @@ export const FIGURE_SLOTS: FigureSlot[] = [
    * title, the two-line introduction, one primary action, and the journey
    * thread that draws itself in below. If a document is ever found whose job
    * is genuinely to open the whole product rather than one stage, it goes here.
+   *
+   * The position is not rendered on the opening screen. It stays declared here
+   * and is reported on `#/kiem-chung`, the arrangement this file already uses
+   * for an unfilled supporting slot - see `FS-ky-4-b`.
    */
   {
     id: 'FS-open',
@@ -770,6 +767,9 @@ export const FIGURE_SLOTS: FigureSlot[] = [
      * the front door is that the position is empty and roughly what belongs in
      * it; why it emptied is one control away, and the full record is on the
      * verification page with `SC-24`.
+     *
+     * It renders only in the register table now, and is kept short for the
+     * same reason: one row per position, and a fifty-word role crowds a table.
      */
     role: 'Một tư liệu mở ra CẢ hành trình, không phải tư liệu của riêng một chặng. Trống từ 19-9-2026, khi tấm ảnh ở đây chuyển sang đúng chặng mà niên đại của nó thuộc về.',
     anchor: { where: 'entrance' },
@@ -1051,7 +1051,7 @@ export const SOURCING_CHECKS: SourcingCheck[] = [
    *
    * Vòng này bắt đầu từ kho ảnh của một kho tham khảo có sẵn trên máy, theo
    * đúng thứ tự mà đề bài đặt ra: tìm tại chỗ trước, ra ngoài sau. Kết quả của
-   * bước tìm tại chỗ được ghi ở SC-16 và trong REFERENCE_IMAGE_AUDIT.md.
+   * bước tìm tại chỗ được ghi ở SC-16 và trong docs/reports/REFERENCE_IMAGE_AUDIT.md.
    * ==================================================================== */
   {
     id: 'SC-16',
@@ -1060,7 +1060,7 @@ export const SOURCING_CHECKS: SourcingCheck[] = [
     found:
       'Tệp `src/data/hcm_data.json` khai 41 sự kiện với **68 mục media**. Mỗi ảnh có một trường `sourceMedia` dạng một dòng, ví dụ “Nguồn: Báo Quân đội nhân dân”, “Nguồn: Bộ Tư Lệnh Lăng”, “Nguồn: Traveloka”, “Nguồn: LalaGo”, “Nguồn: Mia.vn”, “Nguồn: WEBTECH360”. **16 tệp ảnh** nằm trong `public/image/`; số còn lại là liên kết nóng tới máy chủ của báo chí và trang thương mại. **Không có ảnh nào kèm: trang bản ghi hiện vật, ký hiệu kho, tên người chụp, hay một dòng điều kiện sử dụng.** Giấy phép MIT ở gốc kho chỉ phủ mã nguồn, không phủ ảnh của bên thứ ba.',
     blocker:
-      'Kho này dùng được với tư cách **nguồn phát hiện**, không phải nguồn xác thực — đúng như đề bài phân biệt. Không mục nào trong **68 mục** qua được điều kiện 1 và 2 của `FIGURE_REQUIREMENTS` (mở được trang bản ghi hiện vật; đọc được nguyên văn điều kiện sử dụng). **Ghi rõ trạng thái:** đây là CHƯA XÁC LẬP ĐIỀU KIỆN SỬ DỤNG, **không phải** “bị cấm dùng lại” — hai trạng thái khác nhau, và lần kiểm 16-17/9 đã một lần nhầm hai thứ đó. Ba manh mối đáng lần tiếp, đều dẫn tới cơ quan thật: baotanglichsu.vn (Bảo tàng Lịch sử Quốc gia), baotanghochiminh.vn (xem SC-1), và một tệp Commons dẫn về TIMEA của Đại học Rice. Không tệp nào trong ba nhóm ấy mở ra được bản ghi hiện vật trong vòng kiểm này. Bảng đầy đủ **68 dòng** nằm ở REFERENCE_IMAGE_AUDIT.md. *(Đính chính 19-9-2026: bản ghi này ban đầu in “58 đường dẫn ảnh”, “20 tệp” và “58 dòng”. Cả ba đều **đếm sai** — số đúng, đếm bằng máy từ chính tệp JSON, là 68 mục media và 16 tệp cục bộ, và đó là số mà REFERENCE_IMAGE_AUDIT.md đã in từ đầu. Trang này từng mâu thuẫn với tài liệu ấy.)*',
+      'Kho này dùng được với tư cách **nguồn phát hiện**, không phải nguồn xác thực — đúng như đề bài phân biệt. Không mục nào trong **68 mục** qua được điều kiện 1 và 2 của `FIGURE_REQUIREMENTS` (mở được trang bản ghi hiện vật; đọc được nguyên văn điều kiện sử dụng). **Ghi rõ trạng thái:** đây là CHƯA XÁC LẬP ĐIỀU KIỆN SỬ DỤNG, **không phải** “bị cấm dùng lại” — hai trạng thái khác nhau, và lần kiểm 16-17/9 đã một lần nhầm hai thứ đó. Ba manh mối đáng lần tiếp, đều dẫn tới cơ quan thật: baotanglichsu.vn (Bảo tàng Lịch sử Quốc gia), baotanghochiminh.vn (xem SC-1), và một tệp Commons dẫn về TIMEA của Đại học Rice. Không tệp nào trong ba nhóm ấy mở ra được bản ghi hiện vật trong vòng kiểm này. Bảng đầy đủ **68 dòng** nằm ở docs/reports/REFERENCE_IMAGE_AUDIT.md. *(Đính chính 19-9-2026: bản ghi này ban đầu in “58 đường dẫn ảnh”, “20 tệp” và “58 dòng”. Cả ba đều **đếm sai** — số đúng, đếm bằng máy từ chính tệp JSON, là 68 mục media và 16 tệp cục bộ, và đó là số mà docs/reports/REFERENCE_IMAGE_AUDIT.md đã in từ đầu. Trang này từng mâu thuẫn với tài liệu ấy.)*',
     outcome: 'rejected',
   },
   {

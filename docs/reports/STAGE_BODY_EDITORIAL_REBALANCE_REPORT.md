@@ -1,5 +1,27 @@
 # Stage body editorial rebalance — all five stages
 
+> ## ĐÍNH CHÍNH 18-9-2026, 21:15 (+0700) — SỐ ĐO TRONG BÁO CÁO NÀY ĐÃ LỖI THỜI
+>
+> Báo cáo này **không bị sửa**. Nội dung phân tích giữ nguyên. Chỉ các **con số đo**
+> là đã lỗi thời, và đây là cách đọc chúng:
+>
+> | Ghi trong báo cáo | Giá trị hiện hành, đo 18-9-2026 20:47-20:55 |
+> |---|---|
+> | kiểm thử đơn vị 113 / 115 / 116 | **136 đạt** (content 88, places 48) |
+> | kiểm thử trình duyệt 183 / 213 / 228, hoặc "chưa chạy" | **255 đạt**, mã thoát 0 |
+>
+> Nguồn duy nhất cho số đo hiện hành: [`docs/MEASURED_STATE_2026-09-18.md`](../MEASURED_STATE_2026-09-18.md).
+>
+> Mọi con số cũ **đều đúng tại thời điểm chúng được ghi**. Bản ghi cũ không bị viết lại.
+>
+> **Về buổi Showcase:** báo cáo này được viết khi chưa biết buổi Showcase của Nhóm 2
+> đã diễn ra **ngày 17-9-2026, Slot 4** (lịch do giảng viên sở hữu, sheet
+> `SHOWCASE / PRESENTATION SCHEDULE`). Mọi câu trong báo cáo này hàm ý buổi ấy
+> *chưa diễn ra* đều phải đọc lại theo nghĩa hẹp: **chưa có bản ghi nào của buổi ấy
+> trong kho mã**. Bản ghi sự kiện: Folder 06, `..._06_ShowcaseDefenseRecord_2026-09-17_v1.0`.
+
+---
+
 > Date: 18-9-2026
 > Scope: **layout, composition and visual rhythm only.** No academic content, locator,
 > source label, quotation, chronology, provenance or verification status was changed.

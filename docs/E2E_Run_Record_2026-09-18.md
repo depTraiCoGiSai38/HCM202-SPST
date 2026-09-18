@@ -1,5 +1,19 @@
 # Bản ghi lần chạy kiểm thử trình duyệt (E2E) — 18-9-2026
 
+> ## ĐÍNH CHÍNH 18-9-2026, 21:15 (+0700) — ĐÃ CÓ LẦN CHẠY MỚI HƠN
+>
+> Bản ghi này **không bị sửa**: con số **228 passed** là đúng tại thời điểm nó được đo.
+>
+> Lần chạy gần nhất, `npx playwright test` lúc khoảng **20:55 ngày 18-9-2026**, cho
+> **255 passed / 255**, mã thoát 0, 6,1 phút. Chênh lệch đến từ các phép kiểm thêm vào
+> trong đợt làm bản đồ cùng ngày.
+>
+> Câu ở mục cuối — *"từ nay đọc là 228/228"* — vì vậy **không còn đúng**. Nguồn duy nhất
+> cho số đo hiện hành: [`MEASURED_STATE_2026-09-18.md`](MEASURED_STATE_2026-09-18.md).
+>
+> Câu *"thử nghiệm với người dùng thật (Folder 09), vốn vẫn chưa diễn ra"* ở mục
+> "Ranh giới của bằng chứng này" **vẫn đúng** và không thay đổi.
+
 > Bản ghi kỹ thuật. Thuộc Folder `04_Product_Prototype_DevelopmentLog`.
 > **KHÔNG** thuộc Folder `09_Interaction_Feedback_Evidence`: đây là kiểm thử tự động,
 > không phải bằng chứng người dùng thật.

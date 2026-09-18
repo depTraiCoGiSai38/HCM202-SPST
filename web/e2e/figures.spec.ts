@@ -3,12 +3,6 @@ import { expect, test } from '@playwright/test';
 /**
  * Documentary positions and the motion added with them.
  *
- * CORRECTED 18-9-2026. This docstring said the product had "no photograph that
- * has cleared a checkable source and a usage condition", while the tests below
- * it already drove eight cleared documents across four stages and pinned eight
- * filled register rows. A reader taking it at face value would have concluded
- * the suite covered only the blocked states.
- *
  * Eight of the thirteen declared positions hold a document that has cleared a
  * checkable source and a published usage condition; five are still blocked.
  * These checks hold three things: that each remaining gap is stated on screen
@@ -17,13 +11,8 @@ import { expect, test } from '@playwright/test';
  * of it reveals nothing and blocks nothing.
  */
 
-/*
- * UPDATED 19-9-2026. These three tests used to open `#/` because the Marseille
- * plate was the opening image. The project moved it to stage 3, where its own
- * recorded date puts it (`SC-24`), so the tests follow the picture rather than
- * the screen. Nothing they asserted has been dropped; a fourth test below now
- * covers the opening in its emptied state.
- */
+// The Marseille plate lives in stage 3, where its own recorded date puts it
+// (`SC-24`), so these three tests open that stage rather than `#/`.
 test('the stage-3 anchor carries the sourced photograph, with the credit its source requires', async ({
   page,
 }) => {
@@ -55,10 +44,15 @@ test('the stage-3 anchor carries the sourced photograph, with the credit its sou
   await expect(credit).toBeVisible();
   await expect(credit).toHaveText('Source gallica.bnf.fr / Bibliothèque nationale de France');
 
-  // The caption repeats what the holding institution says, and the status stays
-  // visible beside it.
+  // The caption repeats what the holding institution says.
   await expect(fig.locator('.figure__cap-text')).toContainText('Agence Meurisse');
-  await expect(fig.locator('.figure__cap-status')).toContainText('NEED VERIFICATION');
+
+  // No status chip on the caption; the status is reachable from the figure's
+  // own source panel, and that is what is checked.
+  await expect(fig.locator('.figure__cap-status')).toHaveCount(0);
+  await fig.locator('.lens-trigger').click();
+  await expect(page.locator('.lens')).toContainText('NEED VERIFICATION');
+  await page.keyboard.press('Escape');
 });
 
 test('the figure carries its source, its rights and its identification separately', async ({
@@ -102,36 +96,37 @@ test('the figure carries its source, its rights and its identification separatel
 });
 
 /**
- * The opening, after its picture moved.
+ * The opening carries no documentary position, and the record still does.
  *
- * The position stays declared and visibly blocked rather than being deleted -
- * a slot that disappears takes its gap with it. The screen still has to be a
- * front door, so the title, the one primary action and the journey thread are
- * checked here too.
+ * Both halves matter: nothing renders on this screen, AND the position is still
+ * reachable in the register. If the declaration is ever dropped too, the second
+ * half fails - which is the point of keeping them in one test.
  */
-test('the opening states its empty documentary position instead of hiding it', async ({ page }) => {
+test('the opening drops its documentary position from view without dropping it from the record', async ({
+  page,
+}) => {
   await page.goto('/#/');
 
-  // No photograph at the opening any more.
-  await expect(page.locator('.hero__figure img')).toHaveCount(0);
-
-  // The gap is on screen, flagged, with the reason one control away.
-  const note = page.locator('.hero__figure .figure--blocked');
-  await expect(note).toBeVisible();
-  await expect(note.locator('.station__flag')).toHaveCount(1);
-  const role = (await note.locator('.figure__blocked-role').textContent()) ?? '';
-  expect(role.length).toBeGreaterThan(40);
-  expect(role).toContain('19-9-2026');
+  // Nothing of the figure apparatus is left on this screen - not a picture, not
+  // a blocked line, not the empty column that used to hold either.
+  await expect(page.locator('.hero__figure')).toHaveCount(0);
+  await expect(page.locator('.hero .figure--blocked')).toHaveCount(0);
 
   /*
-   * And the opening is still an opening. With the photograph gone, what carries
-   * the screen is the identity block, one primary action, and the journey
-   * thread that draws itself in below - `.thread__run` is the opening thread's
-   * own path, not the five `.thread__line` segments of the overview route.
+   * And the opening is still an opening: the identity block, one primary
+   * action, and the journey thread that draws itself in below - `.thread__run`
+   * is the opening thread's own path, not the five `.thread__line` segments of
+   * the overview route.
    */
   await expect(page.locator('.hero__title')).toBeVisible();
   await expect(page.locator('.scene__go')).toHaveCount(1);
   await expect(page.locator('.scene__draw .thread__run')).toHaveCount(1);
+
+  // The gap itself survives the removal, in the register, still unevidenced.
+  await page.goto('/#/kiem-chung');
+  const row = page.locator('tr').filter({ has: page.getByText('FS-open', { exact: true }) });
+  await expect(row).toHaveCount(1);
+  await expect(row).toContainText('NOT YET EVIDENCED');
 });
 
 test('the enlarged view opens, carries the credit, and closes back to its trigger', async ({
@@ -162,17 +157,14 @@ test('the enlarged view opens, carries the credit, and closes back to its trigge
 });
 
 /*
- * UPDATED 18-9-2026. This test used to assert that NO stage entrance carried an
- * image, which was true when it was written and is not any more: stage 5's
- * position was filled from a 1946 magazine cover whose own printed caption
- * names the subject. The assertion is not relaxed, it is split - each entrance
- * must be in exactly one of two states, and each state is checked in full.
+ * Each stage entrance must be in exactly one of two states - filled, or visibly
+ * blocked - and each state is checked in full. Splitting it this way is what
+ * keeps the check from being relaxed as positions get filled.
  */
 test('every stage entrance carries its primary position, filled or visibly blocked', async ({
   page,
 }) => {
-  // ky-3 joined on 19-9-2026 when the Marseille plate moved here from the
-  // opening; ky-5 was the first, on 18-9.
+  // The two entrances that currently hold a document.
   const filled = ['ky-3', 'ky-5'];
 
   for (const id of ['ky-1', 'ky-2', 'ky-3', 'ky-4', 'ky-5']) {
@@ -196,8 +188,11 @@ test('every stage entrance carries its primary position, filled or visibly block
       await expect(portrait, id).toContainText(
         'Source gallica.bnf.fr / Bibliothèque nationale de France',
       );
-      // And the status stays beside it: nothing here is claimed as settled.
-      await expect(portrait.locator('.figure__cap-status'), id).toContainText('NEED VERIFICATION');
+      // The status is one control away rather than printed on the caption.
+      await expect(portrait.locator('.figure__cap-status'), id).toHaveCount(0);
+      await portrait.locator('.figure .lens-trigger').click();
+      await expect(page.locator('.lens'), id).toContainText('NEED VERIFICATION');
+      await page.keyboard.press('Escape');
       // No blocked note where a document is.
       await expect(portrait.locator('.figure--blocked'), id).toHaveCount(0);
       continue;
@@ -296,16 +291,11 @@ test('a supporting document renders at the station it supports, not at the entra
 
 test('the supporting position is only in the reading flow when it is filled', async ({ page }) => {
   /*
-   * UPDATED 18-9-2026: this used to walk ky-1, whose supporting position was
-   * blocked. It is filled now, from a 1909 map of the province the stage opens
-   * on. ky-4 is the stage whose two positions are both still empty:
+   * ky-4 is the stage whose two supporting positions are both still empty:
    * BLOCKED - FURTHER ARCHIVAL / INSTITUTIONAL RESEARCH REQUIRED (`SC-25`).
-   *
-   * CORRECTED 19-9-2026: this comment used to give the reason as "the excerpt
-   * names no artefact there that an archive could be asked for" - the same
-   * over-strong sentence SC-23 was corrected for. The queries run so far, in the
-   * holdings opened so far, returned nothing; that is a fact about the search,
-   * not about what exists.
+   * The reason is stated narrowly on purpose - the queries run so far, in the
+   * holdings opened so far, returned nothing. That is a fact about the search,
+   * not a claim about what exists.
    *
    * A blocked supporting position must not put an empty frame into the middle
    * of a stage; it stays in the register instead.
@@ -400,9 +390,11 @@ test('a supporting document sits at the exact sentence it explains', async ({ pa
     // the picture rather than behind a control.
     await expect(support.locator('.figure__cap-text'), c.stage).toContainText(c.inCaption);
     await expect(support.locator('.figure__cap-credit'), c.stage).toContainText(c.credit);
-    await expect(support.locator('.figure__cap-status'), c.stage).toContainText(
-      'NEED VERIFICATION',
-    );
+    // The status is checked where it lives, in this figure's own source panel.
+    await expect(support.locator('.figure__cap-status'), c.stage).toHaveCount(0);
+    await support.locator('.figure .lens-trigger').click();
+    await expect(page.locator('.lens'), c.stage).toContainText('NEED VERIFICATION');
+    await page.keyboard.press('Escape');
 
     // A meaningful image carries a description of what is visible in it.
     const alt = (await img.getAttribute('alt')) ?? '';
@@ -416,7 +408,7 @@ test('a supporting document sits at the exact sentence it explains', async ({ pa
  * The dialog is shared, but the trigger is rendered per figure, so the keyboard
  * path has to be checked where a reader will actually meet it. Since 19-9-2026
  * that is only ever a stage entrance or a station - the opening carries no
- * enlargeable figure, which the test above pins at `.hero__figure img` = 0.
+ * figure apparatus at all, which the test above pins at `.hero__figure` = 0.
  */
 test('a stage document enlarges from the keyboard and returns focus', async ({ page }) => {
   await page.goto('/#/chang/ky-5');

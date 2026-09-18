@@ -120,7 +120,7 @@ Hai truy vấn về "một mô hình điều hướng duy nhất" đều lệch 
 hẹp hơn theo hợp đồng của skill). Căn cứ cho quyết định gộp điều hướng vì vậy là **số đo của chính
 dự án** cộng **hướng dẫn chung trong `SKILL.md`** (bảng Rule Categories mục 9, anti-pattern
 `Overloaded nav`) — **không phải** một kết quả CLI, và được ghi đúng như vậy trong
-[`../UX_REDESIGN_REPORT.md`](../UX_REDESIGN_REPORT.md) §5.
+[`../UX_REDESIGN_REPORT.md`](reports/UX_REDESIGN_REPORT.md) §5.
 
 ---
 

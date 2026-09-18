@@ -1,5 +1,21 @@
 # CREATIVE SPATIAL JOURNEY — REPORT
 
+> ## ĐÍNH CHÍNH 18-9-2026, 21:15 (+0700) — SỐ ĐO TRONG BÁO CÁO NÀY ĐÃ LỖI THỜI
+>
+> Báo cáo này **không bị sửa**. Nội dung phân tích giữ nguyên. Chỉ các **con số đo**
+> là đã lỗi thời, và đây là cách đọc chúng:
+>
+> | Ghi trong báo cáo | Giá trị hiện hành, đo 18-9-2026 20:47-20:55 |
+> |---|---|
+> | kiểm thử đơn vị 113 / 115 / 116 | **136 đạt** (content 88, places 48) |
+> | kiểm thử trình duyệt 183 / 213 / 228, hoặc "chưa chạy" | **255 đạt**, mã thoát 0 |
+>
+> Nguồn duy nhất cho số đo hiện hành: [`docs/MEASURED_STATE_2026-09-18.md`](../MEASURED_STATE_2026-09-18.md).
+>
+> Mọi con số cũ **đều đúng tại thời điểm chúng được ghi**. Bản ghi cũ không bị viết lại.
+
+---
+
 > **Date:** 2026-09-17
 > **Work:** turning the existing HCM202 product into a spatial learning experience without disturbing its academic, verification, accessibility, offline or UX work.
 > **Status:** `CREATIVE PRODUCT IMPLEMENTED — REQUIRES HUMAN VERIFICATION AND REAL PROJECT EVIDENCE`
@@ -33,7 +49,7 @@ Also confirmed by eye on the scans: `trở thành thành` (tr.32), `Sdd` not `S�
 
 ## 2. Reference analysis
 
-Full decomposition in [`REFERENCE_ANALYSIS.md`](REFERENCE_ANALYSIS.md); the originality trail is in [`docs/REFERENCE_USE_RECORD_2026-09-17.md`](docs/REFERENCE_USE_RECORD_2026-09-17.md).
+Full decomposition in [`REFERENCE_ANALYSIS.md`](REFERENCE_ANALYSIS.md); the originality trail is in [`docs/REFERENCE_USE_RECORD_2026-09-17.md`](../REFERENCE_USE_RECORD_2026-09-17.md).
 
 `_reference/creative_product_HCM202` was cloned, read, and never modified — `git status --porcelain` empty before and after, and the directory is git-ignored. It is **not an academic source** and is cited nowhere in the product.
 

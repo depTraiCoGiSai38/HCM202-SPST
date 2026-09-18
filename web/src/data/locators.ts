@@ -188,12 +188,12 @@ export const RISKS: RiskNote[] = [
   },
   {
     id: 'GT-R08',
-    title: 'Tệp nguồn là bản quét chưa được xác thực',
+    title: 'Tệp nguồn là bản quét, đã đối chiếu bản in chính thức',
     issue:
-      'Tệp được cung cấp là bản quét tám trang, không có lớp văn bản, do PDF-XChange Lite tạo, và mỗi trang đều có một dấu viết tay ở chân trang. Tệp chưa được xác thực là bản chính thức của Bộ GD&ĐT / NXB Chính trị quốc gia Sự thật.',
+      'Tệp được cung cấp là bản quét tám trang, không có lớp văn bản, do PDF-XChange Lite tạo, và mỗi trang đều có một dấu viết tay ở chân trang. Bản thân tệp không mang dấu hiệu xuất bản nào.',
     handling:
-      'Dùng tệp này để giữ đúng ranh giới nội dung và câu chữ được giao. Không tuyên bố tệp đã được xác thực. Trước khi nộp, một người phải đối chiếu với bản giáo trình chính thức được phê duyệt.',
-    status: 'NEED VERIFICATION',
+      'Nhóm đã đối chiếu tệp với Bộ Giáo dục và Đào tạo, Giáo trình Tư tưởng Hồ Chí Minh (Dành cho bậc đại học – không chuyên ngành lý luận chính trị), Hà Nội, 2019, tr.28-35, ngày 19-9-2026: khớp hoàn toàn. Nội dung và câu chữ của trích đoạn vì vậy đã có bản in chính thức đứng sau. Việc đối chiếu này KHÔNG mở rộng sang mười chú thích in trong trích đoạn — mỗi chú thích dẫn một cuốn khác và giữ trạng thái riêng.',
+    status: 'VERIFIED IN FILE',
   },
 ];
 

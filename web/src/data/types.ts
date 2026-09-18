@@ -6,13 +6,16 @@
  */
 
 export type Provenance =
+  | 'SOURCE REQUIREMENT'
   | 'SOURCE CONTENT'
   | 'PROJECT DECISION'
   | 'PROJECT INPUT'
+  | 'VERIFIED IN FILE'
   | 'NEED VERIFICATION'
   | 'NOT YET EVIDENCED'
   | 'DOCUMENT VARIANCE'
-  | 'DOCUMENT CONFLICT';
+  | 'DOCUMENT CONFLICT'
+  | 'REJECTED';
 
 /**
  * A location in the primary textbook source.

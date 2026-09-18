@@ -11,7 +11,18 @@ import {
   placesWithoutCoordinate,
   turningPointPlacement,
 } from '../data/places';
-import { LAND_MIN_WINDOW_DEGREES, LAND_PATH, LAND_SIMPLIFY_DEGREES } from '../data/land';
+import {
+  ARCHIPELAGOS,
+  ARCHIPELAGO_MIN_SPREAD_UNITS,
+  BORDER_PATH,
+  CARTOGRAPHY_PROJECTION,
+  CARTOGRAPHY_RETRIEVED,
+  CARTOGRAPHY_SOURCES,
+  LAND_MIN_WINDOW_DEGREES,
+  LAND_PATH,
+  LAND_SIMPLIFY_DEGREES,
+  VN_ISLANDS_PATH,
+} from '../data/land';
 import { ALL_QUOTATIONS, STAGES } from '../data/stages';
 import { citeSource, isInExcerpt } from '../data/source';
 
@@ -324,5 +335,328 @@ describe('the basemap is geometry, not a claim', () => {
     // `y` is -latitude in the stored path.
     expect(Math.max(...lats)).toBeLessThanOrEqual(90);
     expect(Math.min(...lats)).toBeGreaterThanOrEqual(-90);
+  });
+});
+
+/**
+ * The basemap's national-boundary and archipelago layers.
+ *
+ * These hold what the drawing cannot hold on its own. Several exist because a
+ * build transformation is the one place where this representation could
+ * disappear WITHOUT anything failing: a selector that stopped matching, a field
+ * renamed upstream, or a simplification pass that dropped a one-point ring would
+ * all leave a plate that still renders, still passes every other check, and
+ * quietly no longer shows the islands.
+ *
+ * What these tests do NOT do is adjudicate anything. A unit test cannot settle a
+ * territorial dispute and none below tries to. They check one thing only: that
+ * the product still draws what the cited source says, and that the citation is
+ * still attached to it.
+ */
+describe('national boundaries are drawn, and are Admin-0 only', () => {
+  it('ships a boundary path that is real geometry', () => {
+    expect(BORDER_PATH.startsWith('M')).toBe(true);
+    expect(BORDER_PATH.length).toBeGreaterThan(10000);
+  });
+
+  it('draws boundaries as open polylines, never as closed country shapes', () => {
+    // A closed subpath would mean a country outline had been filled in as a
+    // political-map shape. A border separates two countries; it encloses none.
+    expect(BORDER_PATH).not.toMatch(/[Zz]/);
+  });
+
+  it('stays inside real world coordinates', () => {
+    const lons: number[] = [];
+    const lats: number[] = [];
+    for (const pair of BORDER_PATH.matchAll(/(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g)) {
+      lons.push(Number(pair[1]));
+      lats.push(Number(pair[2]));
+    }
+    expect(lons.length).toBeGreaterThan(1000);
+    expect(Math.max(...lons)).toBeLessThanOrEqual(180);
+    expect(Math.min(...lons)).toBeGreaterThanOrEqual(-180);
+    // `y` is -latitude in the stored path.
+    expect(Math.max(...lats)).toBeLessThanOrEqual(90);
+    expect(Math.min(...lats)).toBeGreaterThanOrEqual(-90);
+  });
+
+  it('carries no province, state or district mesh', () => {
+    /*
+     * Counted, not eyeballed. The source file holds Admin-0 geometry only, so
+     * the honest guard is a ceiling on how much linework a national-boundary
+     * layer can contain: an Admin-1 dataset would be several times this size.
+     * Natural Earth 1:110m yields 326 national land-boundary segments; a layer
+     * that suddenly carried thousands would be a different dataset.
+     */
+    const segments = BORDER_PATH.match(/M/g) ?? [];
+    expect(segments.length).toBeGreaterThan(200);
+    expect(segments.length).toBeLessThan(600);
+  });
+
+  it('draws no boundary line through the offshore archipelagos', () => {
+    /*
+     * At 1:110m the world dataset has no geometry at all out there, so any line
+     * appearing in that box would mean a maritime or disputed-boundary
+     * convention had arrived from a third-party dataset without being chosen.
+     * The product must not publish such a line by accident.
+     */
+    let inside = 0;
+    for (const pair of BORDER_PATH.matchAll(/(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g)) {
+      const lon = Number(pair[1]);
+      const lat = -Number(pair[2]);
+      if (lon > 108.5 && lon < 119 && lat > 6.5 && lat < 18.2) inside += 1;
+    }
+    expect(inside).toBe(0);
+  });
+});
+
+describe('the Vietnamese offshore representation cannot be silently dropped', () => {
+  it('carries exactly the two archipelagos the convention requires', () => {
+    expect(ARCHIPELAGOS.map((a) => a.id)).toEqual(['hoang-sa', 'truong-sa']);
+  });
+
+  it('ships no display name for either group', () => {
+    /*
+     * PROJECT DECISION, 2026-09-18: this product is about the formation of Hồ
+     * Chí Minh's thought, so it does not inscribe these groups' names anywhere -
+     * not on the plate, not in the register, and not as a string in the bundle.
+     * The build tool still reads the source's name field to select and validate
+     * the right features; it just stops there.
+     *
+     * Asserted structurally rather than by string match, so a name cannot be
+     * reintroduced under a different key.
+     */
+    for (const a of ARCHIPELAGOS) {
+      const text = JSON.stringify(a);
+      expect(text, `${a.id} must ship no display name`).not.toMatch(/Hoàng|Trường|quần đảo/i);
+      // And the group is still identified internally, for provenance.
+      expect(a.wikidataId).toMatch(/^Q\d+$/);
+    }
+  });
+
+  it('keeps every islet the build transformation selected', () => {
+    /*
+     * The counts are the point. A selector that stopped matching, or a
+     * simplification pass that dropped short rings, would leave an archipelago
+     * present in name and empty of marks - which renders as clean, passes
+     * everything else, and shows nothing.
+     */
+    const byId = new Map(ARCHIPELAGOS.map((a) => [a.id, a]));
+    expect(byId.get('hoang-sa')?.islets.length).toBe(7);
+    expect(byId.get('truong-sa')?.islets.length).toBe(12);
+  });
+
+  it('places every islet inside its own published extent', () => {
+    for (const a of ARCHIPELAGOS) {
+      const [w, s, e, n] = a.extent;
+      expect(e).toBeGreaterThan(w);
+      expect(n).toBeGreaterThan(s);
+      for (const [lon, lat] of a.islets) {
+        expect(lon, `${a.id} islet longitude`).toBeGreaterThanOrEqual(w);
+        expect(lon, `${a.id} islet longitude`).toBeLessThanOrEqual(e);
+        expect(lat, `${a.id} islet latitude`).toBeGreaterThanOrEqual(s);
+        expect(lat, `${a.id} islet latitude`).toBeLessThanOrEqual(n);
+      }
+    }
+  });
+
+  it('sits inside the territorial extent the Vietnamese standard states', () => {
+    /*
+     * `QCVN 80:2024/BTNMT` clause 1.2 and `Thông tư 17/2018/TT-BTNMT` Điều 20
+     * both give the same window for a product showing the whole of Vietnam:
+     * 102-118 East, 4.5-23.5 North. This checks that what the plate draws falls
+     * inside it - NOT that the product is a compliant map product, which the
+     * register says plainly that it is not.
+     */
+    for (const a of ARCHIPELAGOS) {
+      expect(a.extent[0]).toBeGreaterThanOrEqual(102);
+      expect(a.extent[2]).toBeLessThanOrEqual(118);
+      expect(a.extent[1]).toBeGreaterThanOrEqual(4.5);
+      expect(a.extent[3]).toBeLessThanOrEqual(23.5);
+    }
+  });
+
+  it('publishes the extent its own islets occupy, which frames the inset', () => {
+    /*
+     * Two different extents, and the difference is real rather than a rounding
+     * slip: `extent` is the published extent of the whole group, `isletExtent`
+     * is what this source actually resolves. For the southern group the source covers
+     * 114.03-115.85 E of a group published as 111.87-117.88 E. The inset is
+     * framed on the data and the register prints both, so an enlarged window
+     * can never be read as a claim about the group's size.
+     */
+    for (const a of ARCHIPELAGOS) {
+      const [w, s2, e, n] = a.isletExtent;
+      expect(e).toBeGreaterThan(w);
+      expect(n).toBeGreaterThan(s2);
+      expect(w).toBeGreaterThanOrEqual(a.extent[0]);
+      expect(e).toBeLessThanOrEqual(a.extent[2]);
+      expect(s2).toBeGreaterThanOrEqual(a.extent[1]);
+      expect(n).toBeLessThanOrEqual(a.extent[3]);
+      // And it is the actual bounding box of the islets, not a copy of `extent`.
+      const lons = a.islets.map((p) => p[0]);
+      const lats = a.islets.map((p) => p[1]);
+      expect(w).toBeCloseTo(Math.min(...lons), 3);
+      expect(e).toBeCloseTo(Math.max(...lons), 3);
+      expect(s2).toBeCloseTo(Math.min(...lats), 3);
+      expect(n).toBeCloseTo(Math.max(...lats), 3);
+    }
+  });
+
+  it('spreads its islets in both axes, so an inset can show an arrangement', () => {
+    // A group whose islets were collinear, or all in one spot, would have no
+    // distribution or orientation for the inset to preserve. Both have both.
+    for (const a of ARCHIPELAGOS) {
+      const [w, s2, e, n] = a.isletExtent;
+      expect(e - w, `${a.id} longitude spread`).toBeGreaterThan(0.5);
+      expect(n - s2, `${a.id} latitude spread`).toBeGreaterThan(0.5);
+    }
+  });
+
+  it('cites the theme version, not the release tag it was fetched from', () => {
+    /*
+     * Natural Earth versions each theme independently. At release tag v5.1.2 the
+     * Vietnam point-of-view theme is 5.1.1 and the geography-regions theme is
+     * 5.0.0, and `world-atlas@2.0.2` is a third version of a third thing.
+     * Recording the tag as though it were the theme version misstates provenance.
+     */
+    const vnm = CARTOGRAPHY_SOURCES.find((src) => src.url.includes('countries_vnm'));
+    expect(vnm?.version).toContain('5.1.1');
+    const regions = CARTOGRAPHY_SOURCES.find((src) => src.url.includes('geography_regions'));
+    expect(regions?.version).toContain('5.0.0');
+  });
+
+  it('resolves its islets at the in-country framing and symbolises them beyond it', () => {
+    /*
+     * The threshold that stops the islets merging into a filled mass. Computed
+     * here the way the renderer computes it: a framing W degrees wide maps to
+     * 1000/W canvas units per degree, so a cluster spanning `d` degrees lands
+     * `d * 1000 / W` units across.
+     *
+     * Stages 1 and 5 frame Vietnam at 26 degrees and MUST resolve; the
+     * whole-world framing at 348 degrees MUST NOT, because seven marks inside
+     * four units is a blob that reads as real land area.
+     */
+    const spreadAt = (group: (typeof ARCHIPELAGOS)[number], windowDegrees: number): number => {
+      const lons = group.islets.map((p) => p[0]);
+      const lats = group.islets.map((p) => p[1]);
+      const k = 1000 / windowDegrees;
+      return Math.max(Math.max(...lons) - Math.min(...lons), Math.max(...lats) - Math.min(...lats)) * k;
+    };
+    for (const group of ARCHIPELAGOS) {
+      expect(spreadAt(group, 26), `${group.id} must resolve at the Vietnam framing`).toBeGreaterThan(
+        ARCHIPELAGO_MIN_SPREAD_UNITS,
+      );
+      expect(spreadAt(group, 348), `${group.id} must NOT resolve at the world framing`).toBeLessThan(
+        ARCHIPELAGO_MIN_SPREAD_UNITS,
+      );
+    }
+  });
+});
+
+describe("Vietnam's coastal islands are drawn, because 1:110m cannot show them", () => {
+  it('ships island geometry as closed polygons at true scale', () => {
+    // Closed, unlike the border layer: these are land, not a line between two
+    // countries. And real polygons, unlike the archipelago symbols.
+    expect(VN_ISLANDS_PATH.startsWith('M')).toBe(true);
+    expect(VN_ISLANDS_PATH).toMatch(/Z/);
+    expect((VN_ISLANDS_PATH.match(/M/g) ?? []).length).toBe(24);
+  });
+
+  it('places every island inside the standard territorial extent', () => {
+    /*
+     * `QCVN 80:2024/BTNMT` clause 1.2 and `Thông tư 17/2018/TT-BTNMT` Điều 20
+     * give 102-118 East, 4.5-23.5 North. This checks what the plate draws falls
+     * inside it - not that the product is a compliant map product.
+     */
+    for (const pair of VN_ISLANDS_PATH.matchAll(/(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g)) {
+      const lon = Number(pair[1]);
+      const lat = -Number(pair[2]);
+      expect(lon).toBeGreaterThanOrEqual(102);
+      expect(lon).toBeLessThanOrEqual(118);
+      expect(lat).toBeGreaterThanOrEqual(4.5);
+      expect(lat).toBeLessThanOrEqual(23.5);
+    }
+  });
+
+  it('keeps Phú Quốc, which is the largest and the one 1:110m most obviously lacks', () => {
+    // Phú Quốc sits at roughly 103.85-104.09 E, 10.01-10.45 N. The world land
+    // layer has no vertex anywhere near it, so if this layer ever stopped being
+    // generated the island would silently vanish from every Vietnam framing.
+    let found = false;
+    for (const pair of VN_ISLANDS_PATH.matchAll(/(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g)) {
+      const lon = Number(pair[1]);
+      const lat = -Number(pair[2]);
+      if (lon > 103.8 && lon < 104.2 && lat > 9.9 && lat < 10.6) found = true;
+    }
+    expect(found).toBe(true);
+    // And the world layer genuinely does not carry it.
+    let inWorldLayer = false;
+    for (const pair of LAND_PATH.matchAll(/(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g)) {
+      const lon = Number(pair[1]);
+      const lat = -Number(pair[2]);
+      if (lon > 103.8 && lon < 104.2 && lat > 9.9 && lat < 10.6) inWorldLayer = true;
+    }
+    expect(inWorldLayer).toBe(false);
+  });
+});
+
+describe('every line on the plate can be traced to a named dataset', () => {
+  it('publishes a source record for each drawn layer', () => {
+    expect(CARTOGRAPHY_SOURCES.length).toBe(5);
+    for (const src of CARTOGRAPHY_SOURCES) {
+      expect(src.layer.length).toBeGreaterThan(3);
+      expect(src.dataset.length).toBeGreaterThan(3);
+      expect(src.version.length).toBeGreaterThan(3);
+      expect(src.licence.length).toBeGreaterThan(3);
+      expect(src.note.length).toBeGreaterThan(20);
+      expect(src.url).toMatch(/^https:\/\//);
+    }
+  });
+
+  it('names the Vietnam point-of-view edition rather than a default worldview', () => {
+    // The choice of edition is the whole cartographic decision. If a
+    // regeneration ever pointed at the default file instead, the drawing would
+    // change without a word of the documentation changing.
+    const positions = CARTOGRAPHY_SOURCES.find((s) => s.url.includes('countries_vnm'));
+    expect(positions, 'the archipelago positions must cite the Vietnam POV file').toBeDefined();
+    expect(positions?.url).toContain('natural-earth-vector');
+  });
+
+  it('pins its sources to an exact version rather than to a moving branch', () => {
+    for (const src of CARTOGRAPHY_SOURCES) {
+      expect(src.url, `${src.layer} must not track a moving branch`).not.toContain('/master/');
+    }
+  });
+
+  it('states when the geometry was fetched, and how the projection distorts', () => {
+    expect(CARTOGRAPHY_RETRIEVED).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    // The projection note must keep saying what it does not preserve.
+    expect(CARTOGRAPHY_PROJECTION).toMatch(/KHÔNG bảo toàn/);
+  });
+
+  it('keeps the basemap out of the excerpt evidence class', () => {
+    // A cartographic source is not a textbook locator and must never be dressed
+    // as one. None of these may carry a printed-page citation.
+    for (const src of CARTOGRAPHY_SOURCES) {
+      expect(`${src.layer} ${src.dataset} ${src.note}`).not.toMatch(/tr\.\s*\d+/);
+    }
+  });
+});
+
+describe('the basemap is bundled, never fetched at runtime', () => {
+  it('holds its geometry as committed text, not as a request', () => {
+    // Everything the plate draws is a string in the bundle. If any of these
+    // became a URL the product would need a network at the Showcase.
+    expect(typeof LAND_PATH).toBe('string');
+    expect(typeof BORDER_PATH).toBe('string');
+    expect(LAND_PATH).not.toMatch(/^https?:/);
+    expect(BORDER_PATH).not.toMatch(/^https?:/);
+    for (const a of ARCHIPELAGOS) {
+      for (const [lon, lat] of a.islets) {
+        expect(Number.isFinite(lon)).toBe(true);
+        expect(Number.isFinite(lat)).toBe(true);
+      }
+    }
   });
 });

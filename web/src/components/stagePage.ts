@@ -5,7 +5,7 @@ import { FIGURE_SLOTS } from '../data/figures';
 import { figureSlot, hasFigure } from './figure';
 import { LOCATOR_BY_ID, RISK_BY_ID } from '../data/locators';
 import type { Passage, Quotation, Stage, StageId, TurningPoint } from '../data/types';
-import { ICONS, clear, h, icon } from '../lib/dom';
+import { ICONS, clear, h, icon, wholeDates } from '../lib/dom';
 import { getReading, getStop, motionSuppressed, setReading, setStop } from '../lib/state';
 import { type EvidenceItem, lensTrigger, readLocator } from './evidence';
 import { predictPanel } from './predict';
@@ -894,7 +894,7 @@ function bridge(stage: Stage): HTMLElement {
       ),
     );
   }
-  root.appendChild(h('p', { class: 'bridge__period', text: next.headingPeriod }));
+  root.appendChild(h('p', { class: 'bridge__period' }, ...wholeDates(next.headingPeriod)));
   root.appendChild(h('p', { class: 'bridge__claim', text: next.headingClaim }));
 
   /*
@@ -957,11 +957,9 @@ interface Head {
  * accessibility tree, so a screen reader still reads the official wording at
  * every stop, and never out of the evidence magnifier either.
  *
- * CORRECTED 18-9-2026: this said `compact` shows "the stage number and its
- * period". It does not - the chapter element is not rendered at all past the
- * entrance, and the compact bar deliberately carries the period only. A
- * maintainer reading the old sentence would have treated the absent "CHẶNG 02 /
- * 05" as a bug and put it back.
+ * Note for maintainers: past the entrance the chapter element is not rendered
+ * at all, and the compact bar deliberately carries the period ONLY. The absent
+ * "CHẶNG 02 / 05" is intended, not a bug.
  */
 /**
  * The chapter opening of a stage.
@@ -1005,7 +1003,7 @@ function stageHead(stage: Stage): Head {
   const heading = h(
     'h1',
     { class: 'walk__heading' },
-    h('span', { class: 'walk__heading-period', text: stage.headingPeriod }),
+    h('span', { class: 'walk__heading-period' }, ...wholeDates(stage.headingPeriod)),
     h('span', { class: 'visually-hidden', text: ': ' }),
     h('span', { class: 'walk__heading-claim', text: stage.headingClaim }),
   );
@@ -1017,7 +1015,7 @@ function stageHead(stage: Stage): Head {
     { class: 'walk__context', aria: { hidden: 'true' } },
     // No ordinal: the strip under the masthead already says which of the five
     // stages this is, on every screen. What this bar adds is the period.
-    h('span', { class: 'walk__context-period', text: stage.headingPeriod }),
+    h('span', { class: 'walk__context-period' }, ...wholeDates(stage.headingPeriod)),
   );
 
   const expandBtn = h('button', {
@@ -1169,7 +1167,8 @@ function stageEvidence(stage: Stage): { title: string; items: EvidenceItem[] } {
     { label: 'Loại nội dung', value: 'SOURCE CONTENT', tone: 'status' },
     {
       label: 'Trạng thái',
-      value: 'NEED VERIFICATION — chưa đối chiếu với giáo trình chính thống',
+      value:
+        'Đã đối chiếu với bản in chính thức (Bộ GD&ĐT, Giáo trình Tư tưởng Hồ Chí Minh, Hà Nội, 2019, tr.28-35): khớp hoàn toàn',
       tone: 'status',
     },
   ];

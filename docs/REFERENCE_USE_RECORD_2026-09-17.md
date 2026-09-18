@@ -93,7 +93,7 @@ tìm **ảnh tư liệu lịch sử**. Kết quả được ghi tách riêng ở
 | Mục đích | Tìm ảnh tư liệu, theo đúng thứ tự đề bài đặt: **tìm tại chỗ trước, ra ngoài sau** |
 | Cách xử lý | **CHỈ ĐỌC**, như lần trước. Kho không bị sửa. Không clone lại. |
 | Phạm vi đã đọc | `src/data/hcm_data.json` (toàn bộ 41 sự kiện), `public/image/` (**19 tệp** — *đính chính 18-9-2026: bản ghi này in “20 tệp”, đếm sai; thư mục có 19 tệp, cả trên đĩa lẫn trong chỉ mục git. Đây là con số mà `SC-16` trong `figures.ts` đã ghi là đếm sai nhưng chưa sửa ở đây*), `public/`, `readme.md`, `AGENTS.md` |
-| Kết quả | **0 ảnh được dùng.** Bảng đầy đủ 68 mục: [`../REFERENCE_IMAGE_AUDIT.md`](../REFERENCE_IMAGE_AUDIT.md) |
+| Kết quả | **0 ảnh được dùng.** Bảng đầy đủ 68 mục: [`../REFERENCE_IMAGE_AUDIT.md`](reports/REFERENCE_IMAGE_AUDIT.md) |
 
 **Vì sao 0.** Kho ghi **một dòng nhà phát hành** cho mỗi ảnh và không ghi gì thêm. Đếm bằng máy từ
 chính tệp JSON: **0 mục** có trang bản ghi hiện vật, **0 mục** có ký hiệu kho hay số hiệu, **0 mục**
