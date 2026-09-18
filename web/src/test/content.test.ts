@@ -20,6 +20,7 @@ import {
   SOURCING_CHECKS,
 } from '../data/figures';
 import { splitForReading } from '../components/stagePage';
+import { figureSlot, hasFigure } from '../components/figure';
 import {
   LOCATORS,
   PRINTED_FORM_NOTES,
@@ -96,6 +97,22 @@ describe('locator candidates', () => {
     for (const l of LOCATORS) {
       expect(l.status).toBe('NEED VERIFICATION');
     }
+  });
+
+  /**
+   * The count the Verify screen publishes, against the data it is drawn from.
+   *
+   * Added 18-9-2026 after the register was found publishing `0` here. The
+   * summary filtered on the normalised spelling `Sđd`, which AGENTS.md forbids
+   * the product from writing, so it matched none of the three printed `Sdd`
+   * notes. The test below had asserted the 3 in the data the whole time;
+   * nothing compared the data with what the screen said about it.
+   */
+  it('publishes the same abbreviation count the locator data holds', () => {
+    const printedForm = LOCATORS.filter((l) => l.printed.includes('Sdd'));
+    expect(printedForm).toHaveLength(3);
+    // The normalised spelling must never be what the product counts or prints.
+    expect(LOCATORS.filter((l) => l.printed.includes('Sđd'))).toHaveLength(0);
   });
 
   it('never expands the unresolved abbreviation, and keeps it as printed', () => {
@@ -478,12 +495,18 @@ describe('the question that opens each stage', () => {
 
 describe('documentary photographs', () => {
   /**
-   * The registry is empty on purpose. These tests are the guard that keeps it
-   * honest: a record may not appear without every provenance field filled, and
-   * the reasons the slots are still blocked must stay published rather than
-   * quietly disappearing when someone tidies up.
+   * CORRECTED 18-9-2026. This said "the registry is empty on purpose", which was
+   * true when it was written and had not been touched since eight records
+   * cleared. A maintainer reading it would have concluded the block below
+   * guarded an empty list; it does the opposite.
+   *
+   * Eight of the thirteen declared positions hold a record and five are still
+   * blocked. These tests keep both halves honest: a record may not appear
+   * without every provenance field filled, and the reasons the remaining slots
+   * are blocked must stay published rather than quietly disappearing when
+   * someone tidies up.
    */
-  it('publishes a primary position for the opening and for every stage, plus one supporting position per stage', () => {
+  it('publishes a primary position for the opening and for every stage, plus one to three supporting positions per stage', () => {
     expect(FIGURE_SLOTS.filter((s) => s.stageId === null)).toHaveLength(1);
     for (const stage of STAGES) {
       const mine = FIGURE_SLOTS.filter((s) => s.stageId === stage.id);
@@ -516,7 +539,26 @@ describe('documentary photographs', () => {
   });
 
   it('records what was checked and why each source did not clear a slot', () => {
-    expect(SOURCING_CHECKS.length).toBeGreaterThan(0);
+    /*
+     * PINNED 18-9-2026. `> 0` passed with a single entry, and no test in either
+     * suite had ever read `outcome` - the one field that says whether a source
+     * cleared, is unresolved, or was rejected. The Verify screen prints one row
+     * per check, so the count is pinned the way the slot count is.
+     */
+    expect(SOURCING_CHECKS).toHaveLength(26);
+    const byOutcome = (o: (typeof SOURCING_CHECKS)[number]['outcome']) =>
+      SOURCING_CHECKS.filter((c) => c.outcome === o);
+    expect(byOutcome('cleared')).toHaveLength(12);
+    expect(byOutcome('unresolved')).toHaveLength(8);
+    expect(byOutcome('rejected')).toHaveLength(6);
+    for (const c of SOURCING_CHECKS) {
+      expect(['cleared', 'unresolved', 'rejected'], `${c.id}.outcome`).toContain(c.outcome);
+    }
+    // No published figure may cite a page that a check rejected.
+    const rejectedUrls = new Set(byOutcome('rejected').map((c) => c.url));
+    for (const fig of FIGURES) {
+      expect(rejectedUrls.has(fig.sourceUrl), `${fig.id} cites a rejected source`).toBe(false);
+    }
     for (const c of SOURCING_CHECKS) {
       // A check is only a check if someone can open the page again.
       expect(c.url).toMatch(/^https:\/\//);
@@ -536,7 +578,8 @@ describe('documentary photographs', () => {
       // A search-result link is not a source; the page itself must be named.
       expect(fig.sourceUrl, fig.id).toMatch(/^https:\/\//);
       expect(fig.sourceUrl, fig.id).not.toMatch(/google\.|bing\.|search\?/);
-      expect(fig.rights.length, fig.id).toBeGreaterThan(10);
+      expect(fig.holderRightsStatus.length, fig.id).toBeGreaterThan(10);
+      expect(fig.reuseCondition.length, fig.id).toBeGreaterThan(10);
       // Where a source makes attribution a condition of reuse, the string it
       // requires has to be stored so it can be displayed.
       expect(fig.credit.length, fig.id).toBeGreaterThan(10);
@@ -546,27 +589,290 @@ describe('documentary photographs', () => {
     }
   });
 
-  it('carries the one cleared photograph, sourced and unattached to any stage', () => {
-    const open = FIGURES.find((f) => f.id === 'FS-open');
-    expect(open, 'FS-open should be filled').toBeDefined();
-    if (!open) return;
+  /**
+   * Every delivered file is a local file that exists.
+   *
+   * Two failures this catches, both of which would ship silently. A record
+   * pointing at a file nobody copied renders a broken box with a caption and a
+   * credit under it, which is worse than a blocked slot because it looks like a
+   * document. And a record pointing at a remote address would make the product
+   * depend on someone else's server and, for an archive that requires its own
+   * source line, would be hotlinking rather than reuse.
+   */
+  it('delivers every document from a local file that is actually on disk', () => {
+    /*
+     * The list of files that really exist, taken from the build tool rather
+     * than from a hand-kept constant, so it cannot go stale. `import.meta.glob`
+     * without `eager` hands back the matching paths as keys and never reads the
+     * bytes, which is what is wanted: this checks presence, not content.
+     */
+    const shipped = new Set(
+      Object.keys(import.meta.glob('../../public/tu-lieu/*')).map((p) =>
+        p.replace('../../public/', ''),
+      ),
+    );
+    expect(shipped.size, 'no files found under public/tu-lieu').toBeGreaterThan(0);
+
+    for (const fig of FIGURES) {
+      expect(fig.file, fig.id).toMatch(/^tu-lieu\//);
+      expect(fig.file, fig.id).not.toMatch(/^https?:/);
+      expect(shipped.has(fig.file), `${fig.id}: missing ${fig.file}`).toBe(true);
+    }
+  });
+
+  /**
+   * No document is used twice.
+   *
+   * The brief for the documentary pass rules out repeated portrait cards, and
+   * the cheapest way to break that rule is to point two positions at one file
+   * so a stage that found nothing borrows the picture from a stage that did.
+   */
+  it('uses each document in exactly one position', () => {
+    const files = FIGURES.map((f) => f.file);
+    expect(new Set(files).size, files.join(', ')).toBe(files.length);
+  });
+
+  /**
+   * The evidence axes stay separate.
+   *
+   * CORRECTED 19-9-2026: this said "the six evidence axes stay six" while the
+   * body compared four. The heading was describing an intention, the body an
+   * implementation, and they had drifted - which is the same class of error the
+   * test itself exists to catch. The sweep now covers all SEVEN text axes that
+   * are supposed to be answered independently: identity, event/date, place,
+   * offline packaging, the holder's own statement, the holder's published
+   * condition, and the maker's position.
+   *
+   * They exist to be answered separately because they have different evidence
+   * behind them. Copying a cleared answer from one field into another would let
+   * a settled axis vouch for an unsettled one, which is precisely the reasoning
+   * error the earlier passes made and corrected. Identical text in two axes is
+   * the signature of that error, so it fails here.
+   */
+  it('keeps the evidence axes answered separately, never copied between each other', () => {
+    for (const fig of FIGURES) {
+      const axes = {
+        identification: fig.identification,
+        eventCheck: fig.eventCheck,
+        locationCheck: fig.locationCheck,
+        offlineCheck: fig.offlineCheck,
+        holderRightsStatus: fig.holderRightsStatus,
+        reuseCondition: fig.reuseCondition,
+        creatorRightsCheck: fig.creatorRightsCheck,
+      };
+      for (const [name, value] of Object.entries(axes)) {
+        expect(value.length, `${fig.id}.${name}`).toBeGreaterThan(30);
+      }
+      const values = Object.values(axes);
+      expect(new Set(values).size, `${fig.id}: two axes carry identical text`).toBe(values.length);
+    }
+  });
+
+  /**
+   * The usage condition is published by whoever holds the document.
+   *
+   * A condition read off a third-party page says nothing about what the holder
+   * permits. Requiring the two links to share a host is a blunt check, but it
+   * is the one that would have caught the earlier mistake of judging an
+   * institution from a line in somebody else's footer.
+   */
+  it('reads each usage condition on the holding institution’s own site', () => {
+    for (const fig of FIGURES) {
+      const host = (u: string) => new URL(u).hostname.replace(/^www\./, '');
+      expect(host(fig.rightsUrl), fig.id).toBe(host(fig.sourceUrl));
+    }
+  });
+
+  /**
+   * An intermediary is never cited as the source.
+   *
+   * Images for this pass were discovered through a reference repository on the
+   * machine. Discovery is not provenance: a code-hosting URL, or that
+   * repository's name, appearing in a source field would be citing the courier
+   * instead of the archive.
+   */
+  it('never names a code host or a reference repository as a source', () => {
+    for (const fig of FIGURES) {
+      const cited = `${fig.sourceName} ${fig.sourceUrl} ${fig.credit} ${fig.rightsUrl}`;
+      for (const intermediary of ['github', 'gitlab', 'creative_product_HCM202', 'wikipedia', 'commons.wikimedia']) {
+        expect(cited.toLowerCase(), `${fig.id}: ${intermediary}`).not.toContain(
+          intermediary.toLowerCase(),
+        );
+      }
+    }
+  });
+
+  /**
+   * The Marseille plate, after it moved.
+   *
+   * REWRITTEN 19-9-2026. This test used to be called "carries the opening
+   * photograph, sourced and deliberately unattached to any stage" and asserted
+   * `stageId === null`. The project reversed that placement (`SC-24`): the
+   * record's own date, 26-12-1921, falls inside stage 3, so the picture does a
+   * stage-specific job there instead of a generic one at the front door.
+   *
+   * The assertion that mattered is not dropped, only moved to where it belongs.
+   * The reason the plate was held back was never its date - it was its EVENT,
+   * the Marseille congress, which the excerpt does not cover. That boundary is
+   * still absolute, and it is what this test now guards: the picture may sit in
+   * stage 3, and it may never be used to illustrate that congress.
+   */
+  it('keeps the Marseille plate on the stage its own date belongs to, and off the event it records', () => {
+    const plate = FIGURES.find((f) => f.id === 'FS-ky-3');
+    expect(plate, 'FS-ky-3 should be filled').toBeDefined();
+    if (!plate) return;
 
     // Held by a named institution, at a page anyone can open.
-    expect(open.sourceUrl).toContain('gallica.bnf.fr/ark:/12148/btv1b9054078w');
-    expect(open.sourceName).toContain('Bibliothèque nationale de France');
-    expect(open.credit).toBe('Source gallica.bnf.fr / Bibliothèque nationale de France');
+    expect(plate.sourceUrl).toContain('gallica.bnf.fr/ark:/12148/btv1b9054078w');
+    expect(plate.sourceName).toContain('Bibliothèque nationale de France');
+    expect(plate.credit).toBe('Source gallica.bnf.fr / Bibliothèque nationale de France');
+
+    // Attached to stage 3, whose printed period contains the record's date.
+    expect(plate.stageId).toBe('ky-3');
+    const stage3 = STAGES.find((s) => s.id === 'ky-3');
+    expect(stage3?.headingPeriod).toContain('31-12-1920');
+    expect(stage3?.headingPeriod).toContain('3-2-1930');
+    expect(plate.caption).toContain('26-12-1921');
 
     /*
-     * Not attached to a stage. The event in the BnF record is the Marseille
-     * congress of December 1921, which the assigned excerpt does not cover -
-     * the excerpt's congress is Tours, December 1920. Attaching this to a stage
-     * because it looks apt is exactly the inference the project forbids.
+     * And the limit travels with it. The event axis must still say, in the
+     * product's own words, that the congress in the record is outside the
+     * excerpt - otherwise the move would have quietly widened what the picture
+     * claims, which is the thing the earlier placement existed to prevent.
      */
-    expect(open.stageId).toBeNull();
+    expect(plate.eventCheck).toContain('Marseille');
+    expect(plate.eventCheck).toContain('NGOÀI');
 
     // The file is served from the product's own folder, not hotlinked.
-    expect(open.file).toMatch(/^tu-lieu\//);
-    expect(open.file).not.toMatch(/^https?:/);
+    expect(plate.file).toMatch(/^tu-lieu\//);
+    expect(plate.file).not.toMatch(/^https?:/);
+  });
+
+  /**
+   * The opening position is empty, declared, and says why.
+   *
+   * When its document moved to stage 3 the position could have been deleted.
+   * It was not: AGENTS.md section 4 requires an empty evidence field to stay
+   * visibly blocked, and a slot that vanishes takes its gap with it.
+   */
+  it('keeps the opening position declared and empty after its document moved', () => {
+    expect(FIGURES.find((f) => f.id === 'FS-open')).toBeUndefined();
+    const slot = FIGURE_SLOTS.find((s) => s.id === 'FS-open');
+    expect(slot, 'the opening position must stay declared').toBeDefined();
+    /*
+     * REPLACED 19-9-2026: this line asserted slotStatus('FS-open') is
+     * NOT YET EVIDENCED, which the line above already entails by that
+     * function's definition - it restated the data it had just read. What is
+     * worth pinning instead is that the slot is still a PRIMARY position at the
+     * entrance, so a later edit cannot quietly demote the opening's gap into a
+     * supporting position nobody renders.
+     */
+    expect(slot?.kind, 'the opening position stays a primary anchor').toBe('primary');
+    expect(slot?.anchor.where, 'and it stays at the entrance').toBe('entrance');
+    // The role says what would go here and that it is empty, not just where.
+    expect(slot?.role).toContain('19-9-2026');
+  });
+
+  /**
+   * Reuse is its own axis, and it may never be inferred from the holder.
+   *
+   * A holding institution speaks for the copy it digitised. For a photograph it
+   * does not speak for whoever took the picture, and the two 1946 sheets make
+   * that concrete by printing a photographer credit on the page. These checks
+   * hold the four fields apart and stop a `USE` being handed to a photograph
+   * whose maker's position is still open.
+   */
+  it('keeps the reuse decision separate from the holder’s own rights label', () => {
+    for (const fig of FIGURES) {
+      // The holder's statement and the holder's terms are different sentences.
+      expect(fig.holderRightsStatus, fig.id).not.toBe(fig.reuseCondition);
+      // Whatever the holder says, the maker axis must be answered on its own.
+      expect(fig.creatorRightsCheck.length, `${fig.id}.creatorRightsCheck`).toBeGreaterThan(40);
+      /*
+       * TIGHTENED 19-9-2026. This line was `not.toBe('REJECT')`, which let the
+       * undecided value `NEED VERIFICATION` through: a document could have been
+       * published on a decision nobody had made, and this test would have
+       * passed. Asserting the positive set excludes both, and subsumes the
+       * union-membership check that used to sit above it.
+       */
+      expect(['USE', 'USE WITH CAUTION'], `${fig.id}: published on a real decision`).toContain(
+        fig.reuse,
+      );
+
+      /*
+       * The rule, enforced on the ITEM's nature rather than on whether a name
+       * happens to be printed.
+       *
+       * The first version keyed on `printedCreatorCredit !== null`, which left
+       * two holes. It did not bind the two Agence Meurisse plates at all - the
+       * hard rule was pinned for them only by hard-coded id below, so the
+       * ruling could have been reverted on them in silence. And it could not
+       * explain `FS-ky-5-c`, a photograph the magazine printed with NO credit
+       * line, which is `USE WITH CAUTION` anyway: an absent credit settles
+       * nothing about who took the picture.
+       *
+       * So the discriminator is whether the record answers the maker question,
+       * not whether the sheet prints a name. Every figure whose maker axis is
+       * unestablished must carry the caution, whatever the item prints.
+       */
+      const makerUnsettled = fig.creatorRightsCheck.includes('CHƯA XÁC LẬP');
+      if (makerUnsettled) {
+        expect(fig.reuse, `${fig.id}: maker unsettled, cannot be plain USE`).toBe(
+          'USE WITH CAUTION',
+        );
+      }
+      if (fig.reuse === 'USE WITH CAUTION') {
+        expect(fig.creatorRightsCheck, `${fig.id}: caution must state why`).toContain(
+          'CHƯA XÁC LẬP',
+        );
+      }
+      // An item that prints a maker credit always has an open maker question.
+      if (fig.printedCreatorCredit !== null) {
+        expect(fig.reuse, `${fig.id} names a maker on the item`).toBe('USE WITH CAUTION');
+      }
+    }
+
+    /*
+     * The two Meurisse plates and the two 1946 sheets are the four the rulings
+     * were written for. Pinned by id as well, so the generic rule above cannot
+     * be satisfied by quietly loosening every record at once.
+     */
+    for (const id of ['FS-ky-3', 'FS-ky-2-b', 'FS-ky-5', 'FS-ky-5-c']) {
+      const fig = FIGURES.find((f) => f.id === id);
+      expect(fig, id).toBeDefined();
+      expect(fig?.reuse, id).toBe('USE WITH CAUTION');
+      expect(fig?.creatorRightsCheck, id).toContain('CHƯA XÁC LẬP');
+    }
+
+    /*
+     * The maker axis must be answered, and only two answers are legitimate.
+     *
+     * REPLACED TWICE on 19-9-2026, and both attempts are worth recording.
+     * The first was two exact phrases no realistic regression would ever emit -
+     * a no-op dressed as enforcement. The second was a negative regex for
+     * "đã xác lập" not preceded by "CHƯA", which failed immediately and
+     * correctly: `FS-ky-5` says "CHƯA XÁC LẬP, và không được đọc thành đã xác
+     * lập" - a sentence warning AGAINST the claim, matched as though it made it.
+     * A negative-phrase guard cannot tell assertion from prohibition.
+     *
+     * So the check is positive and exhaustive instead. Every figure's maker axis
+     * must land on one of exactly two answers, and each answer forces its own
+     * reuse decision. There is no third state to slip through, and no way to
+     * satisfy this by deleting the sentence.
+     */
+    for (const fig of FIGURES) {
+      const unsettled = fig.creatorRightsCheck.includes('CHƯA XÁC LẬP');
+      const notRaised = fig.creatorRightsCheck.includes('KHÔNG PHÁT SINH');
+      expect(
+        unsettled || notRaised,
+        `${fig.id}: creatorRightsCheck must say either CHƯA XÁC LẬP or KHÔNG PHÁT SINH`,
+      ).toBe(true);
+      // The two answers are mutually exclusive, and each forces its decision.
+      expect(unsettled && notRaised, `${fig.id}: cannot claim both answers`).toBe(false);
+      expect(fig.reuse, `${fig.id}: the answer must drive the decision`).toBe(
+        unsettled ? 'USE WITH CAUTION' : 'USE',
+      );
+    }
   });
 
   it('never states a caption fact the source did not state', () => {
@@ -576,9 +882,16 @@ describe('documentary photographs', () => {
       // the caption from somewhere else.
       const years = fig.caption.match(/\b(18|19|20)\d{2}\b/g) ?? [];
       for (const y of years) {
+        /*
+         * TIGHTENED 18-9-2026. The haystack used to begin with `fig.caption`,
+         * which is where `y` was just extracted from, so the assertion held for
+         * every possible dataset and guarded nothing. The point is that a year
+         * printed in the caption must also be recorded on an axis that was
+         * actually checked, so the caption itself is not part of the haystack.
+         */
         expect(
-          `${fig.caption} ${fig.rights} ${fig.identification}`,
-          `${fig.id}: year ${y} in caption`,
+          `${fig.holderRightsStatus} ${fig.reuseCondition} ${fig.identification} ${fig.eventCheck} ${fig.alt}`,
+          `${fig.id}: year ${y} in caption is not recorded on any checked axis`,
         ).toContain(y);
       }
     }
@@ -591,6 +904,52 @@ describe('documentary photographs', () => {
     // a note someone can drop.
     expect(blob).toContain('AI');
     expect(blob).toContain('chân dung');
+  });
+
+  /**
+   * Nobody may write, anywhere in this registry, that a maker's own rights
+   * position has been established - because for no record has it been.
+   *
+   * ADDED 18-9-2026. The Historical Image Integration report listed this guard
+   * among the tests added on 19-9, and it did not exist: the suite bound the
+   * DECISION (a record whose maker axis is unsettled cannot be plain `USE`) but
+   * nothing stopped the prose itself from drifting into a claim of clearance.
+   * The report described a real and cheap guard, so the guard is written here
+   * rather than the claim deleted.
+   *
+   * The positive half matters more than the banned list: every record must
+   * answer the maker question in exactly one of the two honest ways - the
+   * question is open, or it does not arise because the item is a printed
+   * document and not a photograph. There is no third answer available.
+   */
+  it('never claims a maker rights position has been established, in either language', () => {
+    for (const fig of FIGURES) {
+      const open = fig.creatorRightsCheck.includes('CHƯA XÁC LẬP');
+      const notRaised = fig.creatorRightsCheck.includes('KHÔNG PHÁT SINH');
+      expect(
+        open || notRaised,
+        `${fig.id}.creatorRightsCheck must answer the maker question as open or not-raised`,
+      ).toBe(true);
+      // The two answers are exclusive: a record may not hedge between them.
+      expect(open && notRaised, `${fig.id}: the two maker answers are exclusive`).toBe(false);
+    }
+
+    const blob = JSON.stringify([FIGURES, SOURCING_CHECKS]).toLowerCase();
+    for (const banned of [
+      'đã xác lập quyền',
+      'quyền của người chụp đã được',
+      'đã kiểm chứng quyền',
+      'photographer rights verified',
+      'photographer rights established',
+      'creator rights verified',
+      'creator rights established',
+      'rights are cleared',
+      'all rights cleared',
+    ]) {
+      expect(blob, `the registry must never assert: ${banned}`).not.toContain(
+        banned.toLowerCase(),
+      );
+    }
   });
 
   it('never ships a generated, restored or colourised portrait', () => {
@@ -610,16 +969,88 @@ describe('documentary photographs', () => {
    * the two to disagree again.
    */
   it('derives the documentary status from the records, in both directions', () => {
-    expect(figureFilledCount()).toBe(
-      FIGURE_SLOTS.filter((slot) => FIGURES.some((f) => f.id === slot.id)).length,
-    );
-    expect(figureFilledCount()).toBeGreaterThan(0);
-    expect(figureFilledCount()).toBeLessThan(FIGURE_SLOTS.length);
+    /*
+     * PINNED 18-9-2026, because the previous form could not fail.
+     *
+     * Both sides of the old assertion were the same expression: it compared
+     * `figureFilledCount()` with a copy of `figureFilledCount()`'s own body, and
+     * `slotStatus` with a copy of `slotStatus`'s body. A register that drifted
+     * would have drifted on both sides together. The counts are therefore
+     * written out, the way the Verify screen writes them out, so that adding or
+     * emptying a position has to be stated here deliberately.
+     */
+    expect(FIGURE_SLOTS).toHaveLength(13);
+    expect(FIGURES).toHaveLength(8);
+    expect(figureFilledCount()).toBe(8);
+    expect(FIGURE_SLOTS.length - figureFilledCount()).toBe(5);
+    expect(
+      FIGURE_SLOTS.filter((slot) => !FIGURES.some((f) => f.id === slot.id)).map((s) => s.id).sort(),
+    ).toEqual(['FS-ky-1', 'FS-ky-2', 'FS-ky-4', 'FS-ky-4-b', 'FS-open']);
     // A cleared photograph exists, so the programme is no longer NOT YET EVIDENCED.
     expect(figureStatus()).toBe('NEED VERIFICATION');
+
+    /*
+     * Every record's own evidence status, against the controlled vocabulary
+     * rather than against itself. Before this line nothing in either suite ever
+     * read `fig.status`: a figure silently promoted to `VERIFIED IN FILE` would
+     * have kept rendering its chip and the whole run would have stayed green.
+     *
+     * This is a DELIBERATE PIN, not a claim that the value can never change.
+     * The file's own contract says `status` may go beyond `NEED VERIFICATION`
+     * once a human has opened `sourceUrl` and read the condition quoted in
+     * `reuseCondition`. No human has done that for any of the eight records, so
+     * the honest current value is the one pinned here. When a human does verify
+     * one, this line goes red and has to be changed by hand - which is the
+     * point: promoting a record past `NEED VERIFICATION` is exactly the edit
+     * that must never happen quietly.
+     */
+    for (const fig of FIGURES) {
+      expect(fig.status, `${fig.id}.status`).toBe('NEED VERIFICATION');
+    }
     for (const slot of FIGURE_SLOTS) {
       const fig = FIGURES.find((f) => f.id === slot.id);
-      expect(slotStatus(slot.id), slot.id).toBe(fig ? fig.status : 'NOT YET EVIDENCED');
+      if (fig) expect(slotStatus(slot.id), slot.id).toBe(fig.status);
+      else expect(slotStatus(slot.id), slot.id).toBe('NOT YET EVIDENCED');
+    }
+  });
+
+  /**
+   * The picture is on screen only because the decision says it may be.
+   *
+   * `figureSlot()` decides to render a photograph from membership in `FIGURES`
+   * alone; `reuse` is read only to pick a tone. So nothing coupled the decision
+   * to the rendering: a record whose `reuse` slipped back to `NEED VERIFICATION`
+   * would have gone on being displayed, credited and enlargeable while the data
+   * said nobody had decided it could be. This walks every declared position
+   * through the real renderer and holds both halves of that invariant.
+   */
+  it('renders a photograph only where an affirmative reuse decision exists, and a blocked line everywhere else', () => {
+    for (const slot of FIGURE_SLOTS) {
+      const el = figureSlot(slot.id, slot.role);
+      const fig = FIGURES.find((f) => f.id === slot.id);
+      const img = el.querySelector('img');
+
+      if (!fig) {
+        expect(hasFigure(slot.id), slot.id).toBe(false);
+        expect(img, `${slot.id} must not render a picture`).toBeNull();
+        expect(el.className, slot.id).toContain('figure--blocked');
+        // The gap states itself rather than disappearing.
+        expect(el.textContent, slot.id).toContain('CHƯA CÓ NGUỒN');
+        expect(el.textContent, slot.id).toContain(slot.role);
+        continue;
+      }
+
+      // Anything rendered carries a decision from the affirmative set - never
+      // the undecided value, never a refusal.
+      expect(['USE', 'USE WITH CAUTION'], `${slot.id} is rendered on decision ${fig.reuse}`)
+        .toContain(fig.reuse);
+      expect(img, `${slot.id} must render its picture`).not.toBeNull();
+      expect(img?.getAttribute('src'), slot.id).toBe(fig.file);
+      expect(img?.getAttribute('alt'), slot.id).toBe(fig.alt);
+      // The credit is a licence condition, so it is on the surface, not behind a control.
+      expect(el.textContent, `${slot.id} must show its required credit`).toContain(fig.credit);
+      // And the evidence status travels with it, in words rather than by colour.
+      expect(el.textContent, `${slot.id} must show its evidence status`).toContain(fig.status);
     }
   });
 
@@ -637,7 +1068,7 @@ describe('documentary photographs', () => {
         expect(slot.anchor.where, slot.id).toBe('entrance');
         continue;
       }
-      expect(slot.anchor.where, slot.id).not.toBe('entrance');
+      expect(['passage', 'turn', 'quote'], slot.id).toContain(slot.anchor.where);
       const stage = STAGES.find((st) => st.id === slot.stageId);
       expect(stage, slot.id).toBeDefined();
       if (!stage || slot.anchor.where === 'entrance') continue;
@@ -671,8 +1102,16 @@ describe('documentary photographs', () => {
    * rights and offline packaging to be maintained SEPARATELY, so that a cleared
    * axis can never carry an uncleared one. Each has its own field and each must
    * actually say something.
+   *
+   * SIX axes, SEVEN fields, and the difference is deliberate: the rights axis
+   * was split in two on 19-9 - `holderRightsStatus` for what the holder says
+   * about the copy it digitised, `reuseCondition` for the terms it publishes -
+   * because letting one string answer both let a `domaine public` label read as
+   * though it settled the photographer's position. The heading used to say
+   * "seven provenance checks", which put it in conflict with this docstring;
+   * it now names both numbers so neither can be mistaken for the other.
    */
-  it('keeps the six provenance checks as separate fields', () => {
+  it('keeps the six provenance checks as separate fields, the rights check split across two of them', () => {
     for (const fig of FIGURES) {
       for (const [name, value] of [
         ['identification', fig.identification],
@@ -680,7 +1119,8 @@ describe('documentary photographs', () => {
         ['locationCheck', fig.locationCheck],
         ['offlineCheck', fig.offlineCheck],
         ['sourceUrl', fig.sourceUrl],
-        ['rights', fig.rights],
+        ['holderRightsStatus', fig.holderRightsStatus],
+        ['reuseCondition', fig.reuseCondition],
       ] as const) {
         expect(value.length, `${fig.id}.${name}`).toBeGreaterThan(10);
       }

@@ -53,7 +53,9 @@ npm run build:offline    # tạo dist/HCM202_HanhTrinhTuTuong_offline.html
 npm run check:offline    # kiểm tra lại: 11 tuyến, 0 request mạng, 0 lỗi
 ```
 
-Tệp đó tự chứa toàn bộ CSS, mã và 42 tệp phông (dạng data URI), khoảng 1 MB.
+Tệp đó tự chứa toàn bộ CSS, mã, 42 tệp phông và 8 ảnh tư liệu (tất cả ở dạng data URI),
+khoảng 3,8 MB. Con số này thay đổi chút ít giữa các lần dựng, nên hãy đọc dung lượng thật của
+tệp vừa dựng thay vì tin vào con số in ở đây.
 **Nhấp đúp để mở, không cần máy chủ, không cần mạng.** Đây là tệp nên chép vào USB
 và dùng trên máy trình chiếu theo quy tắc No-AI live rebuttal (một máy tính).
 
@@ -85,8 +87,12 @@ trong sản phẩm.
 Hai chế độ hiển thị **cùng một nội dung**: không chế độ nào thêm, bớt, gộp hay rút ngắn điều gì.
 Lựa chọn được ghi nhớ trong trình duyệt của người xem.
 
-Thanh phía trên mỗi chặng cho biết chặng gồm những phần nào (Bối cảnh · Chuyển biến · Bước ngoặt ·
-Nguyên văn · Ranh giới), mỗi phần có bao nhiêu nhịp, đang đứng ở phần nào, và bấm để đi thẳng tới.
+Khi đi trong một chặng, dòng “Đang đọc” cho biết đang ở phần nào (Bối cảnh · Chuyển biến · Bước ngoặt ·
+Nguyên văn · Ranh giới), và sợi chỉ đánh dấu bằng một vạch cao hơn ở chỗ một phần nhường sang phần sau.
+Cấu trúc được **cho thấy**, không bày ra thành mục lục: hàng nút chọn phần đã được gỡ, và không chỗ nào
+trong dòng ghi chú ấy là nút bấm. Số thứ tự “phần N / M” cũng đã bỏ, vì trích đoạn đan xen phần chuyển
+biến với bước ngoặt nên con số ấy chạy lùi ở bốn trong năm chặng. Di chuyển trong chặng là việc của
+nút Trước/Tiếp và phím mũi tên.
 
 ### Nhịp của một chặng
 

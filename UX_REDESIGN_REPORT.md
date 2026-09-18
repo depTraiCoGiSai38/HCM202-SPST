@@ -314,6 +314,29 @@ Bản yêu cầu nêu: *"EVERY STAGE MUST HAVE A PRIMARY AUTHENTIC IMAGE OF HỒ
 
 **Mệnh lệnh này không được thực hiện, và không nên được thực hiện bằng tư liệu hiện có.**
 
+> ⚠️ **ĐÍNH CHÍNH 18-9-2026 — đọc trước phần 2.5.** Toàn bộ các câu ở thì hiện tại trong mục này
+> nói về trạng thái ảnh **đã bị đợt Historical Image Integration lật lại**, và bản gốc được giữ
+> nguyên bên dưới vì lịch sử đính chính là một phần của hồ sơ. Trạng thái thật, đọc thẳng từ
+> `web/src/data/figures.ts` ngày 18-9-2026:
+>
+> - **13 vị trí** được khai báo, không phải 11: một ở màn mở đầu, năm vị trí **chính** (mỗi chặng
+>   một) và **bảy** vị trí **bổ trợ** — chặng 3 và chặng 5 mỗi chặng có hai.
+> - **8 đã điền, 5 còn trống**, không phải 4/7 và không phải 1/10. Năm ô còn trống là `FS-open`,
+>   `FS-ky-1`, `FS-ky-2`, `FS-ky-4`, `FS-ky-4-b`.
+> - **`FS-open` KHÔNG còn chứa tấm ảnh Marseille.** Tấm `btv1b9054078w` đã chuyển sang ô ảnh chính
+>   của **chặng 3** (`FS-ky-3`) theo phán quyết `SC-24`, căn cứ duy nhất là niên đại 26-12-1921 nằm
+>   trong khoảng của chặng. Màn mở đầu nay **trống nhưng vẫn được khai báo**.
+> - Câu “**một** bức ảnh đã đủ căn cứ” và “vẫn là ảnh duy nhất đủ căn cứ” **không còn đúng**: sản
+>   phẩm mang **tám** tài liệu, từ **hai** cơ quan giữ hiện vật (BnF và Humazur).
+> - “Năm vị trí chính vẫn trống” **không còn đúng**: `FS-ky-3` và `FS-ky-5` đã điền.
+> - Trục quyền **không còn là một trục**: nó đã được tách thành bốn trường riêng cộng một quyết
+>   định `reuse` (`USE` 4 · `USE WITH CAUTION` 4). Bảng “sáu trục” ở mục 4.2 vì thế cũng đã cũ.
+>
+> **Không tài liệu nào trong tám tài liệu ấy đã được người thật xác thực** — cả tám vẫn mang
+> `NEED VERIFICATION`. Xem `HISTORICAL_IMAGE_INTEGRATION_REPORT.md` và
+> `FINAL_SUBMISSION_CONSISTENCY_AUDIT.md`.
+
+
 - Tính tới hôm nay, **một** bức ảnh đã đủ căn cứ trên cả sáu trục tách rời: bản ghi BnF Gallica
   `btv1b9054078w`, Agence Meurisse. Ảnh này ở **màn mở đầu**.
 - Tra cứu SRU trên Gallica cho thấy loạt ảnh Đại hội Marseille chỉ có **đúng một** tấm chụp đại
@@ -326,7 +349,7 @@ Bản yêu cầu nêu: *"EVERY STAGE MUST HAVE A PRIMARY AUTHENTIC IMAGE OF HỒ
   > (`FS-ky-5-b`), tất cả do BnF giữ. **Năm vị trí chính vẫn trống** — không có thêm ảnh chân dung
   > nào đủ căn cứ. Chi tiết ở `docs/08_Image_Source_Register_TEMPLATE.md` và
   > `docs/07_AI_Prompt_Log_Images3_2026-09-17.md`.
-- Mười vị trí còn lại hiển thị đúng trạng thái bị chặn kèm lý do — theo `AGENTS.md` §4.
+- Mười vị trí còn lại hiển thị đúng trạng thái bị chặn kèm lý do — theo `AGENTS.md` §4. *(Đính chính 18-9-2026: nay là **năm** vị trí còn trống, không phải mười. Nguyên tắc — vị trí trống phải hiện trạng thái bị chặn kèm lý do — không đổi, và một điểm được làm rõ trong đợt rà soát này: quy tắc ấy áp dụng cho các ô **chính**; một ô **bổ trợ** còn trống thì không hiện gì trong mạch đọc mà chỉ hiện ở sổ trên `#/kiem-chung`, đúng như `figures.ts` mô tả.)*
   Trên một chặng, hai vị trí đang bị chặn gộp thành **một** ghi chú nêu tên cả hai, để không lặp
   cùng một cờ hai lần trên một màn.
 - **Không** lấp bằng ảnh không liên quan. **Không** tạo, mô phỏng, tô màu, phục dựng hay làm
@@ -455,6 +478,16 @@ người học tới đúng hai chặng vừa đi qua. Id không hợp lệ bị
 
 ## 4. Ảnh: đã thêm gì, nguồn nào, trạng thái nào
 
+> ⚠️ **ĐÍNH CHÍNH 18-9-2026 — đọc trước toàn bộ phần 4.** Mọi bảng và mọi câu ở thì hiện tại
+> trong phần này mô tả trạng thái ngày 17-9-2026 và **đã bị lật lại**. Cụ thể: mục 4.1 xếp
+> `btv1b9054078w` vào `FS-open` — tấm ấy **nay ở `FS-ky-3`**, và `FS-open` **trống**; mục 4.2
+> trình bày quyền như **một** trục, nay là **bốn** trường riêng cộng một quyết định `reuse`; mục
+> 4.3 nói `FS-open` “đã điền và đang hiển thị ở màn mở đầu”, điều **không còn đúng**. Bản gốc được
+> giữ nguyên, không sửa chữ nào, vì nó ghi đúng trạng thái tại thời điểm viết và vì việc dự án đã
+> đổi ý là thứ phải nhìn thấy được. Trạng thái hiện hành: **13 vị trí · 8 đã điền · 5 còn trống**,
+> tám tài liệu từ hai cơ quan giữ hiện vật, cả tám vẫn `NEED VERIFICATION`.
+
+
 ### 4.1 Ảnh đã thêm trong toàn bộ dự án
 
 | Vị trí | Ảnh | Nguồn | Trạng thái |
@@ -551,7 +584,7 @@ Các thay đổi khác dành riêng cho khung hẹp:
 - thanh đầu trang **2 hàng** thay vì 3: công cụ và dải vị trí dùng chung hàng thứ hai, nút trình bày
   bỏ nhãn chữ và giữ tên khả truy cập. Đo được **112px ≈ 13%** chiều cao màn hình;
 - dải vị trí bỏ phần thời kỳ (tiêu đề chặng ngay bên dưới đã nói), giữ `Chặng N / 5`;
-- cột mốc thời gian chạy ngang, cuộn trong chính nó thay vì kéo dài trang;
+- cột mốc thời gian chạy ngang, cuộn trong chính nó thay vì kéo dài trang; *(đính chính 18-9-2026: cột mốc thời gian ở lối vào chặng **đã bị gỡ** trong đợt hành trình không gian — bản khắc thay chỗ nó, và CSS của cột cũ đã xoá.)*
 - mũi tên giữa hai vị trí ở nhịp Suy ngẫm quay xuống, vì hai vị trí nay đọc theo chiều dọc;
 - cột bên biến mất hoàn toàn; không còn bất kỳ sidebar nhiều tầng thường trực nào.
 
@@ -563,7 +596,7 @@ Chạy ngày 17-9-2026 trên máy đang phát triển, Chrome.
 
 | Hạng mục | Cách chạy | Kết quả |
 |---|---|---|
-| Luồng đầy đủ × 3 khung màn | Playwright, 3 project (1440 / 768 / 375), 59 kiểm thử mỗi project | **177 / 177 đạt** |
+| Luồng đầy đủ × 3 khung màn | Playwright, 3 project (1440 / 768 / 375), 59 kiểm thử mỗi project | **177 / 177 đạt** *(đính chính 18-9-2026: con số của ngày 17-9. Bộ kiểm thử nay là **76 spec × 3 khung = 228**, và bộ đơn vị là **113**.)* |
 | Ràng buộc nội dung | Vitest | **67 / 67 đạt** |
 | Bàn phím | các bộ `keyboard*.spec.ts`; 25 điểm dừng Tab trên màn chặng ở laptop và mobile | đạt; không điểm dừng nào bị thanh dính che |
 | Chữ 200% | `tools/ux-audit.mjs`, `html { font-size: 200% }`, 11 tuyến × 390px | **không tràn ngang, không cắt chữ** |
@@ -583,7 +616,7 @@ Chạy ngày 17-9-2026 trên máy đang phát triển, Chrome.
 - bản ghi ảnh tư liệu **suy ra từ dữ liệu** theo cả hai chiều;
 - sáu trục kiểm của một bức ảnh là sáu trường riêng và không sao chép lẫn nhau;
 - mỗi vị trí ảnh có mô tả vai trò riêng, không dùng lại câu mẫu cũ;
-- mỗi chặng có một vị trí chính và một vị trí bổ trợ, cả hai nêu tên trên màn.
+- mỗi chặng có một vị trí chính và một vị trí bổ trợ, cả hai nêu tên trên màn. *(Đính chính 18-9-2026: chặng 3 và chặng 5 nay mỗi chặng có **hai** vị trí bổ trợ; phép thử còn lại khoá “một vị trí **chính** mỗi chặng”, không khoá số vị trí bổ trợ.)*
 
 ### 7.2 Hai lỗi thật, tìm ra nhờ kiểm tra chứ không nhờ đọc lại
 
@@ -671,7 +704,7 @@ lối vào chương — trước đó màn chặng hoàn toàn không có chữ 
 
 | | trước | sau |
 |---|---|---|
-| `#/` desktop / tablet / mobile | 1 / 1 / 0 | **1 / 1 / 1** |
+| `#/` desktop / tablet / mobile | 1 / 1 / 0 | **1 / 1 / 1** *(đính chính 18-9-2026: nay là **0 / 0 / 0** — màn mở đầu không còn ảnh tư liệu nào ở bất kỳ khổ nào, vì `FS-open` đã trống; một phép thử trình duyệt khoá đúng điều đó.)* |
 | mọi tuyến khác | 0 | 0 |
 
 > **Đính chính.** Bản đầu của công cụ đo đếm ảnh trên **toàn trang** trong khi cột được gắn nhãn

@@ -114,8 +114,20 @@ export function chip(label: string, tone: 'verify' | 'conflict' | 'source' | 'pr
 }
 
 export function chipForStatus(status: string): HTMLElement {
-  if (status.includes('CONFLICT')) return chip(status, 'conflict');
-  if (status.includes('NEED VERIFICATION') || status.includes('NOT YET EVIDENCED')) {
+  if (status.includes('CONFLICT') || status.includes('REJECT')) return chip(status, 'conflict');
+  /*
+   * `CAUTION` joined this line on 19-9-2026, with the reuse decisions.
+   *
+   * `USE WITH CAUTION` would otherwise have fallen through to the neutral
+   * `project` tone, which is what a settled project decision looks like - and
+   * this is the opposite of settled. It takes the same amber the product uses
+   * everywhere else for a question still open.
+   */
+  if (
+    status.includes('NEED VERIFICATION') ||
+    status.includes('NOT YET EVIDENCED') ||
+    status.includes('CAUTION')
+  ) {
     return chip(status, 'verify');
   }
   if (status.includes('SOURCE')) return chip(status, 'source');

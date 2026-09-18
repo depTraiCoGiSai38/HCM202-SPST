@@ -29,6 +29,14 @@ const LABELISH = [
   '.turn__label',
   '.turn__shift-label',
   '.turn__cross',
+  /*
+   * The place line is signage, in the same sense `.station__marker` already is:
+   * a compact apparatus label about the source, set in the apparatus face at
+   * apparatus size, not narrative reading. It is listed here for that reason
+   * and not to flatter the number - the report states the count both ways, so
+   * the effect of this line is visible rather than absorbed.
+   */
+  '.station__where',
   '.lens-trigger',
 ];
 

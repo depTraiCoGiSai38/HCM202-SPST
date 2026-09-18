@@ -1,0 +1,124 @@
+PROMPT NGUYÊN VĂN — P-IMG-05
+Ngày dùng: 19-9-2026
+Công cụ: Claude Code (Claude Opus 5, cửa sổ ngữ cảnh 1M)
+Lưu đầy đủ, không cắt, không sửa chính tả, không dịch.
+
+================================================================================
+
+I want to make three project decisions before closing this sprint.
+
+## 1. BnF 1946 material
+
+Keep the 1946 BnF material, but classify it conservatively.
+
+The item-level BnF/Gallica record may state `domaine public`, and Gallica's
+general terms permit non-commercial / academic reuse of public-domain
+digitized material with source attribution.
+
+However, do NOT convert that into:
+
+`photographer copyright independently verified`
+
+unless that has actually been established.
+
+Use a status such as:
+
+`USE WITH CAUTION`
+
+and preserve separately:
+
+- BnF/Gallica item status
+- Gallica reuse condition
+- photographer attribution if printed
+- photographer-rights verification status
+
+Do not overstate the rights conclusion.
+
+---
+
+## 2. Move the Marseille 26-12-1921 portrait to Stage 3
+
+Reconsider SC-22.
+
+The Marseille portrait is dated 26-12-1921.
+
+The active 2019 Stage 3 is:
+
+31-12-1920 → 3-2-1930.
+
+Therefore the photograph has a much stronger stage-specific narrative role
+in Stage 3 than as a generic front-door image.
+
+A previous design decision is NOT immutable when stronger evidence and a
+better academic placement now exist.
+
+Unless another project constraint blocks it:
+
+- move/reassign the Marseille portrait to the Stage 3 primary slot;
+- update the image register;
+- update the narrative role;
+- update tests;
+- record the previous decision and its reversal transparently.
+
+Do not silently rewrite history.
+
+For the opening, prefer an intentional composition such as:
+
+title
++ atlas/journey thread
++ verified documentary material if another suitable asset exists
+
+rather than keeping a stage-specific 1921 portrait merely because it was
+used there first.
+
+If the same image is retained in both places, justify explicitly why
+duplication improves the experience instead of simply duplicating content.
+
+---
+
+## 3. Do NOT close Stage 4 permanently
+
+Change the conclusion:
+
+`Stage 4 has nothing and won't`
+
+to:
+
+`Stage 4 currently has no image that clears the project's evidence and
+reuse requirements.`
+
+The failure of the reference repository to provide traceable material does
+NOT prove that no suitable archival material exists elsewhere.
+
+Keep Stage 4 as:
+
+`BLOCKED — FURTHER ARCHIVAL / INSTITUTIONAL RESEARCH REQUIRED`
+
+Possible future sources may include official archives, museums, libraries,
+or other holding institutions, but do not insert anything until provenance,
+stage relevance and reuse conditions clear the project protocol.
+
+The unsent permission letter remains one possible path, not proof that
+Stage 4 is permanently impossible.
+
+---
+
+## AFTER THESE DECISIONS
+
+Update:
+
+- HISTORICAL_IMAGE_INTEGRATION_REPORT.md
+- REFERENCE_IMAGE_AUDIT.md
+- image/source register
+- SC decision records
+- relevant tests
+
+Then rerun only the tests affected by these changes plus the normal final
+validation required by AGENTS.md.
+
+Do not redesign the atlas or unrelated UX.
+
+Report the final figure-slot matrix after these decisions.
+
+================================================================================
+HẾT PROMPT NGUYÊN VĂN

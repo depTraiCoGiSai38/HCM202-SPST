@@ -7,7 +7,18 @@
 import { chromium } from '@playwright/test';
 
 const BASE = process.env['AUDIT_BASE'] ?? 'http://localhost:4173/';
-const ROUTES = ['#/', '#/hanh-trinh', '#/chang/ky-2', '#/doi-sanh', '#/noi-ket', '#/tong-hop', '#/kiem-chung'];
+/*
+ * `#/chang/ky-5` joined the list on 18-9-2026, when a stage entrance first
+ * carried a document as well as the spatial plate. Measuring only ky-2, which
+ * has a blocked position, would have measured the cheap case.
+ *
+ * `#/chang/ky-3` joined on 19-9-2026, when the Marseille plate moved there. It
+ * is now the densest stage in the product - a filled entrance plus TWO
+ * supporting documents - so it, not ky-5, is where an added picture shows up
+ * first as cost. ky-2 stays in the list as the blocked-entrance case, so both
+ * states go on being measured.
+ */
+const ROUTES = ['#/', '#/hanh-trinh', '#/chang/ky-2', '#/chang/ky-3', '#/chang/ky-5', '#/doi-sanh', '#/noi-ket', '#/tong-hop', '#/kiem-chung'];
 const SIZES = { desktop: [1440, 900], tablet: [834, 1112], mobile: [390, 844] };
 
 const browser = await chromium.launch({ channel: 'chrome' });

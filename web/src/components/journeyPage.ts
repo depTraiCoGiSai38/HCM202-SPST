@@ -6,6 +6,7 @@ import { h } from '../lib/dom';
 import { getVisited, motionSuppressed, nextUnvisited } from '../lib/state';
 import { lensTrigger } from './evidence';
 import { VB_H, journeyThread, levelFor } from './thread';
+import { excerptPlate } from './atlas';
 
 /**
  * The five stages as one drawn thread.
@@ -103,7 +104,21 @@ export function journeyPage(): HTMLElement {
         dataset: { kind: boundary.kind },
         ...(risk ? { title: `${risk.id} — ${risk.title}` } : {}),
       },
-      h('span', { class: 'atlas__boundary-label', text: boundary.label }),
+      /*
+       * The joint's two dates, split so the label can wrap BETWEEN them and
+       * never inside one. A date broken across lines at its own hyphens would
+       * be unreadable, which is why this whole mark used to be `nowrap` - but
+       * that made it run off the page at 200% text. Each date keeps `nowrap`
+       * individually instead. The element's text is unchanged.
+       */
+      h(
+        'span',
+        { class: 'atlas__boundary-label' },
+        ...boundary.label.split(' › ').flatMap((part, i) => [
+          ...(i > 0 ? [' › '] : []),
+          h('span', { class: 'atlas__boundary-part', text: part }),
+        ]),
+      ),
     );
     mark.style.insetInlineStart = `${String(mid * 100)}%`;
     mark.style.insetBlockStart = `${String((y / VB_H) * 100)}%`;
@@ -125,6 +140,9 @@ export function journeyPage(): HTMLElement {
     ),
     h('div', { class: 'atlas__stage' }, thread, overlay),
     chain(visited),
+    // The same five stages, read a second way. It is a section of this page,
+    // not a destination: no link, no control, nothing added to the menu.
+    excerptPlate(),
     onward(visited),
     h(
       'div',

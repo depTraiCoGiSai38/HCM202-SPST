@@ -196,19 +196,19 @@ export const INTEGRITY_STATEMENTS = [
   {
     id: 'IS-2',
     title: 'Ranh giới nội dung',
-    body: 'Toàn bộ nội dung học thuật lấy từ trích đoạn 10 trang được giao. Trích đoạn bắt đầu giữa chừng một mạch lập luận và kết thúc ngay sau tiêu đề mở đầu của mục III. Sản phẩm không dựng thêm phần nội dung nằm ngoài ranh giới đó.',
+    body: 'Toàn bộ nội dung học thuật lấy từ trích đoạn 10 trang được giao. Trích đoạn bắt đầu giữa chừng một mạch lập luận và kết thúc ngay sau tiêu đề mở đầu của mục III. Sản phẩm không dựng thêm phần nội dung nằm ngoài ranh giới đó. ⚠️ ĐÍNH CHÍNH 18-9-2026: cả ba vế của câu trên đều đã cũ và sai so với chính dữ liệu của sản phẩm. (1) Trích đoạn được giao là TÁM trang in, trang 28 đến 35 — SOURCE.pdfPages là 8, không phải 10; con số 10 là của trích đoạn C2 cũ. (2) Trích đoạn KHÔNG bắt đầu giữa chừng một mạch lập luận: ranh giới của chặng 1 ghi rõ bản 2019 bắt đầu ngay ở tiêu đề mục II trên trang 28. (3) Trích đoạn KHÔNG kết thúc ngay sau tiêu đề mở đầu của mục III: EXCERPT_BOUNDARY ghi bản quét mở mục III trên trang 35 rồi chạy tiếp sang phần thân bài của mục III.1.a, và phần thân bài ấy nằm ngoài nội dung được giao nên sản phẩm không dùng làm nội dung học thuật. Vế cuối của câu gốc — không dựng thêm nội dung ngoài ranh giới — vẫn đúng và không đổi.',
     status: 'SOURCE CONTENT' as Provenance,
   },
   {
     id: 'IS-3',
     title: 'Xuất xứ của tệp được giao cần kiểm chứng',
-    body: 'Tệp nội dung được giao mang dấu hiệu xuất xứ của một nền tảng chia sẻ tài liệu. Nó được dùng để giữ đúng ranh giới nội dung được phân công, nhưng chưa được xác thực là bản chính thức. Trước khi nộp, một người thật phải đối chiếu từng luận điểm, số trang in và chú thích với bản giáo trình chính thống được phê duyệt.',
+    body: 'Tệp nội dung được giao chưa được xác thực là bản chính thức. Nó là bản quét chỉ có ảnh, không có lớp văn bản, do PDF-XChange Lite 11.0.1 tạo, và mỗi trang có một dấu viết tay ở chân trang. Tệp được dùng để giữ đúng ranh giới nội dung được phân công, nhưng chưa được xác thực là ấn bản chính thức của Bộ GD&ĐT / NXB Chính trị quốc gia Sự thật. Trước khi nộp, một người thật phải đối chiếu từng luận điểm, số trang in và chú thích với bản giáo trình chính thống được phê duyệt. ⚠️ ĐÍNH CHÍNH 18-9-2026: câu này trước đây ghi tệp được giao “mang dấu hiệu xuất xứ của một nền tảng chia sẻ tài liệu”. Vế ấy GÁN SAI NGUỒN. Dấu hiệu Studocu thuộc về tệp C2-02.pdf đã nghỉ, không thuộc bản quét 2019 đang dùng — xem chú thích đầu tệp source.ts và bản ghi chuyển nguồn. Vấn đề xuất xứ thật của tệp 2019 là bản quét không lớp văn bản kèm dấu viết tay, đã ghi thành rủi ro GT-R08. Kết luận “chưa được xác thực” không đổi; chỉ lý do là khác.',
     status: 'NEED VERIFICATION' as Provenance,
   },
   {
     id: 'IS-4',
     title: 'Mười chú thích chỉ là ứng viên định vị',
-    body: 'Mười chú thích được in trong trích đoạn được trình bày nguyên văn như ứng viên định vị. Ba chú thích dùng chữ viết tắt “Sđd” và không bao giờ được suy đoán mở rộng. Không chú thích nào ở đây được đánh dấu là đã kiểm chứng.',
+    body: 'Mười chú thích được in trong trích đoạn được trình bày nguyên văn như ứng viên định vị. Ba chú thích dùng chữ viết tắt “Sdd” — đúng dạng bản 2019 in, không phải dạng “Sđd” đã chuẩn hoá — và không bao giờ được suy đoán mở rộng. Không chú thích nào ở đây được đánh dấu là đã kiểm chứng.',
     status: 'NEED VERIFICATION' as Provenance,
   },
   {
@@ -253,9 +253,9 @@ export const DESIGN_DECISIONS = [
     reason:
       'Cả hai văn bản quy định đều xếp việc dùng AI tạo hình ảnh mô phỏng, biến dạng chân dung vào mức vi phạm nặng nhất, với phạm vi khác nhau. Phần cấm AI là tuyệt đối và không thay đổi. Phần ảnh tư liệu thật là một câu hỏi khác: nó phụ thuộc vào nguồn và quyền sử dụng, chứ không phụ thuộc vào việc có nên có ảnh hay không.',
     evidence:
-      'Biến thể tài liệu DV-08 trong ngữ cảnh dự án. Ngày 17-9-2026 đã mở ba nguồn để kiểm; kết quả từng nguồn được in ở mục “Ảnh tư liệu: vị trí còn trống” trên trang này.',
+      'Biến thể tài liệu DV-08 trong ngữ cảnh dự án. Ngày 17-9-2026 đã mở ba nguồn để kiểm; kết quả từng nguồn được in ở mục “Ảnh tư liệu: vị trí còn trống” trên trang này. ĐÍNH CHÍNH 18-9-2026: “ba nguồn” là con số của riêng ngày 17-9-2026 và đã cũ — sổ kiểm nguồn nay có hai mươi sáu lượt. Tên mục được dẫn cũng đã đổi thành “Ảnh tư liệu: vị trí đã điền và vị trí còn trống”. Cả hai con số trên trang ấy đều suy ra từ dữ liệu, nên chúng là con số đáng tin, không phải câu này.',
     alternative:
-      'Bản quyết định trước đây loại bỏ hoàn toàn hình ảnh người. Nay được thay bằng: các vị trí ảnh có thật trong sản phẩm, vị trí nào chưa có nguồn thì bị chặn và ghi rõ lý do, thay vì không tồn tại. Lý do sửa: một vị trí bị chặn và nói rõ vì sao thì kiểm toán được, còn một vị trí không tồn tại thì không. ĐÍNH CHÍNH 17-9-2026: câu này từng ghi “sáu vị trí”. Con số ấy đúng khi viết, nhưng sản phẩm nay khai báo mười một vị trí — một ở màn mở đầu, năm vị trí chính và năm vị trí bổ trợ. Số vị trí được suy ra từ dữ liệu ở trang Kiểm chứng, không viết tay ở bất kỳ đâu.',
+      'Bản quyết định trước đây loại bỏ hoàn toàn hình ảnh người. Nay được thay bằng: các vị trí ảnh có thật trong sản phẩm, vị trí nào chưa có nguồn thì bị chặn và ghi rõ lý do, thay vì không tồn tại. Lý do sửa: một vị trí bị chặn và nói rõ vì sao thì kiểm toán được, còn một vị trí không tồn tại thì không. ĐÍNH CHÍNH 17-9-2026: câu này từng ghi “sáu vị trí”. Con số ấy đúng khi viết, nhưng sản phẩm nay khai báo mười một vị trí — một ở màn mở đầu, năm vị trí chính và năm vị trí bổ trợ. ĐÍNH CHÍNH 18-9-2026: mười một cũng đã cũ — sản phẩm khai báo mười ba vị trí, vì chặng 3 và chặng 5 mỗi chặng nhận thêm một vị trí bổ trợ. Bài học lặp lại lần thứ ba trong ba ngày và vì vậy được ghi thẳng vào đây: SỐ VỊ TRÍ PHẢI ĐỌC TỪ DỮ LIỆU, KHÔNG VIẾT TAY. Con số duy nhất đáng tin là con số trang Kiểm chứng suy ra từ FIGURE_SLOTS; mọi con số viết tay, kể cả câu này, đều sẽ cũ đi.',
   },
   {
     id: 'DD-3',
@@ -377,7 +377,7 @@ export const DESIGN_DECISIONS = [
     reason:
       'Có hai cách xử lý sai. Một khung xám trông như ảnh tải hỏng và mời người ta nộp sản phẩm như vậy. Không hiển thị gì thì khoảng trống biến mất khỏi tầm mắt và không ai còn nhớ là còn nợ. Một dòng ngắn, đúng màu hổ phách mà sản phẩm vẫn dùng cho “chưa có bằng chứng”, thì vừa không chiếm chỗ đọc vừa không thể lọt qua.',
     evidence:
-      'Sáu vị trí và ba nguồn đã kiểm được in đầy đủ ở mục “Ảnh tư liệu: vị trí còn trống” trên trang Kiểm chứng, kèm nguyên văn điều mỗi trang ghi.',
+      'Sáu vị trí và ba nguồn đã kiểm được in đầy đủ ở mục “Ảnh tư liệu: vị trí còn trống” trên trang Kiểm chứng, kèm nguyên văn điều mỗi trang ghi. ĐÍNH CHÍNH 18-9-2026: cả hai con số viết tay ở câu trên đều đã cũ, và tên mục cũng đã đổi. FIGURE_SLOTS nay khai báo mười ba vị trí — tám đã điền, năm còn trống — và SOURCING_CHECKS nay có hai mươi sáu lượt kiểm nguồn; mục ấy nay mang tên “Ảnh tư liệu: vị trí đã điền và vị trí còn trống”. Đây đúng là lỗi mà DD-2 đã phải sửa hai lần và đã viết thành quy tắc trong chính bản ghi này: số vị trí và số lượt kiểm phải đọc từ dữ liệu, không viết tay. Bản ghi này bị bỏ sót ở cả hai lần sửa ấy.',
     alternative:
       'Dựng ảnh minh hoạ thay thế hoặc ảnh do AI tạo, bị loại tuyệt đối theo cả hai văn bản quy định.',
   },
@@ -405,7 +405,7 @@ export const DESIGN_DECISIONS = [
     id: 'DD-18',
     decision: 'Mỗi màn hình chỉ có một hoặc hai chuyển động',
     reason:
-      'Quá nhiều chuyển động gây phân tán và khó chịu. Ngân sách được giữ chặt: màn tổng quan có một (sợi chỉ tự vẽ), màn chặng có một (bước ngoặt hiện ra cùng câu tóm tắt) cộng một nhịp phản hồi ở lề, ảnh lớn có một (tài liệu tiến lại gần).',
+      'Quá nhiều chuyển động gây phân tán và khó chịu. Ngân sách được giữ chặt: màn tổng quan có một (sợi chỉ tự vẽ), màn chặng có một (bước ngoặt hiện ra cùng câu tóm tắt) cộng một nhịp phản hồi ở lề, ảnh lớn có một (tài liệu tiến lại gần). ĐÍNH CHÍNH 18-9-2026: bản kê viết tay ở trên đã cũ. Màn tổng quan nay có hai chuyển động — sợi chỉ tự vẽ và bản khắc hiện dần (plate-settle); chú thích trong atlas.css tự gọi nó là “chuyển động thứ hai của màn tổng quan, sau sợi chỉ”. Ở chế độ đọc liền mạch, đầu chặng còn có thêm chapter-open. Ngân sách “một hoặc hai chuyển động mỗi màn hình” vẫn giữ ở màn tổng quan; riêng chế độ đọc liền mạch cần một lần rà lại của người thật. Chỉ bản kê là sai, không phải quyết định.',
     evidence:
       'Không có chuyển động lặp vô hạn, không autoplay, không hiệu ứng cuộn ép, không âm thanh. Mọi chuyển động đều tắt hoàn toàn khi hệ thống yêu cầu giảm chuyển động, và nội dung vẫn đầy đủ.',
     alternative:
@@ -422,15 +422,23 @@ export const DESIGN_DECISIONS = [
     alternative:
       'Sửa lặng lẽ bản ghi cũ cho gọn, bị loại: lịch sử đính chính là một phần của hồ sơ, không phải thứ để dọn đi.',
   },
+  /*
+   * DD-20 carried two statements that the rulings of 19-9-2026 overturned, and
+   * it carried them on the Verify page, where a reader meets them as current.
+   * Corrected the way DD-1, DD-2 and DD-19 correct themselves: the 17-9 wording
+   * stays word for word, and the correction is appended inside the same entry.
+   * Deleting it would hide that the project changed its mind, which is the one
+   * thing AGENTS.md treats as worse than having been wrong.
+   */
   {
     id: 'DD-20',
     decision:
-      'Ô ảnh mở đầu dùng ảnh báo chí của BnF, không gắn vào chặng nào, và luôn hiển thị dòng ghi nguồn',
+      'Ô ảnh mở đầu dùng ảnh báo chí của BnF, không gắn vào chặng nào, và luôn hiển thị dòng ghi nguồn. ⚠️ ĐÍNH CHÍNH 19-9-2026 (SC-24): vế “không gắn vào chặng nào” ĐÃ BỊ LẬT. Tấm ảnh nay là ô ảnh chính của chặng 3 (`FS-ky-3`), và ô mở đầu `FS-open` trống nhưng vẫn được khai báo. Vế “luôn hiển thị dòng ghi nguồn” không đổi.',
     reason:
-      'Bản ghi của chính BnF ghi dc:rights là “domaine public”, và điều kiện sử dụng của Gallica cho phép dùng lại phi thương mại miễn phí với đúng một điều kiện: giữ dòng ghi nguồn. Sản phẩm học tập này không bán và không tạo doanh thu. Số hiệu 94.447 ghi tay trên tấm kính ảnh trùng với số trong bản ghi, nên tấm ảnh tự xác nhận nó đúng là hiện vật được mô tả.',
+      'Bản ghi của chính BnF ghi dc:rights là “domaine public”, và điều kiện sử dụng của Gallica cho phép dùng lại phi thương mại miễn phí với đúng một điều kiện: giữ dòng ghi nguồn. Sản phẩm học tập này không bán và không tạo doanh thu. Số hiệu 94.447 ghi tay trên tấm kính ảnh trùng với số trong bản ghi, nên tấm ảnh tự xác nhận nó đúng là hiện vật được mô tả. ⚠️ ĐÍNH CHÍNH 19-9-2026 (SC-26): câu “với đúng một điều kiện” nói THIẾU, và thiếu đúng chỗ nguy hiểm. Nhãn “domaine public” của BnF chỉ trả lời cho BẢN SỐ HOÁ mà BnF giữ; nó KHÔNG trả lời thay cho quyền của người chụp. Bản ghi nêu dc:creator “Agence de presse Meurisse”, và quyền của riêng hãng ảnh ấy CHƯA XÁC LẬP. Vì vậy quyết định dùng lại của tấm này là USE WITH CAUTION, không phải đã sạch quyền. Bốn trục quyền được lưu tách rời trong figures.ts kể từ 19-9.',
     evidence:
-      'Đã mở trực tiếp bản ghi OAI của hiện vật và trang điều kiện sử dụng của Gallica, trích nguyên văn cả hai; không dựa vào đoạn tóm tắt của công cụ tìm kiếm. Dòng ghi nguồn hiển thị ngay dưới ảnh và đi kèm cả khi xem lớn, vì đó là điều kiện của giấy phép chứ không phải lựa chọn trình bày.',
+      'Đã mở trực tiếp bản ghi OAI của hiện vật và trang điều kiện sử dụng của Gallica, trích nguyên văn cả hai; không dựa vào đoạn tóm tắt của công cụ tìm kiếm. Dòng ghi nguồn hiển thị ngay dưới ảnh và đi kèm cả khi xem lớn, vì đó là điều kiện của giấy phép chứ không phải lựa chọn trình bày. Bổ sung 19-9-2026: trục “quyền của người tạo lập” nay là một trường riêng và hiển thị trong ngăn “Nguồn và điều kiện” của chính tấm ảnh, đọc là CHƯA XÁC LẬP.',
     alternative:
-      'Gắn ảnh này vào một chặng, bị loại dứt khoát: sự kiện trong bản ghi là Đại hội Marseille tháng 12-1921, không nằm trong trích đoạn được giao — trích đoạn nói về Đại hội Tua tháng 12-1920. Gắn vào chặng vì “trông hợp” đúng là kiểu suy diễn mà dự án cấm.',
+      'Gắn ảnh này vào một chặng, bị loại dứt khoát: sự kiện trong bản ghi là Đại hội Marseille tháng 12-1921, không nằm trong trích đoạn được giao — trích đoạn nói về Đại hội Tua tháng 12-1920. Gắn vào chặng vì “trông hợp” đúng là kiểu suy diễn mà dự án cấm. ⚠️ ĐÍNH CHÍNH 19-9-2026 (SC-24): lập luận trên ĐÚNG về sự kiện và vẫn đúng — ảnh không bao giờ được dùng để minh hoạ Đại hội Marseille — nhưng nó SAI ở chỗ để một dữ kiện về SỰ KIỆN quyết định một câu hỏi về THỜI KỲ. Bản ghi ghi mốc 26-12-1921, nằm trong khoảng 31-12-1920 đến 3-2-1930 của chặng 3, nên tấm ảnh được gắn vào chặng ấy như một CHÂN DUNG CỦA THỜI KỲ, trên căn cứ niên đại và chỉ niên đại.',
   },
 ];

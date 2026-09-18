@@ -1,0 +1,360 @@
+/*
+ * BẢN KHẮC — the plate.
+ *
+ * Every colour here is an existing token. In particular the accent discipline
+ * set in tokens.css is not widened: `--son` marks a turning point, where you
+ * are, the focus ring and the single primary action, and the thread. On the
+ * plate it therefore marks turning points and the open ends of a stated
+ * movement — which is the thread, drawn in space instead of in time. An
+ * ordinary placed mark is ink. Apparatus is `--cham`.
+ *
+ * There are no plate controls to style, because the plate has none.
+ */
+
+.plate {
+  position: relative;
+  margin: 0 0 var(--space-xs);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-s);
+  background: var(--paper-sunk);
+  overflow: hidden;
+}
+
+.plate__svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  /*
+   * The frame follows the window on the world, which is authored per stage and
+   * clamped in atlas.ts so it can neither eat the column nor collapse into a
+   * slot. It cannot grow with content, so it can never push the reading off
+   * the screen.
+   */
+  aspect-ratio: var(--plate-aspect, 16 / 10);
+}
+
+/*
+ * Land, not territory. No borders are drawn: the excerpt spans 1911-1969 and
+ * present-day boundaries would be an anachronism sitting under the content.
+ */
+.plate__land {
+  fill: var(--paper);
+  stroke: var(--rule-strong);
+  stroke-width: 0.6;
+  stroke-linejoin: round;
+}
+
+/* A mark the excerpt actually places. */
+.plate__mark {
+  fill: var(--ink);
+  stroke: var(--paper);
+  stroke-width: 1.5;
+}
+
+.plate__mark--turn {
+  fill: var(--son);
+}
+
+.plate__mark.is-focus {
+  stroke: var(--son);
+  stroke-width: 2.5;
+}
+
+/* A country is not a point, so it gets a wash instead of a pin. */
+.plate__wash-grad {
+  color: var(--ink-faint);
+}
+
+/*
+ * A movement whose far end the excerpt never names.
+ *
+ * Open rings, not a ray. A ray would have to point somewhere, and pointing
+ * somewhere is naming a destination the page does not give. They are dashed and
+ * thin so they read as an extent that is not known, not as a boundary.
+ */
+.plate__open {
+  stroke: var(--son);
+  stroke-width: 1.1;
+  opacity: 0.5;
+}
+
+/* Drawn only between two ends the excerpt names. */
+.plate__move {
+  stroke: var(--son);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  opacity: 0.7;
+}
+
+/* ---- the text beside the drawing ------------------------------------- */
+
+.plate-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.plate-block__label {
+  margin: 0 0 var(--space-2xs);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.plate-block__note {
+  margin: 0 0 var(--space-2xs);
+  max-inline-size: var(--measure);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  line-height: var(--leading-tight);
+  color: var(--ink-soft);
+}
+
+.plate-block__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-3xs);
+}
+
+.plate-row {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  gap: var(--space-2xs) var(--space-xs);
+  align-items: baseline;
+  padding-block: 2px;
+  border-block-start: var(--hairline) solid var(--rule);
+}
+
+.plate-row:first-child {
+  border-block-start: 0;
+}
+
+/*
+ * The printed time marker, in the marker face. This is the anchor the stage
+ * entrance had before the plate replaced the bare column, at the same size and
+ * in the same face; all markers stay the same size, because making one larger
+ * than another would be the product asserting a relative importance the
+ * excerpt does not assert.
+ */
+.plate-row__marker {
+  font-family: var(--font-marker);
+  font-size: var(--step--1);
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.plate-row__marker--none::before {
+  /* Holds the column open so the places still line up down the list. */
+  content: '';
+  display: inline-block;
+  inline-size: 1px;
+}
+
+.plate-row--turn .plate-row__marker {
+  color: var(--son);
+}
+
+.plate-row__wheres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-2xs);
+  min-inline-size: 0;
+}
+
+.plate-row__where {
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  line-height: var(--leading-tight);
+  color: var(--ink-soft);
+  overflow-wrap: anywhere;
+}
+
+/* The em dash for a marker the excerpt leaves unplaced. */
+.plate-row__where--none {
+  color: var(--ink-faint);
+}
+
+.plate-row__sep {
+  color: var(--rule-strong);
+}
+
+.plate-block__legend {
+  margin: var(--space-2xs) 0 0;
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  color: var(--ink-faint);
+}
+
+.plate-block .lens-trigger {
+  margin-block-start: var(--space-2xs);
+  align-self: start;
+}
+
+/* ---- the whole-excerpt plate on the journey overview ------------------ */
+
+.atlas-space {
+  margin-block-start: var(--space-2xl);
+  padding-block-start: var(--space-l);
+  border-block-start: var(--hairline) solid var(--rule);
+}
+
+.atlas-space__lead {
+  margin: 0 0 var(--space-s);
+  max-inline-size: var(--measure);
+  font-family: var(--font-narrative);
+  font-size: var(--step-1);
+  line-height: var(--leading-tight);
+  color: var(--ink);
+}
+
+.atlas-space__note {
+  margin: var(--space-s) 0 0;
+  max-inline-size: var(--measure);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.atlas-space__stats {
+  margin: var(--space-s) 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-l);
+}
+
+.atlas-space__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.atlas-space__n {
+  font-family: var(--font-marker);
+  font-size: var(--step-2);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.atlas-space__stat-label {
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  color: var(--ink-faint);
+  max-inline-size: 22ch;
+  line-height: var(--leading-tight);
+}
+
+/*
+ * The one movement on this surface, and it runs once.
+ *
+ * It exists for the same reason the overview thread draws itself once: the eye
+ * follows the line the reader is about to follow. The motion budget for a
+ * screen is one to two movements, and this is the overview's second after the
+ * thread — so it is deliberately slight, runs a single time, and reveals
+ * nothing: every mark is in the DOM and legible before, during and after it.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion='off']) .atlas-space .plate__land {
+    animation: plate-settle var(--dur-slow) var(--ease-out) both;
+  }
+}
+
+@keyframes plate-settle {
+  from {
+    opacity: 0.35;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---- narrow screens --------------------------------------------------- */
+
+@media (width < 48rem) {
+  /*
+   * Mobile is a different composition, not a shrunken one. The plate keeps a
+   * fixed framing, carries no gesture and no control, and is capped so that it
+   * can never require panning to reach the reading under it.
+   */
+  .atlas-space__stats {
+    gap: var(--space-s) var(--space-m);
+  }
+}
+
+/* ---- the spatial consequence of walking a stage ----------------------- */
+
+/*
+ * One line under a stop: where the excerpt puts it, or that it does not say.
+ * It sits in the apparatus voice, at apparatus size, because it is a statement
+ * ABOUT the source rather than a piece of the source.
+ */
+.station__where {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: var(--space-2xs) 0 0;
+  max-inline-size: var(--measure);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--2);
+  line-height: var(--leading-tight);
+  color: var(--ink-faint);
+}
+
+.station__where-item {
+  padding-inline-start: var(--space-2xs);
+  border-inline-start: 2px solid var(--rule);
+}
+
+/*
+ * A stop the excerpt does not place is marked with the unverified colour the
+ * product already uses everywhere else for "no evidence yet", not with the
+ * accent, which means something different.
+ */
+.station__where-item[data-kind='unplaced'] {
+  border-inline-start-color: var(--verify);
+  color: var(--verify);
+}
+
+/*
+ * The counted sentence in the reflection beat. Apparatus voice, because it is a
+ * statement about the document rather than a piece of it.
+ */
+.reflect__where {
+  margin: var(--space-2xs) 0 0;
+  max-inline-size: var(--measure);
+  font-family: var(--font-apparatus);
+  font-size: var(--step--1);
+  line-height: var(--leading-tight);
+  color: var(--ink-faint);
+}
+
+/*
+ * A Wikidata address is a single unbreakable token. Left alone it sets a
+ * minimum width on the whole register and pushes a 375px viewport into
+ * horizontal scroll — which is what the overflow test caught.
+ *
+ * Basis: `long-token-wrapping`, ui-ux-pro-max Quick Reference §6 — URLs and IDs
+ * reflow with `overflow-wrap: anywhere` and a shrinkable text child; prose is
+ * left alone, and `word-break: break-all` is not used anywhere.
+ */
+.register__url {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+/*
+ * A line of quoted numeric evidence — coordinates, an item id, and the raw
+ * precision float the record publishes. It is data, so it may break anywhere;
+ * the Vietnamese prose around it is left to wrap on word boundaries as usual.
+ */
+.register__data {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}

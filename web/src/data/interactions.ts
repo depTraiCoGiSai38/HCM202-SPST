@@ -331,7 +331,7 @@ export const PRESENTATION_BEATS: PresentationBeat[] = [
     title: 'Những gì chưa được kiểm chứng',
     route: '#/kiem-chung',
     notes: [
-      'Mở sổ ghi nhận: mười ứng viên định vị, ba chú thích dùng “Sđd”.',
+      'Mở sổ ghi nhận: mười ứng viên định vị, ba chú thích dùng “Sdd”.',
       'Mở xung đột niên đại GT-R02 và giải thích vì sao nhóm không sửa.',
       'Nêu xuất xứ của tệp được giao vẫn cần đối chiếu bản chính thức.',
     ],

@@ -1,0 +1,1712 @@
+# HCM202 CREATIVE PRODUCT TRANSFORMATION
+“HÀNH TRÌNH TƯ TƯỞNG” — INTERACTIVE SPATIAL LEARNING EXPERIENCE
+
+You are working on an existing HCM202 academic creative-product repository.
+
+This is NOT a greenfield redesign.
+
+The project already contains:
+
+- an existing UX/UI redesign;
+- five-stage academic structure;
+- source verification infrastructure;
+- archival-image protocol;
+- Evidence Visible system;
+- offline mode;
+- presentation mode;
+- tests;
+- previous design decisions and Prompt Logs.
+
+Your job is to transform the current product into a genuinely memorable and original **creative learning experience** without destroying the academic, verification, accessibility, offline, and UX work that already exists.
+
+---
+
+# 0. NON-NEGOTIABLE STARTUP
+
+Before changing ANY code:
+
+1. Read `AGENTS.md` completely.
+2. Read `CLAUDE.md` completely if present.
+3. Read the CURRENT active project context completely.
+   - Prefer the newest active context file.
+   - Do not assume an older v2/v3 filename if a newer one exists.
+4. Read:
+   - `MASTER.md`
+   - current Design Decision Records
+   - current UX reports
+   - current Source Migration report
+   - image/source verification records
+   - AI Prompt Logs relevant to UX/images/source migration
+5. Inspect `git status`.
+6. Inspect repository structure.
+7. Run the current product before redesigning it.
+8. Review all major routes on:
+   - desktop
+   - tablet
+   - mobile
+
+Do not edit blindly.
+
+---
+
+# 1. VERIFY THE 2019 SOURCE MIGRATION FIRST
+
+The current primary academic textbook source MUST be:
+
+`Giáo trình Tư tưởng Hồ Chí Minh - 2019`
+
+The previous later-edition `C2-02.pdf` must no longer control active public textbook locators.
+
+Before creative redesign, verify that:
+
+- public textbook citations use:
+  `Giáo trình Tư tưởng Hồ Chí Minh - 2019`
+- printed textbook page locators are used;
+- the five stage boundaries match the active 2019 source;
+- no stale active `C2 PDF p.x` citations remain;
+- old Prompt Logs/reports remain historically truthful and are not rewritten.
+
+If the 2019 migration is incomplete:
+
+STOP creative implementation.
+
+Finish or report the migration problem first.
+
+Do NOT build the creative redesign on stale academic locators.
+
+---
+
+# 2. MANDATORY UX/UI SKILL
+
+You MUST invoke and actively use the installed:
+
+`ui-ux-pro-max`
+
+Read the COMPLETE `SKILL.md`.
+
+Do not merely state that the skill was used.
+
+Use its actual workflow, scripts/CLI where applicable, accessibility guidance, hierarchy guidance, responsive guidance and design-system reasoning.
+
+In the final report include:
+
+- which parts of `ui-ux-pro-max` were applied;
+- relevant CLI/script results;
+- general guidance from the skill;
+- project-specific decisions derived from that guidance.
+
+If `ui-ux-pro-max` is unavailable:
+
+state clearly:
+
+`ui-ux-pro-max skill is unavailable in this environment.`
+
+Do not pretend it was used.
+
+---
+
+# 3. REFERENCE REPOSITORY — INSPIRATION ONLY
+
+Study this project as a conceptual reference:
+
+https://github.com/PhamXuanKhang/creative_product_HCM202
+
+You MAY clone it locally for analysis.
+
+Clone ONLY into:
+
+`_reference/creative_product_HCM202`
+
+If `_reference/` is not ignored, add:
+
+```gitignore
+_reference/
+```
+
+Treat the entire `_reference/` directory as:
+
+# READ-ONLY RESEARCH MATERIAL
+
+Do NOT:
+
+- modify the reference repository;
+- commit it;
+- copy its source files into our project;
+- copy components;
+- copy CSS;
+- copy its event dataset;
+- copy its JSON structure verbatim;
+- copy images/assets;
+- copy wording;
+- copy visual layout;
+- copy globe implementation line-for-line;
+- copy its information architecture;
+- reproduce the product with different text.
+
+If network access is unavailable:
+
+do NOT fabricate an analysis of files you could not inspect.
+
+Report the limitation and continue only with reference information actually available.
+
+---
+
+# 4. WHY WE ARE STUDYING THE REFERENCE
+
+We are interested in the UNDERLYING IDEA:
+
+- spatial historical exploration;
+- chronological movement;
+- locations connected to historical events;
+- visual journey progression;
+- multimedia attached to meaningful points;
+- interactive map/globe as part of storytelling.
+
+We are NOT trying to reproduce that project.
+
+Before implementing anything, create:
+
+`REFERENCE_ANALYSIS.md`
+
+Use this structure:
+
+| Reference idea | Why it works | What we must NOT copy | Our original interpretation |
+|---|---|---|---|
+
+Also answer:
+
+1. What is the reference product’s core interaction idea?
+2. Why does it feel more like a creative product than a normal educational website?
+3. Which ideas are general interaction principles rather than proprietary implementation?
+4. What would constitute copying?
+5. How will our version be materially different?
+
+---
+
+# 5. OUR ORIGINAL PRODUCT CONCEPT
+
+Transform the current project into:
+
+# HÀNH TRÌNH TƯ TƯỞNG
+## BẢN ĐỒ SỐNG CỦA 5 CHẶNG
+
+Product character:
+
+**Interactive Historical Atlas**
+×
+**Digital Museum**
+×
+**Interactive Documentary**
+×
+**Editorial Storytelling**
+×
+**Guided Learning Journey**
+
+The product should NOT primarily feel like:
+
+- a textbook converted into HTML;
+- an academic dashboard;
+- a research database;
+- a collection of cards;
+- five long reading pages;
+- a map with random popups.
+
+The learner should feel that they are moving through:
+
+**không gian**
++
+**thời gian**
++
+**bối cảnh**
++
+**trải nghiệm**
++
+**sự chuyển biến tư tưởng**
+
+---
+
+# 6. CORE ORIGINALITY
+
+The reference project may visualize a historical/revolutionary journey geographically.
+
+Our distinguishing concept must be:
+
+# THE MAP VISUALIZES THE DEVELOPMENT OF THOUGHT,
+# NOT MERELY THE TRAVEL ITINERARY.
+
+Geography is a storytelling instrument.
+
+It helps answer:
+
+- WHERE?
+- WHEN?
+
+But our educational experience must emphasize:
+
+- WHAT WAS EXPERIENCED?
+- WHAT WAS OBSERVED?
+- WHAT CHANGED?
+- WHAT WAS FORMED OR DEVELOPED?
+- WHY DOES THAT MATTER TO THE FIVE-STAGE PROCESS?
+
+Do not let the map replace the academic argument.
+
+---
+
+# 7. CENTRAL LEARNING JOURNEY
+
+The experience should communicate something like:
+
+`BỐI CẢNH`
+
+↓
+
+`TRẢI NGHIỆM / THỰC TIỄN`
+
+↓
+
+`QUAN SÁT / TIẾP NHẬN`
+
+↓
+
+`NHẬN THỨC`
+
+↓
+
+`CHUYỂN BIẾN`
+
+↓
+
+`KIỂM NGHIỆM TRONG THỰC TIỄN`
+
+↓
+
+`PHÁT TRIỂN`
+
+IMPORTANT:
+
+These are DESIGN/LEARNING abstractions.
+
+Do not display any term as an official textbook claim unless the active 2019 source supports that wording.
+
+Preserve the exact verified academic claims already maintained by the project.
+
+---
+
+# 8. FIVE STAGES REMAIN THE ACADEMIC BACKBONE
+
+The official five-stage structure from:
+
+`Giáo trình Tư tưởng Hồ Chí Minh - 2019`
+
+remains authoritative.
+
+Do NOT:
+
+- merge stages;
+- reorder them;
+- invent new periods;
+- simplify official boundaries for visual convenience.
+
+At all times the learner should understand:
+
+`CHẶNG X / 5`
+
+and:
+
+`MÌNH ĐANG Ở ĐÂU TRONG QUÁ TRÌNH HÌNH THÀNH VÀ PHÁT TRIỂN TƯ TƯỞNG?`
+
+---
+
+# 9. PRODUCT EXPERIENCE PRINCIPLE
+
+Optimize for:
+
+# MORE EXPERIENCE, LESS INTERFACE.
+
+At any major moment, aim for:
+
+- 1 primary visual;
+- 1 primary idea;
+- 1 primary action;
+- optional secondary action.
+
+Avoid simultaneously exposing:
+
+- sidebar;
+- stage rail;
+- tabs;
+- pagination;
+- counters;
+- source badges;
+- verification states;
+- multiple CTA rows;
+- large map controls.
+
+The creative redesign must NOT reintroduce the dashboard feeling that previous UX work removed.
+
+---
+
+# 10. SPATIAL EXPERIENCE
+
+Use a spatial journey as the backbone of the experience.
+
+Possible visualization:
+
+- world map;
+- globe;
+- Vietnam map;
+- SVG geographic journey;
+- Canvas/WebGL experience;
+- hybrid system.
+
+But DO NOT automatically choose Three.js or a 3D globe because the reference project uses one.
+
+First evaluate the current architecture.
+
+---
+
+# 11. TECHNICAL DECISION BEFORE IMPLEMENTATION
+
+Compare at least:
+
+### OPTION A
+Existing stack + SVG/2D map
+
+### OPTION B
+Canvas-based map
+
+### OPTION C
+WebGL / lightweight globe
+
+### OPTION D
+Hybrid:
+2D accessible journey + enhanced spatial visual layer
+
+Evaluate:
+
+- current Vite + TypeScript architecture;
+- offline support;
+- mobile performance;
+- bundle size;
+- keyboard accessibility;
+- screen-reader fallback;
+- reduced motion;
+- presentation mode;
+- maintenance complexity;
+- visual impact;
+- current test infrastructure.
+
+Choose the SMALLEST technology that achieves the experience strongly.
+
+Do NOT add a major dependency merely to say the project uses 3D.
+
+Document the decision.
+
+---
+
+# 12. SPATIAL STORYTELLING, NOT A GLOBE GIMMICK
+
+The map/globe must never become an isolated visual trick.
+
+Think:
+
+# STORY ON A MAP
+
+not:
+
+# MAP WITH INFORMATION POPUPS
+
+Each meaningful verified location may open a:
+
+# STORY LENS
+
+Possible contents:
+
+1. date / period;
+2. verified location;
+3. authentic historical image;
+4. contextual explanation;
+5. relevant event/experience;
+6. academic claim or development;
+7. why this point matters to the stage;
+8. verified source;
+9. next step.
+
+Not every Story Lens needs every field.
+
+Never invent missing information just to fill the UI.
+
+---
+
+# 13. GEOGRAPHICAL ACCURACY
+
+Never fabricate a travel route.
+
+Every spatial node must be supported.
+
+Maintain something equivalent to:
+
+```ts
+{
+  id,
+  stageId,
+  period,
+  locationName,
+  coordinates,
+  coordinateSource,
+  geographicVerification,
+  academicReason,
+  claimIds,
+  sourceIds,
+  figureIds,
+  narrativeRole,
+  verificationStatus
+}
+```
+
+This is conceptual.
+
+Adapt minimally to the existing architecture.
+
+Do not force a rewrite if the project already has a suitable model.
+
+---
+
+# 14. COORDINATES ARE ALSO EVIDENCE
+
+Do not treat coordinates as decorative data.
+
+For every map location:
+
+- verify the place;
+- verify why it belongs to that stage;
+- verify coordinates from a reliable source;
+- record verification status.
+
+If only a country is supported:
+
+do not fabricate an exact building or city coordinate.
+
+If the textbook says something broad like:
+
+`nhiều nước`
+
+do not construct an impressive-looking route through unsupported locations.
+
+Accuracy overrides spectacle.
+
+---
+
+# 15. DIFFERENT STAGES CAN USE SPACE DIFFERENTLY
+
+Do NOT force the same globe composition across all five stages.
+
+Use geography according to content.
+
+A possible narrative rhythm:
+
+### Stage 1
+Vietnam-focused origin/context.
+
+### Stage 2
+International/global exploration may become more visually prominent.
+
+### Stage 3
+Transnational revolutionary/intellectual network where supported.
+
+### Stage 4
+Transitions and return trajectory only where verified.
+
+### Stage 5
+Increasing visual focus on Vietnam and revolutionary practice.
+
+This is a design hypothesis.
+
+Verify it against current academic sources before implementation.
+
+Do not manufacture geographic symmetry.
+
+---
+
+# 16. OPENING EXPERIENCE
+
+Create a memorable but academically restrained opening.
+
+Suggested sequence:
+
+## Scene 1 — Invitation
+
+Large title:
+
+`HÀNH TRÌNH TƯ TƯỞNG`
+
+Short subtitle:
+
+`5 chặng đường · một quá trình hình thành và phát triển`
+
+Use one VERIFIED authentic archival image.
+
+Primary CTA:
+
+`Bắt đầu hành trình`
+
+Secondary:
+
+`Xem tổng quan 5 chặng`
+
+Avoid large blocks of metadata.
+
+---
+
+## Scene 2 — Space appears
+
+The map/world/Vietnam spatial system emerges subtly.
+
+Possible narrative line:
+
+`Một tư tưởng không hình thành tại một điểm duy nhất.`
+
+Then a short introduction to following context and transitions.
+
+This is PRODUCT NARRATION.
+
+Do not present it as a historical quotation.
+
+Do not attach a textbook citation unless the exact statement is sourced.
+
+---
+
+## Scene 3 — Guiding Question
+
+Show:
+
+`CÂU HỎI DẪN ĐƯỜNG`
+
+Preserve the currently approved Central Question EXACTLY.
+
+Do not rewrite it.
+
+Then enter the first stage.
+
+---
+
+# 17. JOURNEY NAVIGATION
+
+The journey itself should become the main navigation metaphor.
+
+Possible elements:
+
+- five-stage progress;
+- verified spatial points;
+- route/connection line;
+- current stage;
+- current historical point;
+- turning points;
+- explored state.
+
+Avoid another permanent navigation system competing with it.
+
+---
+
+# 18. PROGRESS TERMINOLOGY
+
+Distinguish carefully:
+
+- not opened;
+- visited;
+- explored;
+- activity completed.
+
+Never claim:
+
+- understood;
+- mastered;
+- learned;
+
+unless actual evidence supports such a conclusion.
+
+Prefer:
+
+`Đã xem`
+
+`Đã khám phá`
+
+`Hoàn thành hoạt động`
+
+---
+
+# 19. JOURNEY LINE STATES
+
+Possible design states:
+
+### Unexplored
+quiet / low contrast
+
+### Current
+clearly emphasized
+
+### Explored
+visible but receded
+
+### Turning Point
+distinct visual marker
+
+Use progress to orient users, not gamify academic content excessively.
+
+---
+
+# 20. TURNING POINTS
+
+Turning points must feel different from ordinary locations.
+
+When reaching a genuine academically supported turning point:
+
+- let the map recede;
+- enlarge date/period;
+- feature authentic archival image/document;
+- emphasize before → after relationship;
+- reveal evidence;
+- give space for reflection.
+
+The learner should feel:
+
+`Đây không chỉ là một địa điểm khác. Ở đây có một chuyển biến.`
+
+Do not dramatize beyond the evidence.
+
+---
+
+# 21. FIVE-STAGE IMAGE STRATEGY
+
+The visual experience should be rich in authentic historical material.
+
+Target for EACH stage:
+
+### 1 PRIMARY VISUAL ANCHOR
+
+Prefer:
+
+an authentic archival photograph of Hồ Chí Minh appropriately connected to that stage.
+
+### 1–3 SUPPORTING VISUALS
+
+Possible:
+
+- verified portrait;
+- historical context photograph;
+- archival document;
+- newspaper;
+- place;
+- organization;
+- event material;
+- map/document;
+- period artifact.
+
+But:
+
+# DO NOT ADD IMAGES JUST TO FILL SPACE.
+
+Every image must answer:
+
+`Why is this image here?`
+
+---
+
+# 22. PRIMARY VS SUPPORTING IMAGES
+
+Do NOT put all stage images in one gallery at the top.
+
+Preferred architecture:
+
+```text
+STAGE ENTRANCE
+└── Primary portrait / visual anchor
+
+STORY POINT
+├── narrative
+└── relevant supporting image
+
+TURNING POINT
+├── transition
+├── archival document/image
+└── evidence
+
+REFLECTION
+└── contextual visual if needed
+```
+
+Supporting visuals should appear at the moment they become meaningful.
+
+Avoid:
+
+- generic photo grids;
+- carousels created just to fit more media;
+- 5–10 images competing on one screen.
+
+---
+
+# 23. IMAGE VERIFICATION PROTOCOL
+
+Continue using the repository’s existing image-verification protocol.
+
+Keep separate:
+
+- subject identity;
+- event/date;
+- location;
+- holding institution;
+- source URL;
+- usage/rights condition;
+- offline packaging;
+- verification status.
+
+Search results are discovery tools.
+
+They are NOT final provenance.
+
+Open the actual institutional item record.
+
+---
+
+# 24. HISTORICAL PORTRAIT SAFETY
+
+Never:
+
+- AI-generate Hồ Chí Minh;
+- fabricate historical photographs;
+- face-swap;
+- morph;
+- animate eyes;
+- animate mouth;
+- lip-sync;
+- synthesize historical voice;
+- AI-colorize;
+- generatively restore;
+- make the historical subject perform actions not present in the source.
+
+Authentic documentary imagery remains intact.
+
+Motion occurs AROUND the document/image.
+
+Not INSIDE the historical person.
+
+---
+
+# 25. IMAGE FALLBACK
+
+The goal is one strong portrait/anchor for every stage.
+
+But accuracy is more important than visual symmetry.
+
+If no portrait clears:
+
+- provenance;
+- stage relevance;
+- usage conditions;
+
+DO NOT substitute an unrelated photograph.
+
+Use an intentional alternative:
+
+- historical document;
+- location;
+- typography/date composition;
+- verified contextual material.
+
+Record unresolved slots truthfully.
+
+No image is better than a misleading image.
+
+---
+
+# 26. MOTION SYSTEM
+
+Create ONE coherent motion language.
+
+Motion may communicate:
+
+- travel;
+- chronology;
+- connection;
+- transition;
+- reveal;
+- turning point;
+- zooming between context levels.
+
+Good:
+
+- route drawing;
+- camera easing;
+- map focus;
+- frame reveal;
+- document slide/reveal;
+- subtle layer parallax;
+- opacity transition;
+- line convergence;
+- stage transition.
+
+Avoid:
+
+- constant globe spinning;
+- random particles;
+- bouncing markers everywhere;
+- cinematic lens flares;
+- excessive zoom;
+- shake;
+- autoplay spectacle;
+- scroll hijacking;
+- long waits;
+- game HUD animation.
+
+---
+
+# 27. REDUCED MOTION
+
+`prefers-reduced-motion` must preserve:
+
+- all content;
+- all navigation;
+- all historical points;
+- all sources;
+- all activities.
+
+Spatial movement may become:
+
+- immediate focus;
+- static map state;
+- simple opacity change.
+
+Do not hide content behind motion.
+
+---
+
+# 28. MAP / STORY COMPOSITIONS
+
+Avoid one rigid layout everywhere.
+
+Use composition according to narrative purpose.
+
+Examples:
+
+## Exploration moment
+
+70% spatial canvas
+30% compact Story Lens
+
+## Documentary moment
+
+40% spatial context
+60% image + narrative
+
+## Turning point
+
+map recedes
+date/document/portrait dominates
+
+## Reflection
+
+quiet layout
+minimal chrome
+question + context
+
+## Stage transition
+
+zoom out
+show relationship to previous/next stage
+
+Consistency should come from design grammar, not identical cards.
+
+---
+
+# 29. MOBILE IS A SEPARATE EXPERIENCE
+
+Do NOT shrink the desktop globe UI.
+
+On mobile prefer:
+
+```text
+MAP CONTEXT
+↓
+LOCATION / PERIOD
+↓
+IMAGE
+↓
+STORY
+↓
+DEVELOPMENT
+↓
+EVIDENCE
+↓
+NEXT
+```
+
+Map manipulation should not be required to reach content.
+
+Keep controls minimal.
+
+---
+
+# 30. ACCESSIBILITY FALLBACK
+
+If WebGL/3D is used:
+
+the globe/map can NEVER be the only access path.
+
+Provide an equivalent structured journey.
+
+Users must still be able to:
+
+- navigate all five stages;
+- access every verified historical node;
+- read every academic claim;
+- open sources;
+- complete activities;
+- use keyboard;
+- use reduced motion.
+
+The academic experience must survive if WebGL fails.
+
+---
+
+# 31. OFFLINE REQUIREMENT
+
+The product must continue working offline.
+
+Avoid:
+
+- runtime dependence on remote tiles;
+- hotlinked images;
+- required external CDNs;
+- runtime APIs necessary for core content.
+
+Package required:
+
+- map assets;
+- textures;
+- historical images;
+- icons/data;
+
+locally where licensing allows.
+
+Preserve the existing offline bundling architecture.
+
+If a 3D approach breaks offline reliability:
+
+choose another approach.
+
+Creativity ≠ WebGL.
+
+---
+
+# 32. SOURCES / EVIDENCE VISIBLE
+
+The creative experience must not hide academic evidence.
+
+But evidence UI should remain secondary.
+
+Use compact controls such as:
+
+`Nguồn`
+
+or:
+
+`Kiểm chứng`
+
+Opening source detail may show:
+
+- claim;
+- `Giáo trình Tư tưởng Hồ Chí Minh - 2019`;
+- printed page;
+- original-source support if applicable;
+- image source;
+- verification status.
+
+Do not permanently display large verification dashboards inside the storytelling canvas.
+
+---
+
+# 33. EXISTING ACTIVITIES
+
+Preserve and integrate:
+
+- Đối sánh;
+- Nối kết;
+- Tổng hợp;
+- Kiểm chứng.
+
+Do not leave them feeling like unrelated tools.
+
+Example:
+
+After Stage 2:
+
+zoom out slightly.
+
+Show:
+
+`Bạn vừa đi qua hai chặng đầu tiên.`
+
+Then:
+
+`Đối sánh sự chuyển biến`
+
+After Stage 3:
+
+introduce `Nối kết` naturally.
+
+After Stage 5:
+
+show the entire journey.
+
+Then:
+
+`Nhìn lại 5 chặng`
+
+→ Tổng hợp.
+
+Independent access may remain available.
+
+---
+
+# 34. DO NOT BREAK THE EXISTING UX IMPROVEMENTS
+
+Preserve the successful simplifications already implemented.
+
+Do NOT reintroduce:
+
+- permanent five-stage rail;
+- duplicate stage pager;
+- large phase tab bars;
+- repeated “you are here” UI;
+- permanent source metadata;
+- excessive status badges;
+- many equal-priority buttons.
+
+The new map/globe must replace complexity, not add another layer on top.
+
+Core rule:
+
+# MORE WORLD, LESS UI.
+
+---
+
+# 35. AUDIT BEFORE CODING
+
+Before implementation, produce:
+
+# CREATIVE TRANSFORMATION AUDIT
+
+Cover:
+
+### A. Current product
+What currently works well?
+
+### B. Current limitations
+Why does it still feel like a website rather than a creative experience?
+
+### C. Reference decomposition
+What is useful from the GitHub concept?
+
+### D. Originality boundary
+What must not be copied?
+
+### E. Academic opportunities
+Which verified locations/events can genuinely become spatial nodes?
+
+### F. Technical options
+2D vs 3D vs hybrid.
+
+### G. Current architecture
+Which components/data models should:
+
+- remain;
+- adapt;
+- become spatial;
+- move;
+- disappear?
+
+### H. UX risk
+Where could a map make the interface confusing again?
+
+### I. Evidence risk
+Where are geographic/image claims still unverified?
+
+Then continue.
+
+Do NOT stop after the audit.
+
+---
+
+# 36. CREATE AN ORIGINAL DESIGN DECISION
+
+Before coding, write:
+
+`SPATIAL_JOURNEY_DESIGN_DECISION.md`
+
+Include:
+
+## One-sentence direction
+
+Example structure:
+
+`A guided digital historical atlas where geography reveals the five-stage development of thought rather than simply plotting travel.`
+
+Do not blindly use that sentence if a better project-specific direction emerges.
+
+Then document:
+
+- experience model;
+- map role;
+- navigation model;
+- stage grammar;
+- image strategy;
+- motion strategy;
+- source strategy;
+- mobile model;
+- accessibility fallback;
+- technical choice;
+- originality boundary.
+
+---
+
+# 37. BUILD A VERTICAL SLICE FIRST
+
+Do NOT immediately rebuild all five stages.
+
+Build ONE representative end-to-end slice first.
+
+Prefer:
+
+# STAGE 2
+
+because its content may provide the strongest opportunity for spatial storytelling.
+
+Only use locations/events actually supported by verified sources.
+
+The slice should contain:
+
+```text
+Opening / transition
+→ Spatial context
+→ One verified node
+→ Story Lens
+→ Archival image/document
+→ Academic development
+→ Turning point
+→ Source verification
+→ Reflection
+→ Continue
+```
+
+---
+
+# 38. VALIDATE THE VERTICAL SLICE
+
+Before expanding to all five stages, inspect:
+
+- visual clarity;
+- originality;
+- academic integrity;
+- text density;
+- map usefulness;
+- map vs story balance;
+- mobile;
+- tablet;
+- desktop;
+- keyboard;
+- focus;
+- 200% zoom;
+- reduced motion;
+- offline behavior;
+- presentation mode;
+- performance.
+
+If the spatial system makes the learning flow harder:
+
+fix the model BEFORE copying it across all stages.
+
+---
+
+# 39. THEN EXPAND TO FIVE STAGES
+
+After the vertical slice passes technical/design review:
+
+expand the same interaction grammar to all stages.
+
+Do NOT force:
+
+- equal number of map nodes;
+- equal number of images;
+- identical internal layouts;
+- identical route lengths.
+
+Consistency comes from:
+
+- orientation;
+- interaction language;
+- typography;
+- motion grammar;
+- source behavior;
+- transition logic.
+
+Not from artificial symmetry.
+
+---
+
+# 40. IMAGE INTEGRATION WITH CURRENT ARCHITECTURE
+
+Inspect current:
+
+- figure data model;
+- source registers;
+- image slots;
+- stage rendering;
+- offline packaging.
+
+Do not throw away existing provenance infrastructure.
+
+If current supporting images all render at the stage entrance:
+
+change this minimally so supporting visuals can attach to meaningful narrative anchors such as:
+
+- passage;
+- turning point;
+- quotation;
+- spatial node.
+
+Primary image remains the stage visual anchor.
+
+Supporting image appears where it explains something.
+
+---
+
+# 41. DATA ARCHITECTURE
+
+Do NOT copy the reference repo’s data model.
+
+Design an original extension compatible with current code.
+
+A verified spatial node MAY need fields similar to:
+
+```ts
+{
+  id,
+  stageId,
+  period,
+  title,
+  location,
+  coordinates,
+  coordinateVerification,
+  narrativeRole,
+  claimIds,
+  figureIds,
+  sourceIds,
+  interactionType,
+  mapBehavior,
+  verificationStatus
+}
+```
+
+This is guidance only.
+
+Reuse existing project abstractions wherever possible.
+
+Avoid unnecessary architecture churn.
+
+---
+
+# 42. NO FALSE ACADEMIC PRECISION
+
+Do not transform:
+
+`mid-1911`
+
+into an invented exact date.
+
+Do not transform:
+
+`Europe`
+
+into a specific building.
+
+Do not transform:
+
+`several countries`
+
+into a detailed itinerary.
+
+Do not infer:
+
+- motivation;
+- mental state;
+- hidden intention;
+- route;
+- exact location;
+
+without evidence.
+
+---
+
+# 43. PRODUCT NARRATION VS ACADEMIC CLAIM
+
+Clearly separate:
+
+## PRODUCT NARRATION
+
+Used to guide the learner.
+
+Example:
+
+`Hãy nhìn lại hành trình vừa đi qua.`
+
+Does not pretend to be textbook wording.
+
+## ACADEMIC CLAIM
+
+Requires evidence and locator.
+
+Do not blur these two layers.
+
+---
+
+# 44. VISUAL STYLE
+
+Target:
+
+# CONTEMPORARY VIETNAMESE DIGITAL MUSEUM
+
+Use:
+
+- archival photography;
+- documentary composition;
+- strong dates;
+- elegant editorial typography;
+- warm paper/light surfaces;
+- restrained dark archival surfaces;
+- controlled Vietnamese red accent;
+- subtle ochre/gold where appropriate;
+- thin journey lines;
+- map texture only when useful;
+- whitespace;
+- authentic documents.
+
+Avoid:
+
+- generic SaaS dashboard;
+- neon cyber aesthetic;
+- excessive glassmorphism;
+- generic bento grid;
+- game UI;
+- tourist-map aesthetic;
+- decorative pseudo-historical clichés.
+
+---
+
+# 45. TYPOGRAPHY
+
+Maintain a coherent hierarchy.
+
+Suggested roles:
+
+### DISPLAY
+period / year / turning point
+
+### EDITORIAL
+narrative emphasis
+
+### BODY
+comfortable academic reading
+
+### UI
+navigation / action
+
+### SOURCE
+compact evidence metadata
+
+Do not create many unrelated type scales.
+
+---
+
+# 46. UI DENSITY
+
+At any point the user should quickly understand:
+
+1. Where am I?
+2. What happened / what am I examining?
+3. Why does it matter?
+4. What do I do next?
+
+If the screen answers all four without extra chrome, do not add more controls.
+
+---
+
+# 47. PERFORMANCE
+
+If using WebGL/3D:
+
+measure performance.
+
+Check:
+
+- bundle size;
+- load time;
+- memory;
+- mobile frame behavior;
+- fallback if WebGL unavailable.
+
+Do not sacrifice usability for spectacle.
+
+---
+
+# 48. CURRENT TESTS ARE CONSTRAINTS
+
+Do not remove tests just because the creative redesign breaks them.
+
+Update tests honestly where architecture legitimately changes.
+
+Preserve guarantees around:
+
+- source labels;
+- 2019 textbook locators;
+- image provenance;
+- source visibility;
+- keyboard;
+- reduced motion;
+- offline;
+- responsive behavior;
+- stage chronology;
+- verification truthfulness.
+
+---
+
+# 49. REQUIRED TEST RUN
+
+Use the repository’s actual available commands.
+
+At minimum run the supported equivalents of:
+
+```bash
+npm run typecheck
+npm run lint
+npm run test
+npm run build
+npm run e2e
+npm run build:offline
+npm run check:offline
+```
+
+Also rerun existing:
+
+- UX density audit;
+- accessibility checks;
+- responsive screenshots;
+- contrast checks;
+
+where available.
+
+Do not fabricate test results.
+
+---
+
+# 50. MANUAL RENDER CHECK
+
+Inspect the real rendered product at:
+
+### Desktop
+~1440px
+
+### Tablet
+~768px
+
+### Mobile
+~375–390px
+
+Check:
+
+- opening;
+- overview;
+- Stage 1;
+- Stage 2 spatial slice;
+- all remaining stages after rollout;
+- turning point;
+- image/document state;
+- source drawer;
+- Đối sánh;
+- Nối kết;
+- Tổng hợp;
+- Kiểm chứng;
+- presentation mode;
+- offline build.
+
+---
+
+# 51. USER TESTING HONESTY
+
+Do NOT write:
+
+- “students find this more engaging”;
+- “users understand better”;
+- “lecturers prefer this”;
+- “the product improves learning”.
+
+unless actual user evidence exists.
+
+Technical/design observations are allowed.
+
+Example:
+
+`The redesign reduces simultaneously visible navigation systems from X to Y.`
+
+Not:
+
+`Users are less confused.`
+
+---
+
+# 52. PROMPT LOG
+
+Record this complete prompt in the project’s required AI Prompt Log.
+
+Do not rewrite previous logs.
+
+Use the project’s existing declaration format.
+
+---
+
+# 53. REFERENCE USAGE RECORD
+
+Create a short record explaining:
+
+- reference repository URL;
+- date inspected;
+- what was studied;
+- what was intentionally not copied;
+- resulting original decisions.
+
+This protects the originality trail.
+
+Do not imply the reference repo is an academic source.
+
+It is only design inspiration.
+
+---
+
+# 54. FINAL REPORT
+
+Create:
+
+`CREATIVE_SPATIAL_JOURNEY_REPORT.md`
+
+Include:
+
+## 1. Starting state
+
+## 2. Reference analysis
+
+## 3. Originality boundary
+
+## 4. New product concept
+
+## 5. Academic-spatial model
+
+## 6. Verified spatial nodes
+
+## 7. Nodes rejected / blocked
+
+## 8. Image integration
+
+## 9. Motion system
+
+## 10. Technical architecture decision
+
+## 11. Accessibility fallback
+
+## 12. Offline behavior
+
+## 13. Mobile design
+
+## 14. Existing UX preserved
+
+## 15. Files changed
+
+## 16. Tests actually run
+
+## 17. Remaining risks
+
+## 18. Human verification still needed
+
+---
+
+# 55. COMPLETION STATUS
+
+Do NOT declare the project academically complete merely because implementation is complete.
+
+Use:
+
+`CREATIVE PRODUCT IMPLEMENTED — REQUIRES HUMAN VERIFICATION AND REAL PROJECT EVIDENCE`
+
+unless the repository’s formal completion gate legitimately permits another status.
+
+---
+
+# 56. EXECUTION ORDER
+
+Follow this exact sequence:
+
+1. Read governance and current context.
+2. Verify the 2019 textbook migration.
+3. Inspect current repository and run current product.
+4. Invoke and apply `ui-ux-pro-max`.
+5. Clone/read reference repo into `_reference/` if possible.
+6. Produce `REFERENCE_ANALYSIS.md`.
+7. Audit current product.
+8. Identify academically supportable spatial nodes.
+9. Compare 2D / 3D / hybrid solutions.
+10. Write `SPATIAL_JOURNEY_DESIGN_DECISION.md`.
+11. Build ONE Stage 2 vertical slice.
+12. Run technical/UX/accessibility/offline validation.
+13. Refine the spatial model if needed.
+14. Expand carefully to the remaining stages.
+15. Integrate verified images/documents at meaningful narrative points.
+16. Integrate Đối sánh / Nối kết / Tổng hợp into the journey.
+17. Run the full test suite.
+18. Inspect desktop/tablet/mobile manually.
+19. Update Prompt Log and reference-use record.
+20. Create `CREATIVE_SPATIAL_JOURNEY_REPORT.md`.
+
+Do not stop at a plan.
+
+Do not stop at a mockup.
+
+Do not stop after building the globe.
+
+The final result must be a working, academically grounded, original creative learning product.
+
+---
+
+# FINAL DESIGN PRINCIPLE
+
+The learner should remember:
+
+- the place;
+- the historical image;
+- the moment;
+- the transition;
+- the development of thought;
+- the connection between stages.
+
+They should NOT primarily remember:
+
+- tabs;
+- cards;
+- menus;
+- source badges;
+- dashboard controls.
+
+# MORE WORLD.
+# LESS UI.
+# MORE STORY.
+# LESS DASHBOARD.
+# GEOGRAPHY SUPPORTS THE IDEA.
+# EVIDENCE CONTROLS THE STORY.

@@ -26,19 +26,29 @@ import { openingThread } from './thread';
  * screen asked for a reading commitment before it had established what the
  * product is.
  *
- * Now the first screen carries identity, one photograph, two lines of
- * introduction and one action. The Central Question keeps every character of
- * its approved wording and gets a section of its own directly below, where it
- * has the room to be read as a question rather than skimmed as a wall.
+ * Now the first screen carries identity, two lines of introduction, one action,
+ * and a documentary position. That position held a photograph from 17-9-2026
+ * until 19-9-2026, when the record moved to stage 3, where its own date puts it
+ * (`SC-24`); it is now declared and visibly blocked, because a slot that
+ * disappears takes its gap with it. The Central Question keeps every character
+ * of its approved wording and gets a section of its own directly below, where
+ * it has the room to be read as a question rather than skimmed as a wall.
  *
  * Nothing about its approval state is softened: the status is one control away
  * on the same block, exactly as before.
  */
 
+/*
+  * The fallback exists only so a missing declaration cannot crash the opening.
+  * Its role text must match the declared slot's, or a dropped declaration would
+  * silently restore the pre-19-9 framing - an introductory photograph - on a
+  * screen that no longer has one. `content.test.ts` asserts the slot stays
+  * declared, so this branch should never run.
+  */
 const OPEN_SLOT = FIGURE_SLOTS.find((s) => s.id === 'FS-open') ?? {
   id: 'FS-open',
   stageId: null,
-  role: 'Ảnh dẫn nhập ở màn mở đầu.',
+  role: 'Một tư liệu mở ra CẢ hành trình, không phải tư liệu của riêng một chặng. Trống từ 19-9-2026, khi tấm ảnh ở đây chuyển sang đúng chặng mà niên đại của nó thuộc về.',
 };
 
 /**

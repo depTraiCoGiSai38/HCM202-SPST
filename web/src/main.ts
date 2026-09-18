@@ -13,6 +13,7 @@ import './styles/components.css';
 import './styles/interactive.css';
 import './styles/experience.css';
 import './styles/activities.css';
+import './styles/atlas.css';
 import './styles/presentation.css';
 
 import { PRODUCT_SUBTITLE, PRODUCT_TITLE } from './data/project';

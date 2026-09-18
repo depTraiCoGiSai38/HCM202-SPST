@@ -10,15 +10,21 @@ import { lensTrigger } from './evidence';
 /**
  * A documentary figure, or the documented absence of one.
  *
- * The product has slots for photographs and no photograph that has cleared its
- * source and usage condition. Two ways of handling that would be wrong: leaving
- * a decorative grey rectangle that looks like a loading failure, or quietly
- * rendering nothing so the gap disappears from view. The first misrepresents
- * the product, the second hides an open question.
+ * The product declares more positions for documents than it has documents that
+ * have cleared a checkable source and a usage condition. Two ways of handling
+ * the difference would be wrong: leaving a decorative grey rectangle that looks
+ * like a loading failure, or quietly rendering nothing so the gap disappears
+ * from view. The first misrepresents the product, the second hides an open
+ * question.
  *
- * So a slot with nothing in it renders one quiet line saying the position is
- * blocked and why, in the same amber the product already uses for "not yet
- * evidenced", with the full record a click away. It is small enough not to
+ * So a PRIMARY slot with nothing in it renders one quiet line saying the
+ * position is blocked and why, in the same amber the product already uses for
+ * "not yet evidenced", with the full record a click away. A SUPPORTING slot is
+ * deliberately different: `supportFor()` in `stagePage.ts` renders it only once
+ * it is filled, because a blocked line dropped into the middle of the reading
+ * would repeat the gap rather than report it. An unfilled supporting position is
+ * therefore invisible in the stage and visible in the register on `#/kiem-chung`.
+ * `FS-ky-4-b` is currently in exactly that state. It is small enough not to
  * occupy the reading, and present enough that nobody ships it by accident.
  *
  * When a record is cleared and added to `FIGURES`, the same call renders the
@@ -56,13 +62,49 @@ function picture(fig: DocumentaryFigure): HTMLElement {
   return img;
 }
 
-function sourceItems(fig: DocumentaryFigure): { label: string; value: string; tone: 'plain' | 'locator' | 'status' | 'caution' }[] {
+function sourceItems(fig: DocumentaryFigure): { label: string; value: string; tone: 'plain' | 'locator' | 'status' | 'caution' | 'decision' }[] {
   return [
     { label: 'Nơi giữ tài liệu', value: fig.sourceName, tone: 'plain' },
     { label: 'Trang gốc', value: fig.sourceUrl, tone: 'locator' },
     { label: 'Ghi nguồn bắt buộc', value: fig.credit, tone: 'locator' },
-    { label: 'Điều kiện sử dụng, nguyên văn', value: fig.rights, tone: 'plain' },
+    /*
+     * Reuse, as four rows rather than one.
+     *
+     * A single row used to carry the holder's rights label, the holder's reuse
+     * terms and a conclusion, which let the first be read as settling the last.
+     * For a photograph they are not the same question: the holder speaks for
+     * the copy it digitised, not for the person who took the picture. Split on
+     * 19-9-2026 so that a reader meets the unresolved one on its own line.
+     */
+    { label: 'Nơi giữ tuyên bố gì', value: fig.holderRightsStatus, tone: 'plain' },
+    { label: 'Điều kiện dùng lại, nguyên văn', value: fig.reuseCondition, tone: 'plain' },
     { label: 'Trang đã đọc điều kiện', value: fig.rightsUrl, tone: 'locator' },
+    {
+      label: 'Ghi người tạo lập in trên hiện vật',
+      // A missing credit line is stated as a missing credit line. It is not
+      // evidence that nobody made the thing.
+      value:
+        fig.printedCreatorCredit ??
+        'Hiện vật không in dòng ghi NGƯỜI CHỤP nào. Chữ ký hoặc tên tác giả VĂN BẢN in trên hiện vật, nếu có, nằm ở dòng “Nhận diện người trong ảnh” và ở “Quyền của người tạo lập” — không phải ở dòng này.',
+      tone: 'plain',
+    },
+    { label: 'Quyền của người tạo lập', value: fig.creatorRightsCheck, tone: 'caution' },
+    /*
+     * The tone is chosen from the value, not fixed on the row.
+     *
+     * Every `status` row is painted in the same amber, which is right when all
+     * of a row's values are unresolved states. This row is not like that: it
+     * carries either `USE` or `USE WITH CAUTION`, and painting them identically
+     * would erase the one distinction the row exists to make - in the only
+     * place a stage reader ever meets it. So an open decision takes the amber
+     * and a settled one takes the quiet marker face, which is how the register
+     * table on the verification page already reads.
+     */
+    {
+      label: 'Quyết định dùng lại',
+      value: fig.reuse,
+      tone: fig.reuse.includes('CAUTION') ? 'status' : 'decision',
+    },
     { label: 'Chú thích', value: fig.caption, tone: 'plain' },
     // The six checks the brief requires to be maintained separately, each as its
     // own row: identity, event/date, location, source, rights, offline. Merging
@@ -102,7 +144,7 @@ function blocked(role: string): HTMLElement {
           {
             label: 'Vì sao trống',
             value:
-              'Chưa có ảnh nào vừa mở được trang nguồn để kiểm, vừa có điều kiện sử dụng cho phép dùng lại, VÀ có căn cứ gắn vào đúng chặng này. Một ảnh đã qua được nguồn và điều kiện sử dụng và đang ở màn mở đầu, nhưng sự kiện trong bản ghi của nó nằm ngoài phạm vi trích đoạn, nên nó không được gắn vào chặng nào. Những nguồn đã kiểm và kết quả từng nguồn nằm ở trang Kiểm chứng.',
+              'Vị trí này còn trống vì chưa có tài liệu nào vừa mở được trang bản ghi của cơ quan giữ hiện vật để kiểm, vừa đọc được nguyên văn điều kiện sử dụng, VÀ có căn cứ gắn vào đúng chặng này. Ba điều kiện ấy phải cùng đạt; thiếu một là chưa điền. Trang Kiểm chứng in đủ năm điều kiện, toàn bộ các nguồn đã mở và kết quả của từng nguồn. Ở đó không phải vị trí trống nào cũng có một dòng lý do của riêng nó: hai vị trí của chặng 4 có, ghi ở SC-25; những vị trí còn lại chỉ có bản ghi chung của các lần kiểm nguồn.',
             tone: 'caution',
           },
           ...FIGURE_REQUIREMENTS.map((r, i) => ({

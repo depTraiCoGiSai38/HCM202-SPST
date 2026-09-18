@@ -1,0 +1,882 @@
+PROMPT NGUYÊN VĂN — P-IMG-04
+Ngày dùng: 18-9-2026
+Công cụ: Claude Code (Claude Opus 5, cửa sổ ngữ cảnh 1M)
+Lưu đầy đủ, không cắt, không sửa chính tả, không dịch.
+
+================================================================================
+
+This is a NEW session. Do not rely on previous conversation context.
+Treat the repository, current reports, and source records as the source of truth.
+
+# HISTORICAL IMAGE INTEGRATION SPRINT
+## HÀNH TRÌNH TƯ TƯỞNG — Documentary Visual Layer
+
+The Creative Spatial Journey implementation is already complete.
+
+This is NOT another general UX/UI redesign.
+
+Your task now is to strengthen the existing product with authentic historical
+imagery, especially photographs of Hồ Chí Minh and relevant documentary
+materials, without breaking the current spatial-learning architecture.
+
+---
+
+# 0. READ CURRENT PROJECT STATE FIRST
+
+Before changing anything:
+
+1. Read `AGENTS.md` completely.
+2. Read `CLAUDE.md` if present.
+3. Read the newest active project context completely.
+4. Read:
+   - `CREATIVE_SPATIAL_JOURNEY_REPORT.md`
+   - `SPATIAL_JOURNEY_DESIGN_DECISION.md`
+   - `REFERENCE_ANALYSIS.md`
+   - current Design Decision Records
+   - current image/source verification records
+   - current Prompt Logs related to UX, images, and source migration
+5. Inspect `git status`.
+6. Run the current product before editing.
+7. Inspect the actual rendered experience on:
+   - desktop
+   - tablet
+   - mobile
+
+Do not redesign blindly.
+
+---
+
+# 1. CURRENT CREATIVE ARCHITECTURE IS BASELINE
+
+The current Creative Spatial Journey architecture is now the baseline.
+
+Preserve:
+
+- SVG spatial atlas / plate
+- spatial nodes
+- place register
+- current navigation
+- current simplified UX
+- current stage structure
+- current source/evidence system
+- current offline support
+- current accessibility fallback
+- presentation mode
+- reduced motion support
+- current tests
+
+Do NOT replace the atlas architecture.
+
+Do NOT redesign the whole product again.
+
+This sprint is specifically:
+
+# VISUAL ASSET RESEARCH + DOCUMENTARY IMAGE INTEGRATION
+
+The current report states that most figure slots are still unfilled.
+
+Your job is to reduce that gap with authentic historical material.
+
+---
+
+# 2. MANDATORY DESIGN SKILL
+
+Invoke and actively use:
+
+`ui-ux-pro-max`
+
+Read the complete `SKILL.md`.
+
+Use it specifically to review:
+
+- image hierarchy
+- visual rhythm
+- documentary storytelling
+- caption density
+- source visibility
+- mobile image layout
+- cognitive load
+- image/map balance
+- accessibility
+- responsive behavior
+
+Do NOT use this sprint as an excuse to reopen unrelated UX decisions.
+
+---
+
+# 3. REFERENCE REPOSITORY
+
+The reference repository already exists locally at:
+
+`_reference/creative_product_HCM202`
+
+It is already git-ignored.
+
+Do NOT clone it again.
+
+Treat it as:
+
+# READ-ONLY RESEARCH MATERIAL
+
+The user specifically wants useful historical images from this repository to be
+reused where academically appropriate.
+
+You may inspect:
+
+- `public/`
+- media/image directories
+- JSON/data files
+- captions
+- image references
+- source metadata
+- credits
+- event metadata
+- any provenance notes
+
+---
+
+# 4. VERY IMPORTANT DISTINCTION
+
+The reference repository is NOT automatically the historical source.
+
+It may act as:
+
+1. an image discovery source;
+2. a local copy source;
+3. a source of provenance information if that provenance is actually recorded.
+
+Do NOT automatically mark an image:
+
+`VERIFIED`
+
+just because it exists in the repository.
+
+For every image, inspect whether provenance exists.
+
+If the reference repo already records:
+
+- original institution/archive
+- original source URL
+- caption
+- event/date
+- location
+- creator/author
+- rights/usage conditions
+
+reuse that provenance.
+
+Do not re-research from zero unnecessarily.
+
+---
+
+# 5. DO NOT CITE GITHUB AS THE HISTORICAL SOURCE
+
+Wrong:
+
+`Nguồn: GitHub / creative_product_HCM202`
+
+Better:
+
+`Nguồn: [original archive / institution]`
+
+Optionally record internally:
+
+`Discovered via: PhamXuanKhang/creative_product_HCM202`
+
+GitHub is an intermediary.
+
+The final historical provenance should point to the original archive or source
+whenever possible.
+
+---
+
+# 6. PRIMARY GOAL
+
+Actively inspect the image collection in:
+
+`_reference/creative_product_HCM202`
+
+before searching the wider web.
+
+The user wants the product to become substantially more visual.
+
+Target for EACH of the five stages:
+
+## PRIMARY
+1 strong authentic photograph of Hồ Chí Minh appropriate to that stage
+
+## SUPPORTING
+1–3 relevant authentic visuals where available:
+
+- Hồ Chí Minh photograph
+- historical location
+- archival document
+- newspaper
+- organization
+- event
+- historical context
+- map/documentary material
+
+Do NOT add images just to fill space.
+
+---
+
+# 7. VISUAL TARGET AFTER THIS SPRINT
+
+For each stage, aim for this rhythm:
+
+```text
+STAGE ENTRANCE
+→ one strong authentic Hồ Chí Minh portrait / visual anchor
+
+SPATIAL CONTEXT
+→ existing atlas plate
+
+STORY NODE
+→ relevant historical photo / place / document
+
+TURNING POINT
+→ strongest available verified archival visual
+
+REFLECTION
+→ quieter layout, usually no additional large image
+```
+
+Do NOT stack:
+- atlas
+- primary portrait
+- multiple supporting images
+- source UI
+all above the fold.
+
+The atlas explains:
+WHERE / WHEN
+
+The archival image explains:
+HUMAN / EVENT / DOCUMENTARY CONTEXT
+
+The academic narrative explains:
+WHAT CHANGED / WHY IT MATTERS
+
+# 8. CURRENT FIGURE ARCHITECTURE
+
+Inspect the current implementation, especially:
+- web/src/data/figures.ts
+- web/src/components/figure.ts
+- web/src/components/stagePage.ts
+- web/src/components/atlas.ts
+- web/src/components/verifyPage.ts
+- image-related CSS
+- image/source register
+- image-related unit/e2e tests
+- offline image bundling
+
+Do not assume the previous slot count.
+Derive the actual current figure-slot model from code.
+
+Before integration, produce:
+
+IMAGE INTEGRATION AUDIT
+
+Include:
+1. all declared figure slots;
+2. all currently filled slots;
+3. all blocked slots;
+4. where primary images render;
+5. where supporting images render;
+6. current provenance fields;
+7. outdated documentation/tests if any;
+8. exact files that must change.
+
+Then continue directly into implementation.
+
+# 9. DO NOT TURN THE PRODUCT INTO A GALLERY
+
+The product must remain a learning journey.
+
+Avoid:
+- giant image grids
+- photo carousels just to fit more images
+- repeated portrait cards
+- generic galleries
+- multiple competing full-width images
+- decorative images with no academic role
+
+Every image must answer:
+Why is this image here?
+
+Valid reasons:
+- establishes historical context
+- identifies a documented person
+- illustrates a verified event
+- shows a verified place
+- anchors a turning point
+- introduces a document
+- helps the learner interpret the stage
+
+Invalid reason:
+the page needs more images
+
+# 10. PRIMARY IMAGE RULE
+
+Each stage should AIM for one primary authentic image of Hồ Chí Minh.
+
+The primary image acts as the stage's emotional/documentary visual anchor.
+
+But accuracy overrides symmetry.
+
+If no portrait can be traced and appropriately connected to that stage:
+
+DO NOT use an unrelated portrait.
+
+Fallback hierarchy:
+1. authentic portrait with strong stage relevance
+2. authentic archival document
+3. authenticated place/context image
+4. strong typographic/date composition
+
+Record the unresolved image slot truthfully.
+
+# 11. SUPPORTING IMAGE RULE
+
+Supporting images should appear near the content they actually explain.
+
+Do NOT place all supporting images in the stage entrance.
+
+Possible anchors:
+- spatial node
+- passage
+- turning point
+- quotation
+- document discussion
+
+If current architecture does not support semantic placement cleanly:
+extend it minimally.
+
+Do not rewrite the application.
+
+# 12. IMAGE RESEARCH ORDER
+
+For every stage, use this order:
+
+FIRST
+Search the local reference repository.
+
+SECOND
+Inspect the original source metadata recorded by that repository.
+
+THIRD
+Use our existing approved image/source research.
+
+FOURTH
+Perform new archival research only if necessary.
+
+Do not spend the whole sprint searching the web while useful traceable assets
+already exist locally.
+
+# 13. IMAGE RESEARCH PROTOCOL
+
+For every candidate image, establish these axes separately.
+
+A. SUBJECT IDENTITY
+Who does the original source say is in the image?
+Do not infer identity from filename alone.
+
+B. EVENT / DATE
+What event/date does the source actually state?
+Do not infer event from clothing, appearance, or nearby text.
+
+C. LOCATION
+What place does the source actually state?
+Do not infer location from event knowledge alone.
+
+D. ORIGINAL SOURCE
+Record:
+- institution/archive
+- item page
+- collection/identifier if available
+- original URL
+
+Search-result pages are not enough.
+
+E. RIGHTS / USAGE
+Record the actual usage information.
+Do not convert:
+no reuse information found
+into:
+reuse prohibited
+Those are different states.
+
+F. OFFLINE PACKAGING
+Confirm the accepted image can be stored locally and included in the offline
+build.
+
+# 14. IMAGE STATUS MODEL
+
+Use truthful statuses.
+
+VERIFIED
+Only when the image clears all evidence axes required by the project.
+
+PARTIALLY VERIFIED
+Use when some axes are established but another remains unresolved.
+Example:
+- identity confirmed
+- original source confirmed
+- exact event/date still uncertain
+
+NEED VERIFICATION
+Use when provenance is incomplete.
+
+REJECTED
+Use when:
+- source cannot be traced
+- image context conflicts with the intended stage
+- usage cannot support inclusion
+- the image would mislead the academic narrative
+
+Do not flatten these into one boolean.
+
+# 15. STAGE RELEVANCE OVERRIDES AUTHENTICITY
+
+A photograph may be authentic and still be inappropriate for a stage.
+
+Always distinguish:
+Is this image authentic?
+from:
+Is this image appropriate for THIS stage/event?
+
+Both must pass.
+
+Do not use:
+- a 1921 photo for a 1920 event
+- a later portrait merely because Hồ Chí Minh appears in it
+- a photo from another location to visually represent a specific place
+
+unless the UI explicitly frames it only as a portrait and does not imply
+event/date equivalence.
+
+# 16. REFERENCE REPOSITORY IMAGE REUSE
+
+Historical images from the reference repository MAY be reused where provenance
+and usage conditions support it.
+
+But DO NOT copy:
+- its UI layout
+- its gallery composition
+- its captions verbatim
+- its component code
+- its CSS
+- its transitions
+- its data structure
+- its image presentation style
+
+Reuse historical source material.
+Do not reuse the design.
+
+# 17. IMPORT WORKFLOW
+
+For every accepted image:
+1. identify the reference-repo asset;
+2. inspect its associated metadata;
+3. identify the original historical source;
+4. verify stage relevance;
+5. verify usage condition;
+6. copy/download the highest appropriate original;
+7. store the documentary original in the existing archival directory;
+8. compute SHA-256;
+9. create a web derivative only if needed;
+10. store the derivative in the existing local web image directory;
+11. update the project figure data;
+12. update the Image Source Register;
+13. record the original source;
+14. optionally record:
+       Discovered via: creative_product_HCM202
+15. ensure offline packaging works.
+
+Do not hotlink GitHub assets in the final product.
+
+# 18. IMAGE PROCESSING
+
+Allowed:
+- resize
+- compression
+- format conversion
+- non-destructive optimization
+
+Avoid cropping by default.
+
+If cropping is necessary:
+- verify usage allows it
+- ensure it does not alter documentary meaning
+- record the decision
+
+Do NOT:
+- generatively restore
+- remove documentary markings
+- alter faces
+- alter historical content
+
+# 19. HISTORICAL PORTRAIT SAFETY
+
+Never:
+- AI-generate Hồ Chí Minh
+- recreate missing historical scenes
+- face-swap
+- morph faces
+- animate eyes
+- animate mouth
+- lip-sync
+- synthesize voice
+- AI-colorize
+- fabricate footage
+- make the subject perform actions not present in the source
+
+Authentic archival material remains intact.
+
+# 20. MOTION AROUND IMAGES
+
+Allowed presentation motion:
+- frame reveal
+- opacity reveal
+- document slide-in
+- map-to-image transition
+- subtle static-container movement
+- line connection
+- caption reveal
+- contextual mask reveal
+
+Do NOT animate the historical subject itself.
+
+Motion must remain optional.
+
+Under:
+prefers-reduced-motion
+all content must still be fully visible and usable.
+
+# 21. MAP + IMAGE RELATIONSHIP
+
+Where an image corresponds to a verified spatial node:
+connect them carefully.
+
+Desired flow:
+MAP NODE
+→ STORY CONTEXT
+→ AUTHENTIC IMAGE
+→ EVENT / DOCUMENT
+→ ACADEMIC DEVELOPMENT
+→ SOURCE
+
+Not:
+MAP
+→ RANDOM PHOTO
+
+The map cannot establish image provenance.
+The image cannot establish map provenance.
+
+Each remains separately verified.
+
+# 22. STAGE 5 SPECIAL CASE
+
+The current Creative Spatial Journey report states that Stage 5 has little or no
+point-level drawable geography from the assigned excerpt.
+
+Do NOT treat that as a failure.
+
+For Stage 5, documentary imagery may carry more visual weight than the atlas.
+
+Use verified:
+- portraits
+- documents
+- historical materials
+- relevant context
+where appropriate.
+
+Do not invent spatial points simply to make the map look busier.
+
+# 23. SOURCE LABELS
+
+Keep public textbook citations on:
+Giáo trình Tư tưởng Hồ Chí Minh - 2019
+
+Do not reintroduce:
+- C2 PDF
+- C2-02
+- 2021 textbook label
+
+Historical image provenance is separate from textbook citation.
+Do not collapse them.
+
+# 24. UX RULE
+
+Preserve:
+MORE EXPERIENCE, LESS INTERFACE.
+
+Images should reduce text fatigue.
+They must not create new clutter.
+
+At any major state, prefer:
+- 1 primary visual
+- 1 primary idea
+- 1 primary action
+
+Secondary metadata should remain contextual.
+
+# 25. MOBILE
+
+On mobile:
+prefer:
+ATLAS CONTEXT
+↓
+PRIMARY IMAGE
+↓
+PERIOD / LOCATION
+↓
+STORY
+↓
+SUPPORTING IMAGE/DOCUMENT
+↓
+EVIDENCE
+↓
+NEXT
+
+Do not render a desktop image composition at smaller scale.
+Avoid horizontal image strips.
+Avoid carousels that require precision interaction.
+
+# 26. ACCESSIBILITY
+
+For every accepted image:
+- meaningful alt
+- no redundant alt where caption already fully serves the same purpose
+- keyboard-accessible enlargement if enlargement exists
+- visible focus
+- captions readable at 200% zoom
+- source links wrap safely
+- image does not convey academic meaning through visual content alone
+
+If an image is decorative only:
+mark it appropriately.
+But historical documentary images will usually not be decorative.
+
+# 27. IMAGE ENLARGEMENT
+
+If the current product supports Xem lớn:
+preserve it.
+
+Ensure:
+- button semantics
+- keyboard open/close
+- Escape closes
+- focus returns
+- no background focus leak
+- mobile image fits viewport
+- high-resolution image does not cause layout overflow
+
+Do not add a complex gallery viewer unless clearly necessary.
+
+# 28. DOCUMENTATION DRIFT
+
+Audit:
+- image slot counts
+- figure status counts
+- source register
+- tests
+- reports
+
+If documentation no longer matches code:
+fix the documentation.
+
+Do not silently erase old evidence.
+Record corrections.
+
+# 29. CREATE REFERENCE IMAGE AUDIT
+
+Before integration create:
+
+REFERENCE_IMAGE_AUDIT.md
+
+For every potentially useful image:
+
+Asset | Reference repo path | Stage candidate | Original source | Identity |
+Event/date | Location | Rights | Decision
+
+Decision must be one of:
+- USE
+- USE WITH CAUTION
+- NEED VERIFICATION
+- REJECT
+
+Do not stop after creating the audit.
+Proceed to integrate all USE images that fit the product.
+
+# 30. TESTS
+
+Do NOT weaken provenance tests.
+
+Update old fixed-count tests honestly as images are added.
+
+Preserve or add tests for:
+- original-source URLs
+- no search-result URLs
+- provenance fields
+- separate identity/date/location/rights/offline axes
+- local image files
+- visible attribution
+- alt text
+- enlargement keyboard behavior
+- reduced motion
+- offline decoding
+- truthful verification register
+- no fabricated/AI historical imagery
+
+Avoid brittle tests such as:
+exactly 1 image must exist
+if the correct number is data-driven.
+
+# 31. REQUIRED VALIDATION
+
+Run the actual supported project equivalents of:
+
+npm run typecheck
+npm run lint
+npm run test
+npm run build
+npm run e2e
+npm run build:offline
+npm run check:offline
+
+Also run the current UX/accessibility tooling where available:
+- density audit
+- contrast audit
+- 200% text zoom
+- mobile screenshots
+- reduced-motion checks
+
+Do not fabricate results.
+
+# 32. MANUAL RENDER CHECK
+
+Inspect the real product at:
+- 1440px desktop
+- ~768px tablet
+- 375–390px mobile
+
+Review:
+- opening
+- overview
+- all five stage entrances
+- atlas + portrait balance
+- at least one story node per stage where imagery exists
+- turning-point image
+- source drawer
+- enlarged image state
+- verification page
+- offline build
+- presentation mode
+
+# 33. UI-UX-PRO-MAX FINAL REVIEW
+
+After integration, run ui-ux-pro-max again.
+
+Audit:
+- whether images aid learning
+- image hierarchy
+- visual rhythm
+- text/image balance
+- atlas/image competition
+- caption readability
+- source visibility
+- mobile density
+- accessibility
+- stage-to-stage consistency
+
+Do not redesign unrelated components unless image integration exposes a real
+issue.
+
+# 34. FINAL REPORT
+
+Create:
+
+HISTORICAL_IMAGE_INTEGRATION_REPORT.md
+
+Include:
+1. Starting state
+2. Reference image audit
+3. Images reused from the reference repo
+4. Original archive/source for each accepted image
+5. Stage matrix
+For every stage:
+- primary visual
+- supporting visuals
+- narrative role
+- source
+- verification status
+- integrated location
+6. Rejected candidates
+and why.
+7. Files added
+Original + derivative + SHA-256.
+8. Architecture changes
+Only those necessary for image placement.
+9. UX impact
+Technical/design observations only.
+Do NOT claim users enjoy or understand more.
+10. Offline/accessibility behavior
+11. Tests actually run
+12. Remaining blocked figure slots
+13. Human verification still needed
+
+# 35. PROMPT LOG
+
+Record this entire prompt in the required AI Prompt Log.
+Do not rewrite previous Prompt Logs.
+
+# 36. FINAL STATUS
+
+Do NOT declare academic completion.
+
+Use:
+
+HISTORICAL IMAGE INTEGRATION IMPLEMENTED — REQUIRES HUMAN VERIFICATION AND REAL
+PROJECT EVIDENCE
+
+unless the project's formal completion gate legitimately says otherwise.
+
+# 37. EXECUTION ORDER
+
+Follow this order:
+1. Read governance/context/reports.
+2. Inspect current rendered product.
+3. Invoke ui-ux-pro-max.
+4. Audit current figure architecture.
+5. Inspect _reference/creative_product_HCM202.
+6. Create REFERENCE_IMAGE_AUDIT.md.
+7. Trace original provenance for useful assets.
+8. Reject unsuitable/misleading images.
+9. Integrate all accepted images.
+10. Place primary and supporting visuals at meaningful narrative points.
+11. Preserve atlas architecture.
+12. Update documentation/tests.
+13. Build offline.
+14. Run full validation.
+15. Inspect desktop/tablet/mobile.
+16. Run final ui-ux-pro-max review.
+17. Create HISTORICAL_IMAGE_INTEGRATION_REPORT.md.
+
+Do not stop after finding images.
+Do not stop after writing an audit.
+Do not stop after filling one stage.
+
+Integrate every suitable, traceable image that clears the project's evidence
+requirements.
+
+MORE DOCUMENTARY EVIDENCE.
+MORE HUMAN CONTEXT.
+LESS DECORATION.
+NO FAKE HISTORY.
+KEEP THE MAP.
+LET THE IMAGES CARRY THE STORY.
+
+================================================================================
+HẾT PROMPT NGUYÊN VĂN

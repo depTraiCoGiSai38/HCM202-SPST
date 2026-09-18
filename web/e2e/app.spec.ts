@@ -418,8 +418,17 @@ test('the evidence magnifier carries the printed locator, unexpanded', async ({ 
   // The stage's location in the excerpt and its verification status are both
   // reachable without leaving the stage.
   await expect(lens.getByText('NEED VERIFICATION', { exact: false })).toBeVisible();
-  // Locator L6 must still show the unexpanded abbreviation.
-  await expect(lens.getByText('Sđd', { exact: false }).first()).toBeVisible();
+  /*
+   * Locator L6 must still show the unexpanded abbreviation - in the form the
+   * 2019 edition prints it.
+   *
+   * CORRECTED 18-9-2026: this asserted `Sđd`, the NORMALISED form, which
+   * AGENTS.md says must never stand in for what the edition prints. It passed,
+   * but only off L6's caution sentence, which names both forms in order to
+   * contrast them - so it would have gone on passing if the printed form had
+   * been silently normalised, which is the one thing it exists to prevent.
+   */
+  await expect(lens.getByText('Sdd', { exact: false }).first()).toBeVisible();
 
   await page.keyboard.press('Escape');
   await expect(lens).toBeHidden();

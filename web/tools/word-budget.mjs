@@ -37,6 +37,64 @@ async function count(label, route, prep) {
       '.turn__label', '.lens-trigger', '.slide__kicker', '.slide__marker', '.present__bar',
       '.present__foot', '.walk__apparatus', '.walk__context', '.walk__expand',
       '.turn__shift-label', '.turn__cross',
+      // Same category as `.station__marker`: an apparatus label, not reading.
+      '.station__where',
+      /*
+       * A figure's required credit line, its status chip, its two controls, and
+       * the one-line note a blocked position shows. Added 18-9-2026.
+       *
+       * These are still counted and still printed: they move from the `prose`
+       * column to the `signage` column, they do not vanish. The reason is the
+       * one that already puts `.station__where` here - apparatus that says
+       * where a thing came from is not the reading this budget exists to
+       * protect. Counting a licence-mandated attribution line as story prose
+       * would make the budget report a worse number every time the product got
+       * more honest about its sources, which is the wrong incentive.
+       *
+       * `.figure__cap-text` is DELIBERATELY NOT in this list. The caption is a
+       * sentence somebody reads, so it goes on counting against the reading
+       * budget; only the machinery around it moves. Drawing the line anywhere
+       * looser would be tuning the measurement to flatter the product.
+       *
+       * WHAT THIS CHANGED, measured after the 19-9 correction below: NOTHING.
+       * Every row reads exactly as it did before these three selectors were
+       * added, because a figure's credit, status chip and controls always sit
+       * below the first viewport on the measured routes. The three entries earn
+       * their place by being correct, not by moving a number.
+       *
+       * TWO EARLIER DRAFTS OF THIS LIST DID MOVE NUMBERS, and both are recorded
+       * because each was the measurement flattering the product:
+       *   1. an 18-9 draft also had `.figure__cap`, which pulled the caption
+       *      SENTENCE across and moved the opening from `over, close` to `OK`;
+       *   2. an 18-9 draft also had `.figure__blocked-line`, which looked
+       *      harmless while the opening held a photograph and became a lie on
+       *      19-9 when the opening got a blocked line instead - it moved the
+       *      opening to `OK` again, and it had already been quietly moving
+       *      `stage 2 - passage stop` from `prose 141` to `prose 121`, a shift
+       *      the 18-9 notes attributed to the credit/status/controls entries.
+       * Both were reverted. The opening is `over, close` at prose 104 and stage
+       * 2's passage stop is `OVER` at prose 141, which is where they belong.
+       */
+      '.figure__cap-credit', '.figure__cap-status', '.figure__acts',
+      /*
+       * NARROWED 19-9-2026, after the measurement caught itself flattering the
+       * product for the third time.
+       *
+       * This entry used to be the whole `.figure__blocked-line`, which holds two
+       * different things: the `CHƯA CÓ NGUỒN` badge, which is signage, and the
+       * role sentence, which is a sentence somebody reads. While the opening
+       * carried a photograph that did not matter, because no blocked line was in
+       * its first viewport. When the photograph moved to stage 3 on 19-9 the
+       * opening got a blocked line, its ~28-word role went into the signage
+       * column, and the opening's verdict read `OK` on a classification rather
+       * than on less reading.
+       *
+       * Only the badge is signage now, and it needs no entry here at all:
+       * `.station__flag` is already in this list above. So the line is simply
+       * gone, and the role sentence counts as prose, which is what it is. If
+       * that pushes the opening back over budget, the answer is to cut the
+       * sentence, not to move the line again.
+       */
     ];
 
     let prose = 0;

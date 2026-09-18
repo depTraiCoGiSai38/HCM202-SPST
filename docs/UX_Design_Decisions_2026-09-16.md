@@ -6,6 +6,12 @@
 >
 > Bản rút gọn của `DD-1` đến `DD-10` cũng hiển thị ngay trong sản phẩm, ở màn `#/kiem-chung`,
 > mục “Căn cứ của các lựa chọn thiết kế”.
+>
+> *(Đính chính 18-9-2026: tệp này chỉ ghi `DD-1`–`DD-10`, là các quyết định của phiên 16-9-2026.*
+> *`DESIGN_DECISIONS` trong `web/src/data/project.ts` nay có `DD-1`–`DD-20` và **cả hai mươi** đều*
+> *hiển thị trên `#/kiem-chung`. Căn cứ của `DD-11`–`DD-20` nằm trong các báo cáo của những đợt sau*
+> *— `UX_REDESIGN_REPORT.md`, `CREATIVE_SPATIAL_JOURNEY_REPORT.md`,*
+> *`HISTORICAL_IMAGE_INTEGRATION_REPORT.md` — chứ không nằm ở tệp này.)*
 
 ---
 
@@ -17,7 +23,7 @@ Vấn đề → kết quả/rule của skill → thay đổi thực hiện → c
 |---|---|---|---|---|
 | 1 | Cần một hướng thiết kế cho toàn sản phẩm để đối chiếu với hiện trạng | `--design-system --variance 6 --motion 4 --density 4`. Trả về mẫu `Scroll-Triggered Storytelling`; phong cách `Minimalism`; bảng màu đen/trắng; phông `Inter + Playfair Display`; preset `Stagger List` | **Loại bỏ phần phông và màu.** Giữ phông `Be Vietnam Pro` + `Source Serif 4` đang dùng: `Playfair Display` không có bộ dấu tiếng Việt đầy đủ, mà sản phẩm này đặt dấu tiếng Việt lên hàng đầu. Giữ bảng màu giấy cũ vì `--son` đang mang nghĩa xác định (bước ngoặt, vị trí hiện tại, focus) mà bảng đen/trắng sẽ xoá mất. **Giữ** hai ghi chú trong mẫu: phải có chỉ báo tiến trình, và phải đọc được khi tắt hiệu ứng cuộn | Đọc `design-system/hanh-trinh-tu-tuong/MASTER.md` trước khi sửa. **Không chạy `--force`**, không ghi đè tài liệu thiết kế. Không đổi một token màu hay phông nào |
 | 2 | Nội dung một chặng bị khoá sau 11–20 lần bấm, không có bản đồ, không đọc liền được | `"multi-step progress back navigation" --domain ux` → `Progress Indicators`: hiện chỉ báo bước cho quy trình nhiều bước | Thay bộ đếm trần `1 / 11` bằng thanh các phần của chặng (Bối cảnh · Chuyển biến · Bước ngoặt · Nguyên văn · Ranh giới) kèm số nhịp từng phần và phần đang đứng; thêm chế độ **Đọc liền mạch** dựng đúng các nhịp ấy trên một trang | Kiểm thử trình duyệt `guidance.spec.ts` đối chiếu số trạm ở hai chế độ, kiểm tra thanh phần đổi trạng thái khi nhảy, và kiểm tra bước ngoặt vẫn phải mở ra chứ không hiện sẵn |
-| 3 | Ghép sai ở màn Nối kết chỉ nói “Chưa khớp”, không nói vì sao | `"error clarity recovery path" --domain ux` → `Error Recovery`: thông báo lỗi phải kèm đường ra; `Error Messages`: phải được `aria-live` đọc lên | Phản hồi nay nêu vị trí trong trích đoạn của cả hai mục đang được ghép và nhắc lại quy tắc đọc. Hai vị trí đều là dữ liệu đã lưu, không phải đáp án | `guidance.spec.ts` kiểm tra thông báo có chứa vị trí `C2 PDF` và lựa chọn đang giữ không bị xoá. `aria-live` vốn đã có trên `.join__status` |
+| 3 | Ghép sai ở màn Nối kết chỉ nói “Chưa khớp”, không nói vì sao | `"error clarity recovery path" --domain ux` → `Error Recovery`: thông báo lỗi phải kèm đường ra; `Error Messages`: phải được `aria-live` đọc lên | Phản hồi nay nêu vị trí trong trích đoạn của cả hai mục đang được ghép và nhắc lại quy tắc đọc. Hai vị trí đều là dữ liệu đã lưu, không phải đáp án | `guidance.spec.ts` kiểm tra thông báo có chứa vị trí trang in và lựa chọn đang giữ không bị xoá. `aria-live` vốn đã có trên `.join__status`. ⚠️ *Đính chính 18-9-2026: dòng này viết ngày 16-9, khi nguồn học thuật nền còn là `C2-02.pdf`. Sau đợt chuyển nguồn ngày 17-9, phép thử kiểm chuỗi `tr. ` (`guidance.spec.ts:248`), và trong tệp ấy **không còn chuỗi `C2` nào**. Nhãn `C2 PDF` là nhãn định vị đã nghỉ và không được dùng làm trích dẫn công khai.* |
 | 4 | Hoạt động kéo thả cần phương án bấm và bàn phím | `"dragging movements alternative" --domain ux` → WCAG 2.2 AA: mọi thao tác kéo phải có phương án một con trỏ và bàn phím | **Không phải sửa.** Ba hoạt động vốn đã dùng bấm/chọn, không dùng kéo thả. Ghi lại như một điều kiện phải giữ | `keyboard.spec.ts` sẵn có đã đi hết hai hoạt động bằng bàn phím; đã chạy lại và vẫn xanh |
 | 5 | Màn hình hiện tại không được đánh dấu trong điều hướng | `"empty state guidance action" --domain ux` → `Active State`: vị trí hiện tại phải được đánh dấu rõ | Bốn mục mới trong thanh chỉ dẫn dùng `aria-current="page"`, đánh dấu bằng cả độ đậm và một đường viền, không chỉ bằng màu | `guidance.spec.ts` kiểm tra đúng một mục được đánh dấu và dấu ấy đi theo màn hình |
 | 6 | Kích thước vùng bấm | `"web target size pointer" --domain ux` → `Target Size (Minimum)`: web cần 24 CSS px, không áp dụng con số 44pt của iOS làm chuẩn web | Mọi nút mới đặt `min-block-size: 2.75rem`, vượt xa mức tối thiểu | Kiểm thử sẵn có `interactive controls meet the 44px touch target minimum` chạy trên cả ba khung màn |
@@ -52,7 +58,7 @@ Bốn giá trị CSS được sửa vì lý do bố cục, không phải vì th�
 | `.walk__panel` | `min-block-size: 20rem` | `14rem` | 20rem để lại khoảng trống bằng khoảng hai phần năm màn hình dưới một đoạn ngắn |
 | `.thread--opening` | `clamp(9rem, 22vh, 14rem)` | `clamp(6rem, 14vh, 10rem)` | Danh sách năm chặng có tên nay gánh phần cấu trúc; sợi chỉ chỉ còn gánh phần hướng đi |
 | `.figures` | `minmax(14rem, 1fr)` | `minmax(min(14rem, 100%), 1fr)` | 14rem là sàn cứng; ở cỡ chữ lớn nó rộng hơn cả trang |
-| `.walk__phase-n` | `--ink-faint` | `--ink-soft` | Tương phản trên nền chìm chỉ đạt ≈4.2:1 |
+| `.walk__phase-n` | `--ink-faint` | `--ink-soft` | Tương phản trên nền chìm chỉ đạt ≈4.2:1 ⚠️ **Đính chính 18-9-2026 — CẦN NGƯỜI PHÂN XỬ:** lớp `.walk__phase-n` **không tồn tại** trong bất kỳ tệp CSS nào hiện nay. Ba lớp có thật là `.walk__phase-now` (không đặt màu), `.walk__phase-name` (`--ink`) và `.walk__phase-lead` — lớp gần nhất — **vẫn dùng đúng `--ink-faint`**, tức token mà dòng này nói đã được thay. Việc sửa được ghi ở đây **không kiểm chứng được trong mã**. Điều đo được hôm nay: `tools/ux-audit.mjs` chạy ngày 18-9-2026 báo “all sampled text at or above the minimum” ở cả hai chế độ sáng/tối, nên tương phản hiện **đạt**; nhưng dòng bằng chứng này không mô tả đúng thứ gì trong sản phẩm. Không tự sửa CSS theo dòng này — cần người dựng lại xem lớp nào thực sự được đổi. |
 
 ---
 

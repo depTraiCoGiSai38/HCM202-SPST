@@ -6,11 +6,13 @@ import { DESIGN_DECISIONS, INTEGRITY_STATEMENTS } from '../data/project';
 import {
   FIGURE_REQUIREMENTS,
   FIGURE_SLOTS,
+  FIGURES,
   figureFilledCount,
   figureStatus,
   slotStatus,
   SOURCING_CHECKS,
 } from '../data/figures';
+import { placeSection } from './placeRegister';
 import { chipForStatus, h } from '../lib/dom';
 import { RISK_BY_ID } from '../data/locators';
 import { motionSuppressed } from '../lib/state';
@@ -52,6 +54,8 @@ export function verifyPage(): HTMLElement {
   wrap.appendChild(h('hr', { class: 'rule' }));
   wrap.appendChild(anchor('anh-tu-lieu', figureSection()));
   wrap.appendChild(h('hr', { class: 'rule' }));
+  wrap.appendChild(anchor('noi-chon', placeSection()));
+  wrap.appendChild(h('hr', { class: 'rule' }));
   wrap.appendChild(anchor('khai-bao', statementsSection()));
   wrap.appendChild(h('hr', { class: 'rule' }));
   wrap.appendChild(anchor('thiet-ke', designSection()));
@@ -91,7 +95,7 @@ function figureSection(): HTMLElement {
       text:
         `Sản phẩm có ${String(total)} vị trí dành cho ảnh tư liệu. ` +
         `Hiện ${String(filled)} vị trí đã được điền và ${String(empty)} vị trí còn trống. ` +
-        'Một vị trí chỉ được điền khi ảnh vừa mở được trang nguồn để kiểm, vừa có điều kiện sử dụng cho phép dùng lại. ' +
+        'Một vị trí chỉ được điền khi cả năm điều kiện in ở mục “Điều kiện để mở khoá một vị trí” bên dưới cùng đạt; thiếu một là chưa điền. ' +
         'Các vị trí còn lại được để trống và ghi rõ là đang bị chặn, không dựng ảnh thay thế và không dùng AI tạo chân dung.',
     }),
   );
@@ -108,12 +112,21 @@ function figureSection(): HTMLElement {
         {},
         h('th', { text: 'Mã vị trí' }),
         h('th', { text: 'Dùng để' }),
-        h('th', { text: 'Trạng thái' }),
+        h('th', { text: 'Trạng thái chứng cứ' }),
+        /*
+         * Added 19-9-2026. Evidence status and reuse decision are two different
+         * questions and the register has to show both: a document can be fully
+         * traced and still carry an unresolved question about what may be done
+         * with it. Merging them into one column is exactly the conflation the
+         * rights fields were split to end.
+         */
+        h('th', { text: 'Quyết định dùng lại' }),
       ),
     ),
   );
   const slotBody = h('tbody', {});
   for (const slot of FIGURE_SLOTS) {
+    const fig = FIGURES.find((f) => f.id === slot.id);
     slotBody.appendChild(
       h(
         'tr',
@@ -121,6 +134,9 @@ function figureSection(): HTMLElement {
         h('td', {}, h('span', { class: 'marker', text: slot.id })),
         h('td', { text: slot.role }),
         h('td', {}, chipForStatus(slotStatus(slot.id))),
+        // An empty position has nothing to decide about yet, and says so
+        // rather than borrowing a decision it has not earned.
+        h('td', {}, fig ? chipForStatus(fig.reuse) : h('span', { class: 'muted', text: '—' })),
       ),
     );
   }
@@ -144,7 +160,7 @@ function figureSection(): HTMLElement {
         h('th', { text: 'Trang đã mở' }),
         h('th', { text: 'Loại' }),
         h('th', { text: 'Trang đó ghi gì' }),
-        h('th', { text: 'Vì sao chưa dùng được' }),
+        h('th', { text: 'Kết quả của lần kiểm' }),
       ),
     ),
   );
@@ -186,7 +202,8 @@ const SECTIONS: [string, string][] = [
   ['khong-chu-thich', 'Dẫn liệu không có chú thích số'],
   ['rui-ro', 'Sổ rủi ro niên đại và văn bản'],
   ['chu-in', 'Đối chiếu dạng chữ in'],
-  ['anh-tu-lieu', 'Ảnh tư liệu: vị trí còn trống'],
+  ['anh-tu-lieu', 'Ảnh tư liệu: vị trí đã điền và vị trí còn trống'],
+  ['noi-chon', 'Nơi chốn và toạ độ'],
   ['khai-bao', 'Sản phẩm tự khai báo'],
   ['thiet-ke', 'Căn cứ của các lựa chọn thiết kế'],
 ];
@@ -260,7 +277,17 @@ function conflictFocus(): HTMLElement {
 }
 
 function summary(): HTMLElement {
-  const sddCount = LOCATORS.filter((l) => l.printed.includes('Sđd')).length;
+  /*
+   * Counted on the form the 2019 edition actually prints.
+   *
+   * This filtered on the normalised spelling `Sđd` until 18-9-2026. No
+   * `printed` field contains that form - AGENTS.md forbids normalising it -
+   * so the filter matched nothing and this screen published `0` where the
+   * answer is 3, on the one page whose job is to state the evidence truthfully.
+   * `content.test.ts` had asserted the 3 in the data the whole time; nothing
+   * compared the data with what the register rendered.
+   */
+  const sddCount = LOCATORS.filter((l) => l.printed.includes('Sdd')).length;
   const evaluativeCount = STAGES.reduce(
     (n, s) => n + [...s.context, ...s.development].filter((p) => p.evaluative).length,
     0,
@@ -268,7 +295,7 @@ function summary(): HTMLElement {
 
   const facts: [string, string][] = [
     ['Ứng viên định vị được in trong trích đoạn', String(LOCATORS.length)],
-    ['Trong đó dùng chữ viết tắt “Sđd”, không được mở rộng', String(sddCount)],
+    ['Trong đó dùng chữ viết tắt “Sdd”, không được mở rộng', String(sddCount)],
     ['Dẫn liệu xuất bản không kèm chú thích số', String(UNNOTED_MARKERS.length)],
     ['Trích dẫn nguyên văn được tái hiện', String(ALL_QUOTATIONS.length)],
     ['Câu mang tính đánh giá, quy kết của tài liệu', String(evaluativeCount)],
@@ -408,7 +435,12 @@ function riskSection(): HTMLElement {
     h('h2', { class: 'page-head__title', text: 'Sổ rủi ro niên đại và văn bản' }),
     h('p', {
       class: 'page-head__lede',
-      text: 'Chín mục dưới đây được giữ nguyên trạng. Sản phẩm không sửa, không dời chỗ và không chuẩn hoá chúng theo trí nhớ.',
+      /*
+       * Derived, not written by hand. This read `Chín mục` while `RISKS` held
+       * eight and the list below it rendered eight rows - and the summary table
+       * on the same page already printed `RISKS.length`. One page, two counts.
+       */
+      text: `${String(RISKS.length)} mục dưới đây được giữ nguyên trạng. Sản phẩm không sửa, không dời chỗ và không chuẩn hoá chúng theo trí nhớ.`,
     }),
     list,
   );

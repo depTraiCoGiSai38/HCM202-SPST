@@ -15,7 +15,16 @@ import { ICONS, clear, h, icon } from '../lib/dom';
  * #/kiem-chung, and the trigger announces itself to assistive technology.
  */
 
-export type EvidenceTone = 'locator' | 'status' | 'caution' | 'plain';
+/*
+ * `decision` joined on 19-9-2026, with the reuse decisions.
+ *
+ * `status` paints every value in the same amber, which is right for a row whose
+ * values are all unresolved states. The reuse row is not like that: it carries
+ * either `USE` or `USE WITH CAUTION`, and painting them identically would erase
+ * the one distinction the row exists to make. `decision` is styled to carry the
+ * amber only when the value says CAUTION.
+ */
+export type EvidenceTone = 'locator' | 'status' | 'caution' | 'decision' | 'plain';
 
 export interface EvidenceItem {
   label: string;

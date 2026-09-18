@@ -29,7 +29,22 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   max-inline-size: 100%;
-  overflow-wrap: anywhere;
+  /*
+   * Wrap between words, not inside them.
+   *
+   * `overflow-wrap: anywhere` was here to stop a long label forcing a table to
+   * scroll. It did that, but it also broke `NEED VERIFICATION` into `VERIFICATIO
+   * / N` once the register gained a second status column on 19-9-2026 and the
+   * cells got narrower. A status label that is split mid-word is harder to read
+   * than one that takes two lines, and these labels are the controlled
+   * vocabulary - they have to stay recognisable at a glance.
+   *
+   * `break-word` keeps the original protection for a single unbreakable token
+   * while preferring the space between words, and `balance` keeps the two lines
+   * close to even instead of leaving one orphan character.
+   */
+  overflow-wrap: break-word;
+  text-wrap: balance;
 }
 
 .chip--verify {

@@ -100,8 +100,15 @@
  * question that ran across it is now a section of its own below, at full
  * approved wording.
  *
- * The hero is allowed to take the screen because it is holding one image and
- * one sentence, not a table of contents.
+ * The hero is allowed to take the screen because it is holding one sentence and
+ * one declared documentary position, not a table of contents.
+ *
+ * CORRECTED 18-9-2026: this said "one image and one sentence". The opening no
+ * longer carries an image - `FS-open` was emptied when its photograph moved to
+ * the stage 3 anchor - so the second column now holds the blocked line for that
+ * position rather than a picture. The reservation is deliberate and stays: the
+ * position is still declared, and a document that genuinely opens the whole
+ * journey would render here.
  */
 .hero {
   position: relative;
@@ -593,14 +600,53 @@
 .atlas__boundary {
   position: absolute;
   translate: -50% -50%;
+  /*
+   * PRE-EXISTING FIX, found by `tools/ux-audit.mjs` while checking this pass.
+   *
+   * The mark is centred on its joint, so half of it sits to the right of that
+   * point. At 200% text on a 390px screen the last joint's label grew to 303px
+   * and pushed the page to 426px - a reflow failure that predates this work and
+   * shows in the baseline build too. Capping the box lets the label wrap onto a
+   * second line instead. At normal text size the label is narrower than the cap,
+   * so nothing changes there.
+   *
+   * Same idea as `--atlas-room` on `.atlas__stage-link`, which got this
+   * treatment in the previous pass while the joint marks did not.
+   */
+  /*
+   * Viewport-relative on purpose, NOT in `ch`. A `ch` cap scales with the text
+   * and so constrains identically at 100% and at 200%, which is useless here;
+   * a `vw` cap stays put while the text grows, so it is slack at normal size
+   * and only engages when the text is enlarged. A first attempt used `24ch`
+   * and made two labels wrap at ordinary size - caught by measuring, not by eye.
+   */
+  /*
+   * Absolutely positioned from its left edge only, so the space available to it
+   * is whatever is left to the right of its joint - which for the last joint is
+   * a quarter of the screen. Without `max-content` the label wraps there at
+   * ordinary size; with it, the label stays on one line until the cap below
+   * actually bites.
+   */
+  inline-size: max-content;
+  max-inline-size: 46vw;
+  text-align: center;
   padding: 0.05rem 0.4rem;
   background-color: var(--paper);
   font-family: var(--font-marker);
   font-size: var(--step--3);
   line-height: 1.5;
   color: var(--ink-faint);
-  white-space: nowrap;
+  /*
+   * Wrapping is allowed between the two dates and forbidden inside either one:
+   * a date broken at its own hyphens would be unreadable, which is what the
+   * blanket `nowrap` here was protecting against.
+   */
+  white-space: normal;
   pointer-events: none;
+}
+
+.atlas__boundary-part {
+  white-space: nowrap;
 }
 
 /* ---- Journey: the chain written out ------------------------------------- */
@@ -932,28 +978,28 @@
     gap: var(--space-m);
   }
 
+  /*
+   * Order changed when the plate replaced the bare date column: the spatial
+   * context and the place/period list now come before the image, because the
+   * plate carries both "where am I looking" and "which moment", and an image
+   * lands better once those two are settled. The stage number stays first so a
+   * reader is never uncertain which of the five stages they are in.
+   */
   .walk__head[data-mode='full'] .walk__chapter { order: 1; }
-  .walk__head[data-mode='full'] .walk__portrait { order: 2; }
-  .walk__head[data-mode='full'] .walk__dates { order: 3; }
+  .walk__head[data-mode='full'] .plate-block { order: 2; }
+  .walk__head[data-mode='full'] .walk__portrait { order: 3; }
   .walk__head[data-mode='full'] .walk__heading { order: 4; }
   .walk__head[data-mode='full'] .walk__context { order: 5; }
   .walk__head[data-mode='full'] .walk__ask { order: 6; }
   .walk__head[data-mode='full'] .guess { order: 7; }
   .walk__head[data-mode='full'] .walk__apparatus { order: 8; }
 
-  /* The dates run across the phone rather than down a narrow column. */
-  .walk__head[data-mode='full'] .walk__dates-list {
-    grid-auto-flow: column;
-    grid-auto-columns: max-content;
-    gap: var(--space-s);
-    overflow-x: auto;
-    padding-block-end: var(--space-2xs);
-  }
-
-  .walk__head[data-mode='full'] .walk__date {
-    font-size: var(--step-0);
-    white-space: nowrap;
-  }
+  /*
+   * The dates used to run sideways here, in a strip that clipped its last
+   * marker off the screen. The plate's list runs down the page instead and
+   * carries a place beside each marker, so there is nothing to scroll and
+   * nothing to clip.
+   */
 }
 
 /*
@@ -1006,48 +1052,6 @@
    strip under the masthead is what says which stage this is. */
 .walk__head[data-mode='compact'] .walk__chapter {
   display: none;
-}
-
-/*
- * The time markers the excerpt prints under this stage, at the precision it
- * prints them. They are set large because on a historical stage the dates are
- * what orient a reader, and because they carry the entrance where no
- * photograph has cleared its source and its usage condition.
- *
- * Nothing here is derived: no range is compressed, no year is inferred from a
- * phrase, and the list is not reordered.
- */
-.walk__dates {
-  min-inline-size: 0;
-}
-
-.walk__dates-label {
-  margin: 0 0 var(--space-xs);
-  font-family: var(--font-apparatus);
-  font-size: var(--step--2);
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-
-.walk__dates-list {
-  display: grid;
-  gap: var(--space-3xs);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* Every marker at the same weight. Emphasising one of them would be this
-   product deciding which printed date matters most, which is a claim the
-   excerpt does not make. */
-.walk__date {
-  font-family: var(--font-marker);
-  font-size: var(--step-1);
-  font-variant-numeric: tabular-nums;
-  line-height: 1.3;
-  color: var(--ink);
 }
 
 /*
@@ -1727,6 +1731,36 @@
 
 .station__support .figure__frame {
   max-inline-size: 34rem;
+}
+
+/* ---- A filled primary anchor, beside the plate --------------------------
+ *
+ * Added 18-9-2026, when the first stage entrance actually got a picture.
+ *
+ * Until then `.walk__portrait` only ever rendered one quiet line, so it needed
+ * no size of its own. A document does. The side column already carries the
+ * spatial plate, and the brief for this pass is explicit that the plate, the
+ * primary image and the source apparatus must not all pile up above the fold.
+ *
+ * The cap is on the INLINE size, never the block size, because the frame takes
+ * the image's own ratio and capping the height would either crop the document
+ * or letterbox it - and this product does not crop documents. Capping the width
+ * of a tall sheet caps its height as a consequence, without touching a pixel of
+ * it. Full detail stays one keypress away in `Xem lớn`.
+ */
+.walk__portrait .figure__frame {
+  max-inline-size: 19rem;
+}
+
+@media (max-width: 63.999rem) {
+  /* On a phone the plate comes first and this lands under it, so it has to be
+     small enough that the heading is still reachable without a long scroll.
+     The caption above it was cut back for the same reason; the two numbers were
+     chosen together, by measuring, so that the document is the largest thing in
+     its own block instead of losing to its own metadata. */
+  .walk__portrait .figure__frame {
+    max-inline-size: 15.5rem;
+  }
 }
 
 .figure__blocked-line {
@@ -2787,6 +2821,21 @@
   padding-inline-start: var(--space-s);
   border-inline-start: 2px solid var(--verify);
   color: var(--ink);
+}
+
+/*
+ * The reuse decision, which is NOT a status.
+ *
+ * Added 19-9-2026. `status` would paint `USE` and `USE WITH CAUTION` in the same
+ * amber, so a settled decision and an open one would look alike in the only
+ * place a stage reader meets either. `figure.ts` picks `status` for the value
+ * that says CAUTION and this quieter marker face for the one that does not, so
+ * the amber is spent on the open question rather than on both.
+ */
+.lens__value[data-tone='decision'] {
+  font-family: var(--font-marker);
+  font-size: var(--step--3);
+  color: var(--ink-soft);
 }
 
 /* ======================================================================

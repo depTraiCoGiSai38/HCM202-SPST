@@ -10,6 +10,7 @@ import { getReading, getStop, motionSuppressed, setReading, setStop } from '../l
 import { type EvidenceItem, lensTrigger, readLocator } from './evidence';
 import { predictPanel } from './predict';
 import { stageThread } from './thread';
+import { stagePlate, stageTurnPlacement, stationWhere } from './atlas';
 
 /**
  * One stage, walked rather than read.
@@ -247,6 +248,8 @@ export function stagePage(id: StageId): HTMLElement {
           })
         : stationView(station, stage),
     );
+    const where = stationWhere(stage.id, anchorOf(station));
+    if (where) panel.appendChild(where);
     const support = supportFor(station, stage);
     if (support) panel.appendChild(support);
 
@@ -350,6 +353,8 @@ export function stagePage(id: StageId): HTMLElement {
           : stationView(st, stage);
       view.dataset['station'] = String(i);
       flowEl.appendChild(view);
+      const where = stationWhere(stage.id, anchorOf(st));
+      if (where) flowEl.appendChild(where);
       const support = supportFor(st, stage);
       if (support) flowEl.appendChild(support);
     });
@@ -741,6 +746,18 @@ function reflect(stage: Stage): HTMLElement | null {
       ),
     );
     root.appendChild(h('p', { class: 'reflect__ask', text: REFLECT_ASK }));
+
+    /*
+     * One counted sentence about the source, at the beat that asks what
+     * changed. The entrance says how much of the stage the excerpt places; this
+     * says how much of its TURNING POINTS it places, which is where the excerpt
+     * is thinnest about place. It is arithmetic over the stored data - never a
+     * statement about what the reader now understands.
+     */
+    const turnPlacement = stageTurnPlacement(stage.id);
+    if (turnPlacement) {
+      root.appendChild(h('p', { class: 'reflect__where', text: turnPlacement }));
+    }
   } else {
     root.appendChild(
       h('p', {
@@ -868,10 +885,16 @@ interface Head {
  * The stage header.
  *
  * `full` prints the exact official heading, verbatim and complete, at the
- * entrance to the stage. `compact` replaces it visually with the stage number
- * and its period and moves the exact heading behind a disclosure - but never
- * out of the accessibility tree, so a screen reader still reads the official
- * wording at every stop, and never out of the evidence magnifier either.
+ * entrance to the stage. `compact` replaces it visually with the period alone
+ * and moves the exact heading behind a disclosure - but never out of the
+ * accessibility tree, so a screen reader still reads the official wording at
+ * every stop, and never out of the evidence magnifier either.
+ *
+ * CORRECTED 18-9-2026: this said `compact` shows "the stage number and its
+ * period". It does not - the chapter element is not rendered at all past the
+ * entrance, and the compact bar deliberately carries the period only. A
+ * maintainer reading the old sentence would have treated the absent "CHẶNG 02 /
+ * 05" as a bug and put it back.
  */
 /**
  * The chapter opening of a stage.
@@ -980,10 +1003,16 @@ function stageHead(stage: Stage): Head {
    * The documentary position for this stage.
    *
    * The brief for this redesign asks every stage to open on an authentic
-   * photograph of Hồ Chí Minh. One photograph has cleared both its provenance
-   * and its usage condition so far, and it is at the opening; for a stage with
-   * nothing cleared, the slot states that in place of a picture rather than
-   * borrowing an unrelated one to fill the space. See figures.ts.
+   * photograph of Hồ Chí Minh. TWO positions now hold one, on two different
+   * kinds of basis, and the difference matters: stage 5's magazine cover has
+   * the subject's name printed by the publication in the caption under the
+   * picture, while stage 3's press plate has a holder's record date that falls
+   * inside the stage's printed period - a portrait OF the period, never an
+   * illustration of the event in its record. The other three state the gap in
+   * place of a picture rather than borrowing an unrelated portrait to fill the
+   * space, which the brief rules out as firmly as it asks for the picture. See
+   * figures.ts, and `SC-24`/`SC-25` on the register for the rulings, beside the
+   * questions `SC-22`/`SC-23` that raised them.
    */
   const slot = FIGURE_SLOTS.find((f) => f.stageId === stage.id && f.kind === 'primary');
 
@@ -996,17 +1025,20 @@ function stageHead(stage: Stage): Head {
    * The first marker is dropped when it merely restates the period already set
    * in the heading above it.
    */
-  const shown = stage.markers.filter((m) => !stage.headingPeriod.includes(m));
-  const dates = h(
-    'div',
-    { class: 'walk__dates' },
-    h('p', { class: 'walk__dates-label', text: 'Mốc thời gian in trong chặng' }),
-    h(
-      'ol',
-      { class: 'walk__dates-list' },
-      ...shown.map((m) => h('li', { class: 'walk__date', text: m })),
-    ),
-  );
+  /*
+   * The plate REPLACES the bare date column that stood here.
+   *
+   * It is the same anchor in the same slot, carrying the same printed markers
+   * in the same face at the same size, with the one thing a column of dates
+   * could not say added beside each: where the excerpt puts it - or, for the
+   * markers it leaves unplaced, an em dash that says so.
+   *
+   * It is deliberately not an addition. The previous UX pass cut the number of
+   * simultaneously visible navigation systems from six to two and the chrome
+   * controls in the fold from fourteen to five; a map bolted on beside the
+   * dates would have spent that. `tools/audit-density.mjs` is the check.
+   */
+  const dates = stagePlate(stage.id);
 
   const root = h(
     'header',
@@ -1035,7 +1067,7 @@ function stageHead(stage: Stage): Head {
       // position sits under it. On a phone the two swap, by `order`, because
       // the brief sets the mobile reading order as portrait, then date, then
       // hook - see the narrow-screen block in experience.css.
-      shown.length > 0 ? dates : null,
+      dates,
       // The primary anchor only. A supporting figure now renders beside the
       // station it supports, not here - and only when it is actually filled.
       slot ? h('div', { class: 'walk__portrait' }, figureSlot(slot.id, slot.role)) : null,
@@ -1090,7 +1122,8 @@ function stageEvidence(stage: Stage): { title: string; items: EvidenceItem[] } {
     });
   } else {
     // The printed note itself, verbatim - not just its id. An abbreviation such
-    // as `Sđd` has to stay visible and unexpanded next to the content it is
+    // as `Sdd` - the form the 2019 edition prints, never normalised - has to stay
+    // visible and unexpanded next to the content it is
     // attached to, not only in the register at #/kiem-chung.
     for (const lid of stage.locatorIds) {
       const loc = LOCATOR_BY_ID.get(lid);
@@ -1119,6 +1152,27 @@ function stageEvidence(stage: Stage): { title: string; items: EvidenceItem[] } {
  * does not put an empty frame into the middle of a stage, which would be
  * repeating a gap rather than reporting it.
  */
+/**
+ * The anchor a station presents to the spatial layer.
+ *
+ * A boundary stop is the excerpt's own statement of what it does NOT say, so it
+ * has no place of its own and gets none here.
+ */
+function anchorOf(
+  station: Station,
+): { where: 'passage' | 'turn' | 'quote'; id: string } | null {
+  switch (station.kind) {
+    case 'passage':
+      return { where: 'passage', id: station.passage.id };
+    case 'turn':
+      return { where: 'turn', id: station.turn.id };
+    case 'quote':
+      return { where: 'quote', id: station.id };
+    case 'boundary':
+      return null;
+  }
+}
+
 function supportFor(station: Station, stage: Stage): HTMLElement | null {
   const slot = FIGURE_SLOTS.find((f) => {
     if (f.stageId !== stage.id || f.kind !== 'supporting') return false;

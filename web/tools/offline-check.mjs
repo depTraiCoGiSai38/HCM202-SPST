@@ -45,6 +45,39 @@ await page.locator('.walk__nav.btn--primary').click();
 const crossed = await page.locator('.turn__cross').count();
 console.log(crossed ? '  ok   traverse reaches a turning point' : '  FAIL traverse');
 
+/*
+ * The plate has to survive the bundling too.
+ *
+ * Its land outline is a single 52 KB string inside the script, and the bundler
+ * rewrites the script with string replacement in order to inline the images.
+ * A replacement that went wrong there would not throw - it would quietly leave
+ * a plate with no coastline on it, on the one build that runs at the Showcase.
+ * Measuring the rendered geometry is the only honest test.
+ */
+/*
+ * A DIFFERENT stage on purpose. The traverse above left this page three stops
+ * into ky-4, where the chapter opening - and with it the plate - is collapsed
+ * by design; and re-issuing the same hash does not re-render, so the check
+ * would have measured a deliberately hidden element and called the bundle
+ * broken. Moving to another stage lands on a fresh entrance.
+ */
+await page.goto(url + '#/chang/ky-1');
+await page.waitForTimeout(500);
+const plate = await page.evaluate(() => {
+  const land = document.querySelector('.plate__land');
+  if (!land) return { ok: false, why: 'no .plate__land' };
+  const d = land.getAttribute('d') ?? '';
+  const box = land.getBoundingClientRect();
+  const marks = document.querySelectorAll('.plate-block .plate__mark').length;
+  return { ok: d.length > 10000 && box.width > 0 && marks > 0, d: d.length, marks };
+});
+console.log(
+  plate.ok
+    ? `  ok   plate draws offline (${String(plate.d)} chars of path, ${String(plate.marks)} marks)`
+    : `  FAIL plate: ${JSON.stringify(plate)}`,
+);
+if (!plate.ok) problems.push('plate did not draw offline');
+
 await page.keyboard.press('p');
 await page.waitForTimeout(300);
 const deck = await page.locator('.slide').isVisible();

@@ -171,10 +171,28 @@ test('the verification appendix keeps its tables and gains a way in', async ({ p
   await expect(focus.locator('.focus__id')).toHaveText('GT-R02');
   await expect(focus.locator('.focus__code')).toHaveText('DOCUMENT CONFLICT');
 
-  // The tables underneath are untouched: ten locators, nine risks, and the
-  // unexpanded abbreviation still present.
-  await expect(page.locator('table')).not.toHaveCount(0);
-  await expect(page.getByText('Sđd', { exact: false }).first()).toBeVisible();
+  /*
+   * The registers underneath are untouched. TIGHTENED 18-9-2026: this asserted
+   * only that some <table> existed anywhere on the page, so nine of the ten
+   * locator rows could have been deleted and it would still have passed. The
+   * comment also said `nine risks` - that is the SUPERSEDED risk count, a
+   * different register.
+   *
+   * The abbreviation line was worse than weak: it asserted the NORMALISED form
+   * `Sđd` was visible, and passed off a hand-written column label while the
+   * count beside that label rendered `0`. It now asserts the form the 2019
+   * edition actually prints, and the count the locator data holds.
+   */
+  // Ten locator candidates, in the locator table itself - `.source__id` is also
+  // used by the unnoted-marker and design-decision tables, so it is scoped.
+  await expect(page.locator('#dinh-vi .source__id')).toHaveCount(10);
+  // The abbreviation in the form the 2019 edition prints, never normalised.
+  await expect(page.getByText('Sdd', { exact: false }).first()).toBeVisible();
+  // And the number the summary publishes for it, against the data it counts.
+  // This rendered `0` until 18-9-2026, because the summary filtered on the
+  // normalised spelling that no locator carries.
+  const sddCard = page.locator('.figure-card', { hasText: 'Trong đó dùng chữ viết tắt' });
+  await expect(sddCard.locator('.figure-card__n')).toHaveText('3');
 });
 
 test('the whole Showcase script runs, beat by beat, inside its slot', async ({ page }) => {
