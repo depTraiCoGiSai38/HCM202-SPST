@@ -103,6 +103,81 @@ function buildStations(stage: Stage): Station[] {
 }
 
 /**
+ * How one stop is composed, chosen from the material that stop actually has.
+ *
+ * The stage body used to have exactly one composition: a column at the reading
+ * measure, pinned to the left of whatever width the screen offered. At 1920px
+ * that measured 642px of text inside a 1488px track, so 846px - 45% of the
+ * canvas - was a band no content occupied. The same shape carried a paragraph,
+ * a printed quotation and the stage's closing boundary alike, which is why a
+ * stage read as a document page rather than as a journey.
+ *
+ * These are the compositions that replace it. The choice is made from the
+ * stored data, never from the stage id: the same kind of stop composes the same
+ * way in all five stages, and a stage gets a different rhythm only because the
+ * excerpt gave it different material.
+ *
+ *   center    one idea, no secondary material. The block is CENTRED rather than
+ *             left-pinned, with the place line, where the excerpt prints one,
+ *             standing in the margin beside it as a catalogue note.
+ *   split     a documentary figure is actually filled for this stop, so the
+ *             reading and the document it supports stand side by side.
+ *   turn      a turning point. The widest composition in the stage, because the
+ *             turning point has to stay the loudest beat on the screen.
+ *   boundary  what the excerpt does not say, closing the stage across the full
+ *             width beside the record of what it did make clear.
+ *
+ * Nothing here adds, removes, reorders or rewords any stored text. A station
+ * carries exactly the same elements it carried before; only the grid they sit
+ * in changes.
+ */
+type Composition = 'center' | 'split' | 'turn' | 'boundary';
+
+function compositionOf(station: Station, support: HTMLElement | null): Composition {
+  switch (station.kind) {
+    case 'turn':
+      return 'turn';
+    case 'boundary':
+      return 'boundary';
+    case 'passage':
+    case 'quote':
+      /*
+       * A filled figure is the only secondary material substantial enough to
+       * hold a column of its own. The place line is one sentence - and on
+       * 55-65% of stops the excerpt prints none at all. Given a column it would
+       * be a caption stranded in open space, which is the decoration this
+       * rebalance exists to remove, so it goes to the margin of a centred
+       * block instead.
+       */
+      return support ? 'split' : 'center';
+  }
+}
+
+/**
+ * One stop, with its place line and its figure, inside its composition.
+ *
+ * The three were appended to the panel as siblings, so the layout could only
+ * stack them. Wrapping them lets a composition place them beside one another -
+ * and the wrapper deliberately carries neither the `station` class nor the
+ * `data-station` index, both of which stay on the station element itself,
+ * because the continuous-reading view counts its stops by them.
+ */
+function composed(station: Station, stage: Stage, view: HTMLElement): HTMLElement {
+  const support = supportFor(station, stage);
+  const root = h('div', {
+    class: 'compose',
+    dataset: { comp: compositionOf(station, support) },
+  });
+
+  root.appendChild(view);
+  const where = stationWhere(stage.id, anchorOf(station));
+  if (where) root.appendChild(where);
+  if (support) root.appendChild(support);
+
+  return root;
+}
+
+/**
  * The reading phases of a stage, in the order the excerpt lays them out.
  *
  * `1 / 11` told a viewer how far along they were and nothing else: not what
@@ -240,18 +315,14 @@ export function stagePage(id: StageId): HTMLElement {
     setStop(stage.id, index);
 
     clear(panel);
-    panel.appendChild(
+    const view =
       station.kind === 'turn'
         ? turnStation(station.turn, turnPhase.get(station.turn.id) ?? 'before', (next) => {
             turnPhase.set(station.turn.id, next);
             paintTrack();
           })
-        : stationView(station, stage),
-    );
-    const where = stationWhere(stage.id, anchorOf(station));
-    if (where) panel.appendChild(where);
-    const support = supportFor(station, stage);
-    if (support) panel.appendChild(support);
+        : stationView(station, stage);
+    panel.appendChild(composed(station, stage, view));
 
     counter.textContent = `${String(index + 1)} / ${String(stations.length)}`;
 
@@ -352,11 +423,7 @@ export function stagePage(id: StageId): HTMLElement {
             })
           : stationView(st, stage);
       view.dataset['station'] = String(i);
-      flowEl.appendChild(view);
-      const where = stationWhere(stage.id, anchorOf(st));
-      if (where) flowEl.appendChild(where);
-      const support = supportFor(st, stage);
-      if (support) flowEl.appendChild(support);
+      flowEl.appendChild(composed(st, stage, view));
     });
   }
 

@@ -1724,9 +1724,27 @@
 }
 
 /* The turning point is wider than the measure and sits on its own surface, so
-   a document beneath it lines up with it rather than with the reading column. */
-.station--turn + .station__support {
-  max-inline-size: min(56rem, 100%);
+   a document beneath it lines up with it rather than with the reading column.
+   Keyed on the composition rather than on adjacency: a place line now sits
+   between the two whenever the excerpt prints one, which broke the `+`. */
+.compose[data-comp='turn'] > .station__support {
+  max-inline-size: min(76rem, 100%);
+}
+
+/*
+ * Bind the whole figure to the plate's width, not just the frame.
+ *
+ * Widening the support box to the turn spread's 76rem left `.figure__frame` at
+ * its 34rem cap but let the caption, the credit and the status chip run the
+ * full 1216px: measured, the first caption line inked 1208px - about 160
+ * characters - ending 501px past the right edge of the picture it describes.
+ * The sibling `split` composition had already been reconciled by letting the
+ * frame fill its column; here the frame must keep its cap, because this sheet
+ * is 1100x1484 and filling 1216px would render it about 1640px tall. So the
+ * caption is brought back to the picture instead.
+ */
+.compose[data-comp='turn'] > .station__support .figure {
+  max-inline-size: 34rem;
 }
 
 .station__support .figure__frame {
@@ -2115,6 +2133,41 @@
   gap: var(--space-2xs) var(--space-m);
 }
 
+/*
+ * The instrument and the reading share one axis.
+ *
+ * The thread ran the whole width of the track while the reading under it was
+ * 642px pinned to the inline start, so the drawing of the stage and the stage
+ * itself were two unrelated objects on one screen. Now that the compositions
+ * are centred, the thread, its caption and the pager are centred with them, on
+ * the same maximum the widest composition uses. The thread is still the
+ * spanning element - it is wider than every composition it sits above - but it
+ * is now the axis they hang from rather than a rule floating past them.
+ */
+@media (min-width: 80rem) {
+  /*
+   * An explicit inline-size, not `max-inline-size` with auto margins: auto
+   * margins on a grid item drop it to fit-content, and the thread's only child
+   * with a width is an SVG at `inline-size: 100%`, which contributes nothing to
+   * an intrinsic measurement. The thread would then be sized by its own
+   * viewBox. A definite width keeps the axis where it is declared.
+   *
+   * The caption and the per-stop marks live inside `.walk__track`, so sizing
+   * the track carries them too.
+   */
+  .walk__track,
+  .walk__controls {
+    inline-size: min(76rem, 100%);
+    justify-self: center;
+  }
+
+  /* The pager sits on the same axis as the reading it moves through, rather
+     than at the far inline start of a screen nothing else uses that way. */
+  .walk__controls {
+    justify-content: center;
+  }
+}
+
 .walk__nav {
   flex: none;
 }
@@ -2139,8 +2192,191 @@
   translate: 0 0.5rem;
 }
 
-.station {
+/* ======================================================================
+   Stage body: the composition family
+   ======================================================================
+ *
+ * WHAT THIS REPLACES. Every stop of every stage used to be the same shape: one
+ * column at `--measure`, pinned to the inline start of whatever width the
+ * screen gave it. There was no breakpoint above 1280px, so 1280px and 1920px
+ * got the identical composition and the extra 640px went into an unbounded
+ * `1fr`. Measured at 1920px: the reading track was 1488px and the station
+ * inside it 642px, leaving an 846px band - 45% of the canvas - that no content
+ * occupied. `tools/body-balance.mjs` found that band on 69 of 85 body states,
+ * in all five stages.
+ *
+ * THE FIX IS NOT "FILL IT". There is no material to fill it with: the excerpt
+ * prints a place for only 5-8 stops per stage, and only 6 of the 77 body stops
+ * in the whole product have a documentary figure that is actually filled. So
+ * the composition is chosen from what a stop HAS, in `compositionOf()`:
+ *
+ *   center    centred, not left-pinned. The band becomes two equal margins,
+ *             which is an authored page rather than an unfinished one.
+ *   split     only where a figure is genuinely filled.
+ *   turn      the widest composition, so the turning point stays the loudest
+ *             beat on the screen - a protected regression from an earlier pass.
+ *   boundary  the full track, closing the stage beside the margin record.
+ *
+ * WHAT IS DELIBERATELY UNCHANGED. The reading measure itself: 66ch is a
+ * recorded decision and long lines are harder to read, so no composition
+ * widens the prose. The margin record keeps its column - it is the stage's
+ * accumulating argument, and three tests rely on it filling in as the viewer
+ * crosses a turning point. And the stage ENTRANCE is not touched at all.
+ */
+
+.compose {
+  display: grid;
+  gap: var(--space-m);
+  align-content: start;
+  min-inline-size: 0;
+}
+
+/*
+ * The centred block, and the catalogue note beside it.
+ *
+ * Below 80rem there is no room to be anything but one column, and the measure
+ * does the work. At 80rem and up the block is centred in the track; where the
+ * excerpt prints a place for this stop, that one line stands in the margin
+ * beside the opening of the text, which is where a catalogue puts it. Where it
+ * prints none - 55-65% of stops - the margin column is not reserved at all, so
+ * the text is centred rather than pushed off-centre by an empty rail.
+ */
+.compose[data-comp='center'] > .station,
+.compose[data-comp='split'] > .station {
   max-inline-size: var(--measure);
+}
+
+@media (min-width: 80rem) {
+  /*
+   * The margin column is RESERVED, not conditional.
+   *
+   * It was conditional at first - `:has(> .station__where)` added the rail only
+   * on the stops where the excerpt prints a place. Because the whole group was
+   * centred, reserving 12rem + a gap only sometimes moved the reading column by
+   * half of it: measured, the prose left edge alternated by 120px between
+   * consecutive stops (ky-2 ran L R R R L R L L), which in continuous reading
+   * is a visibly ragged left edge down one document. A printed page keeps its
+   * margin whether or not there is a note in it, and so does this.
+   *
+   * The third column is the margin's counterweight. It holds nothing; it exists
+   * so the reading column itself, not the group around it, sits on the same
+   * axis as the thread and the pager above it.
+   */
+  .compose[data-comp='center'] {
+    grid-template-columns: minmax(0, 12rem) minmax(0, var(--measure)) minmax(0, 12rem);
+    column-gap: var(--space-xl);
+    justify-content: center;
+  }
+
+  .compose[data-comp='center'] > .station,
+  .compose[data-comp='center'] > .station__support {
+    grid-column: 2;
+  }
+
+  .compose[data-comp='center'] > .station__where {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+    max-inline-size: 100%;
+    /* Aligned to the first line of the text it annotates, not to the kicker
+       above it. */
+    margin-block-start: var(--space-l);
+    text-align: end;
+  }
+
+  /*
+   * In the margin the rule that marks each line moves to the side facing the
+   * text, so the annotation reads as attached to the column rather than to the
+   * page edge. The ochre that means "the excerpt prints no place" travels with
+   * it: that distinction is evidence, not decoration, and is kept.
+   */
+  .compose[data-comp='center'] > .station__where .station__where-item {
+    padding-inline: 0 var(--space-2xs);
+    border-inline-start: 0;
+    border-inline-end: 2px solid var(--rule);
+  }
+
+  .compose[data-comp='center'] > .station__where .station__where-item[data-kind='unplaced'] {
+    border-inline-end-color: var(--verify);
+  }
+}
+
+/*
+ * A reading and the document it rests on, side by side.
+ *
+ * Used only where the figure position is actually filled. A blocked position
+ * renders nothing here - `supportFor()` returns null - so this composition
+ * never opens a column to hold an absence. The figure column stays narrower
+ * than the reading, and narrower than the 34rem it had when it sat underneath,
+ * because a supporting document that matches the stage anchor in size turns a
+ * stage into a gallery.
+ */
+@media (min-width: 80rem) {
+  .compose[data-comp='split'] {
+    grid-template-columns: minmax(0, var(--measure)) minmax(15rem, 26rem);
+    /*
+     * A third row, and the figure spans all three.
+     *
+     * With only the two implicit rows the figure spanned both, and grid shared
+     * its surplus height between them: a 551px plate beside a 177px passage
+     * resolved the rows to 340px/187px and dropped the place line 195px below
+     * the text it annotates - measured at 298px on one ky-3 stop, where the
+     * stranded line was the ochre "the excerpt prints no place here", detached
+     * from the passage it qualifies. The first two rows are now content-sized
+     * and the third absorbs whatever the picture has left over.
+     */
+    grid-template-rows: min-content min-content auto;
+    column-gap: var(--space-xl);
+    justify-content: center;
+    align-items: start;
+  }
+
+  .compose[data-comp='split'] > .station {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .compose[data-comp='split'] > .station__where {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .compose[data-comp='split'] > .station__support {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    margin-block-start: 0;
+    padding-block-start: 0;
+    border-block-start: 0;
+    max-inline-size: 100%;
+  }
+
+  .compose[data-comp='split'] > .station__support .figure__frame {
+    max-inline-size: 100%;
+  }
+}
+
+/*
+ * The turning point, and the close of the stage.
+ *
+ * Both are spreads rather than columns: the turning point because it is the
+ * moment the stage exists for, the boundary because it is the stage handing
+ * over what it has and has not established. Both are centred in the track, so
+ * neither is pinned to one edge.
+ */
+@media (min-width: 80rem) {
+  .compose[data-comp='turn'],
+  .compose[data-comp='boundary'] {
+    justify-items: center;
+  }
+
+  .compose[data-comp='turn'] > *,
+  .compose[data-comp='boundary'] > * {
+    inline-size: 100%;
+    max-inline-size: min(76rem, 100%);
+  }
+}
+
+.station {
   opacity: 1;
   translate: 0 0;
   transition:
@@ -2156,7 +2392,11 @@
  * and it is the only station that gets one, so it still means something.
  */
 .station--turn {
-  max-inline-size: min(56rem, 100%);
+  /* Widened from 56rem when the body gained its composition family. The
+     turning point was already the only station allowed to break the reading
+     rhythm; once every other stop is centred at the measure, this one has to
+     be visibly wider than them or the break stops reading as a break. */
+  max-inline-size: min(76rem, 100%);
   padding: var(--space-l) var(--space-m) var(--space-m);
   background-color: var(--paper-sunk);
   border-block-start: 2px solid var(--son);
@@ -2215,6 +2455,32 @@
   inline-size: 100%;
   block-size: 3.5rem;
   overflow: visible;
+}
+
+/*
+ * PRE-EXISTING BUG, fixed here because the manual check found it.
+ *
+ * Below 52rem `.turn__head` collapses to one column, so this SVG - which
+ * carries `preserveAspectRatio="none"` - stretched to the whole head width:
+ * 688px at 768, 310px at 390, against a 260-unit viewBox. `.turn__stem` hides
+ * itself with `stroke-dasharray: 132`, exactly its own path length, but it also
+ * carries `vector-effect: non-scaling-stroke`, which makes the browser measure
+ * that dash in SCREEN pixels. Stretched, the stem rendered 349px at 768 while
+ * the dash still covered only 132 of them, so a detached ~130px rule was
+ * painted in mid-air beside the meeting point - before crossing, when nothing
+ * should be drawn at all, and again after crossing, which broke "one line
+ * continuing where two arrived" into two pieces with a hole between them. It
+ * was visible in every turning point of all five stages at both narrow widths.
+ *
+ * Capping the drawing at its own viewBox width keeps the horizontal scale at
+ * 1, so the dash and the path agree again. It also stops `.turn__meet` being
+ * squashed from a circle into a 3:1 ellipse by the same stretch.
+ */
+@media (max-width: 51.999rem) {
+  .turn__converge {
+    max-inline-size: 16.25rem;
+    justify-self: start;
+  }
 }
 
 .turn__strand,
@@ -2336,7 +2602,31 @@
   gap: var(--space-s);
 }
 
+/*
+ * The close of a stage reads across the spread rather than down a column.
+ *
+ * Each thing the excerpt does not say is its own statement, so on a wide screen
+ * they stand beside each other instead of queueing under one another at the
+ * reading measure. Each item keeps its own measure, so the lines stay readable;
+ * what changes is that the stage ends on a spread, next to the record of what
+ * it did establish, which is the pairing the boundary is for.
+ */
+@media (min-width: 80rem) {
+  .compose[data-comp='boundary'] .station__bounds {
+    grid-template-columns: repeat(auto-fit, minmax(min(26rem, 100%), 1fr));
+    column-gap: var(--space-xl);
+    row-gap: var(--space-m);
+  }
+
+  .compose[data-comp='boundary'] .station__bounds li {
+    max-inline-size: 46ch;
+  }
+}
+
 .station__bounds li {
+  /* The boundary station is not capped at the measure - it is a spread - so
+     each statement carries its own measure instead. */
+  max-inline-size: var(--measure);
   padding-inline-start: var(--space-m);
   border-inline-start: 2px solid var(--verify);
   color: var(--ink-soft);
@@ -2349,9 +2639,19 @@
 }
 
 /* A passage too long for one screen is read in order, never shortened. */
+/*
+ * PRE-EXISTING BUG, fixed here because the manual check found it.
+ *
+ * These two were the only selectors in the stylesheets that undercut
+ * `--target-min`: `min-block-size: 2.5rem` is 40px, and they measured 42px
+ * against the 44px the product holds itself to (tokens.css records that
+ * standard and says a browser test asserts it). The asserting test visits
+ * `/#/chang/ky-2`, which has no split passage, so the only two controls that
+ * broke the floor were never reached - a coverage hole, not a passing check.
+ * Dropping the override lets `.btn`'s own `var(--target-min)` apply.
+ */
 .station__more,
 .station__back {
-  min-block-size: 2.5rem;
   padding-inline: var(--space-s);
   font-size: var(--step--1);
 }
@@ -2550,13 +2850,40 @@
  * are the layout. It reads as a spread, not as a card, because it is the one
  * moment in a stage that asks the learner to stop rather than to move.
  */
+/*
+ * The reflection, as a pause rather than another paragraph.
+ *
+ * It used to be capped at the reading measure like any passage, which put the
+ * whole beat - two positions, the arrow between them, and the question the
+ * stage has been building towards - inside 642px at the inline start of a
+ * 1488px track. Two positions set 250px apart cannot be read as a dialogue,
+ * and a question the same size as the prose above it is not a pause.
+ *
+ * It is now the full width of the track, centred, with the two positions given
+ * room to face each other and the question set larger and centred under them.
+ * Nothing is added: the two positions, the marker under each, the question and
+ * the counted sentence about place are the same stored values as before.
+ */
 .reflect {
   display: grid;
   gap: var(--space-m);
-  max-inline-size: var(--measure);
   margin-block-start: var(--space-xl);
   padding-block: var(--space-l);
   border-block: var(--hairline) solid var(--rule);
+}
+
+@media (min-width: 80rem) {
+  .reflect {
+    gap: var(--space-l);
+    max-inline-size: min(76rem, 100%);
+    margin-inline: auto;
+    padding-block: var(--space-xl);
+    justify-items: center;
+  }
+
+  .reflect > * {
+    inline-size: 100%;
+  }
 }
 
 .reflect__kicker {
@@ -2579,6 +2906,22 @@
   .reflect__pair {
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     gap: var(--space-l);
+  }
+}
+
+/* With the whole beat at track width, the two positions get the room that
+   lets them be compared rather than merely listed, and the arrow between them
+   becomes the axis of the spread. */
+@media (min-width: 80rem) {
+  .reflect__pair {
+    gap: var(--space-2xl);
+    align-items: start;
+    padding-block-end: var(--space-s);
+  }
+
+  .reflect__side-text {
+    font-size: var(--step-1);
+    line-height: 1.45;
   }
 }
 
@@ -2633,6 +2976,60 @@
   text-wrap: pretty;
 }
 
+/*
+ * The question is what the beat is for, so on a wide screen it stops being a
+ * left-ruled paragraph and becomes the centre of the spread: set one step
+ * larger, centred under the two positions it follows, with a short rule above
+ * it instead of beside it. `--step-2` is already on this screen - the arrow
+ * uses it - so the stage's type-size budget is unchanged.
+ */
+@media (min-width: 80rem) {
+  .reflect__ask {
+    max-inline-size: 46ch;
+    justify-self: center;
+    inline-size: auto;
+    padding-inline-start: 0;
+    padding-block-start: var(--space-m);
+    border-inline-start: 0;
+    border-block-start: 2px solid var(--cham);
+    font-size: var(--step-2);
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  /* The quieter material under the question stays quiet, and stays with it.
+     Scoped through `.reflect` because `.reflect__where` is declared in
+     atlas.css, which loads after this file. */
+  .reflect .reflect__where,
+  .reflect .reflect__note {
+    max-inline-size: 62ch;
+    justify-self: center;
+    inline-size: auto;
+    text-align: center;
+  }
+
+  .reflect__invite-lead {
+    justify-self: center;
+    inline-size: auto;
+    text-align: center;
+  }
+
+  /*
+   * The spread stretches its blocks to the axis; a button is not a block, and a
+   * full-width one would read as a dashboard action rather than an offer.
+   *
+   * Scoped through `.reflect` on purpose. The base rule
+   * `.reflect__invite { justify-self: start }` sits LATER in this file, and a
+   * media query adds no specificity, so an unscoped `.reflect__invite` here
+   * lost the cascade and the button stayed flush left - 521px off the axis,
+   * alone under a fully centred spread - while every sibling centred.
+   */
+  .reflect .reflect__invite {
+    inline-size: auto;
+    justify-self: center;
+  }
+}
+
 .reflect__note {
   margin: 0;
   font-family: var(--font-apparatus);
@@ -2663,6 +3060,16 @@
   border-inline-start: 3px solid var(--son);
   border-radius: var(--radius-m);
   background-color: var(--paper-raised);
+}
+
+/* The hand-off follows a reflection that is now centred on the track, so it
+   centres with it rather than dropping back to the inline start of a screen
+   the beat above it no longer uses that way. It keeps its own narrow measure:
+   it is a card about one destination, not a spread. */
+@media (min-width: 80rem) {
+  .bridge {
+    margin-inline: auto;
+  }
 }
 
 .bridge__kicker {

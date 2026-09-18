@@ -1,0 +1,996 @@
+# STAGE BODY EDITORIAL REBALANCE — ALL 5 STAGES
+## Fix the left-heavy layout system without changing academic content
+
+This issue is NOT isolated to Stage 2.
+
+The same left-heavy body-layout problem appears across ALL FIVE stages.
+
+Treat this as a SYSTEM-LEVEL stage-body layout problem.
+
+Your solution must be applied consistently across:
+
+- Stage 1
+- Stage 2
+- Stage 3
+- Stage 4
+- Stage 5
+
+Do NOT fix only the example screen.
+
+Use the supplied screenshots only to understand the recurring layout problem.
+
+The academic content is already acceptable.
+The goal of this sprint is LAYOUT / COMPOSITION / VISUAL RHYTHM only.
+
+---
+
+# 0. READ CURRENT STATE FIRST
+
+Before changing anything:
+
+1. Read `AGENTS.md` completely.
+2. Read `CLAUDE.md` if present.
+3. Read the newest active project context.
+4. Read:
+   - `CREATIVE_SPATIAL_JOURNEY_REPORT.md`
+   - `HISTORICAL_IMAGE_INTEGRATION_REPORT.md`
+   - `SPATIAL_JOURNEY_DESIGN_DECISION.md`
+   - current UX/design decision records
+5. Inspect the actual implementation of all five stages.
+6. Run the current product.
+7. Capture representative BEFORE screenshots at:
+   - 1440px
+   - 1920px
+   - 768px
+   - 390px
+
+Do not redesign from memory.
+
+---
+
+# 1. MANDATORY DESIGN REVIEW
+
+Invoke and actively use:
+
+`ui-ux-pro-max`
+
+Read its complete `SKILL.md`.
+
+Use it specifically for:
+
+- editorial storytelling
+- layout balance
+- spatial rhythm
+- reading width
+- whitespace
+- responsive composition
+- hierarchy
+- documentary / museum-style presentation
+- cognitive load
+- mobile adaptation
+
+Do not use it to reopen unrelated product decisions.
+
+---
+
+# 2. LOCK THE STAGE ENTRANCE
+
+The current stage entrance design is GOOD and is now locked.
+
+The current opening composition:
+
+LEFT:
+- stage number
+- stage heading
+- stage-development statement
+- guiding question
+
+RIGHT:
+- `BẢN KHẮC`
+- spatial plate
+- place / event register
+- figure state where relevant
+
+is visually strong.
+
+This is the quality bar.
+
+DO NOT redesign this section.
+
+DO NOT shrink the atlas into a generic card.
+
+DO NOT turn `BẢN KHẮC` into a dashboard widget.
+
+DO NOT remove the strong left/right composition.
+
+Keep the stage entrance substantially as it is unless a deterministic
+responsive bug must be fixed.
+
+---
+
+# 3. THE PROBLEM
+
+The problem begins AFTER the stage entrance.
+
+Across Stage 1–5, multiple body states currently collapse into:
+
+- a narrow reading column stuck to the left;
+- large unused space on the right;
+- academic blocks stacked vertically;
+- important reflection or turning-point content visually treated like normal text.
+
+This causes the experience to fall back into:
+
+`DOCUMENT READER`
+
+instead of:
+
+`CREATIVE EDITORIAL JOURNEY`
+
+The lack of verified historical images makes this imbalance more visible.
+
+DO NOT solve the problem by forcing additional imagery.
+
+---
+
+# 4. CORE PRINCIPLE
+
+# USE EXISTING MEANING AS COMPOSITIONAL MATERIAL
+
+Do NOT fill the right side with decoration.
+
+Do NOT invent historical context.
+
+Use only content already supported by the current product data, such as:
+
+- stage dates
+- turning points
+- before / after conceptual shifts
+- quotations
+- source-supported statements
+- chronology
+- spatial context
+- stage boundaries
+- reflection questions
+- evidence/source notes
+- current progress
+- verified archival figures where they already exist
+
+If meaningful secondary material does not exist:
+
+CENTER THE CONTENT INTENTIONALLY.
+
+Do not leave it accidentally stuck to the left.
+
+---
+
+# 5. SYSTEM-LEVEL REQUIREMENT
+
+Do not patch Stage 2 manually.
+
+Audit the renderer architecture and solve the layout at the reusable
+component / semantic-state level.
+
+The same kind of state must behave consistently across all five stages.
+
+Examples:
+
+- passage state
+- quotation state
+- turning-point state
+- boundary state
+- reflection state
+- final-stage state
+
+Prefer semantic layout rules over hard-coded:
+
+`if stage === 2`
+
+or per-screen hacks.
+
+Stage-specific exceptions are allowed only when the underlying content
+semantically requires them.
+
+Document every exception.
+
+---
+
+# 6. DESIGN DIRECTION
+
+Transform the STAGE BODY into:
+
+# EDITORIAL DOCUMENTARY STORYTELLING
+
+Avoid:
+
+# LEFT-ALIGNED DOCUMENT PAGE
+
+Use a small reusable family of compositions.
+
+Target approximately THREE core body compositions,
+plus a boundary / transition treatment if necessary.
+
+Do NOT invent 15 unrelated layout patterns.
+
+Consistency matters.
+
+---
+
+# 7. COMPOSITION A — NARRATIVE SPLIT
+
+Use when a primary narrative has meaningful secondary context.
+
+Desktop target:
+
+LEFT:
+approximately 58–65%
+
+RIGHT:
+approximately 28–36%
+
+Possible LEFT content:
+
+- main passage
+- interpretation
+- key academic narrative
+
+Possible RIGHT content:
+
+- current turning point
+- chronology
+- before → after shift
+- relevant quotation
+- source-supported place/date context
+- relevant verified image
+- evidence excerpt
+- current-stage context
+
+The right side must contribute meaning.
+
+Never put generic metadata there solely to occupy empty space.
+
+---
+
+# 8. COMPOSITION B — EDITORIAL CENTER
+
+Use when the state contains one strong narrative idea and no meaningful
+secondary material.
+
+Do NOT render:
+
+```text
+[text block]
+[huge empty right side]
+```
+
+Instead use an intentional centered composition.
+
+Suggested desktop content width:
+
+60–72%
+
+depending on text length.
+
+Use:
+
+- whitespace on both sides
+- strong opening line
+- typographic hierarchy
+- date/source anchor where supported
+- paragraph rhythm
+
+A large amount of whitespace is acceptable when it is visibly deliberate.
+
+ACCIDENTAL empty right-half space is not.
+
+# 9. COMPOSITION C — TURNING POINT SPREAD
+
+Turning points should feel like a CHANGE in the journey.
+
+Do not render them like ordinary paragraph cards.
+
+Where current data supports it, use:
+
+LEFT:
+what existed / had been understood before
+
+CENTER:
+turning point
+date
+arrow / line / transition
+
+RIGHT:
+what changed / what became clearer after
+
+Conceptually:
+
+BEFORE
+supporting content
+
+          → TURNING POINT
+            DATE
+
+AFTER
+supporting content
+
+The transition should still work when no historical image exists.
+
+If a verified archival figure exists, integrate it meaningfully.
+
+Do NOT require an image for the composition to feel complete.
+
+# 10. COMPOSITION D — REFLECTION SPREAD
+
+The current SUY NGẪM sections are especially left-heavy.
+
+Redesign them as major editorial pauses.
+
+Reflection is not another paragraph block.
+
+For before / after reflection:
+use visual dialogue.
+
+Conceptual structure:
+
+                 SUY NGẪM
+
+BEFORE                                  AFTER
+text                                    text
+date                                    date
+
+                    →
+             conceptual change
+
+
+        CENTRAL REFLECTION QUESTION
+
+       quieter supporting explanation
+
+The CENTRAL QUESTION should visually dominate.
+
+Use:
+
+- scale
+- spacing
+- alignment
+- line / arrow
+- existing stage accent
+
+Do NOT gamify it.
+
+Do NOT turn it into quiz-card UI.
+
+# 11. STAGE BOUNDARY / END-OF-STAGE SCREEN
+
+The current boundary / final state has strong information,
+but much of the visual weight still sits left.
+
+Recompose it as a full-width editorial section.
+
+The timeline may span the usable canvas.
+
+Below it, distribute supported information intentionally.
+
+For example:
+
+LEFT:
+Những gì trích đoạn khẳng định
+
+RIGHT:
+Đã làm rõ trong chặng này
+
+or another equivalent relationship already present in the current data.
+
+Then transition into the reflection / next-stage moment.
+
+Do NOT turn this into a dashboard.
+
+# 12. TIMELINE
+
+The stage timeline is meaningful visual content.
+
+Treat it as part of the composition.
+
+On desktop:
+
+- allow it to span horizontally;
+- align its important marks with the surrounding editorial grid;
+- visually connect it to the current turning points / stage boundary.
+
+Do not make the timeline float disconnected above a left-side article.
+
+On mobile:
+convert it into a readable vertical or compact structure if needed.
+
+No horizontal-scroll dependency.
+
+# 13. IMAGES
+
+Keep the current historical-image architecture and verification states.
+
+If a relevant verified image exists:
+use it.
+
+If no verified image exists:
+do NOT create a fake image-shaped vacancy.
+
+Do NOT preserve a giant empty right column just because a figure slot is
+blocked.
+
+The layout must naturally adapt.
+
+Missing images should feel like:
+editorial composition without an image
+
+not:
+broken gallery slot
+
+Do not alter image verification status.
+
+# 14. BLOCKED FIGURES
+
+Review how blocked image states render.
+
+A blocked / unavailable figure may still be mentioned where academically
+necessary.
+
+But it must NOT become a large visual object that dominates the page merely
+to maintain symmetry.
+
+Use concise truthful treatment.
+
+Do not hide unresolved provenance.
+
+Do not make it look like a technical error.
+
+# 15. HORIZONTAL BALANCE RULE
+
+At desktop widths >= 1200px:
+
+no major stage BODY state should unintentionally occupy only the left
+~45–50% of the usable canvas while the entire right side remains structurally
+empty.
+
+Valid exceptions:
+
+1. content is deliberately centered;
+2. whitespace is clearly intentional and balanced;
+3. a full-width visual / timeline / transition provides composition.
+
+Invalid:
+normal left column + unused blank right half
+
+# 16. DO NOT FORCE TWO COLUMNS EVERYWHERE
+
+The solution is NOT:
+every state = left content + right box
+
+That would create another repetitive system.
+
+Instead create rhythm:
+
+STAGE ENTRANCE
+→ narrative split
+→ editorial center
+→ turning-point spread
+→ narrative split / reverse split
+→ reflection spread
+→ boundary / transition
+
+Actual sequence should be derived from semantic content.
+
+Not every stage needs the exact same order.
+
+But all five stages must use the same design language.
+
+# 17. REVERSE SPLIT
+
+Where it improves rhythm and source hierarchy,
+allow a semantic reverse composition:
+
+LEFT:
+secondary material / archival figure / quotation
+
+RIGHT:
+main narrative
+
+Use this sparingly.
+
+Do not alternate left/right mechanically.
+
+The placement must follow meaning, not decoration.
+
+# 18. TYPOGRAPHY AS VISUAL MATERIAL
+
+When imagery is unavailable, typography can provide hierarchy.
+
+Use existing typography system.
+
+Do not replace the current design system.
+
+Possible techniques:
+
+- larger key statement
+- indented passage
+- pull quote from the SAME existing supported text
+- date as editorial anchor
+- section number / marker
+- short contextual note
+- controlled column widths
+
+Do NOT invent new quotations.
+
+Do NOT convert model-written summaries into fake direct quotes.
+
+# 19. WHITESPACE
+
+Whitespace is allowed.
+
+But distinguish:
+
+AUTHORED WHITESPACE
+
+from:
+
+LEFTOVER SPACE
+
+Authored whitespace supports:
+
+- focus
+- pacing
+- transitions
+- hierarchy
+
+Leftover space looks like the layout has no content for half the screen.
+
+Review every state with this distinction.
+
+# 20. NO DASHBOARD REGRESSION
+
+Do NOT introduce:
+
+- card grids
+- KPI panels
+- statistic tiles
+- floating sidebars
+- permanent info drawers
+- large sets of bordered cards
+- pill-badge overload
+- duplicated navigation
+- dashboard-style metadata panels
+
+Think:
+
+- museum catalogue
+- documentary spread
+- editorial exhibition
+- historical publication
+
+NOT:
+
+- admin portal
+- analytics dashboard
+- SaaS landing page
+
+# 21. NO ACADEMIC CONTENT CHANGES
+
+The content is already acceptable.
+
+Do NOT rewrite academic content merely to make layout easier.
+
+Do NOT alter:
+
+- stage headings
+- stage boundaries
+- chronology
+- textbook locators
+- source labels
+- quotations
+- turning-point claims
+- Central Question
+- spatial node claims
+- image provenance
+- verification status
+
+Small presentation-only line breaks are okay.
+
+Substantive wording changes are NOT part of this task.
+
+# 22. ALL FIVE STAGES MUST BE REVIEWED
+
+Mandatory.
+
+After implementing the reusable system,
+manually inspect EVERY stage:
+
+Stage 1
+Review:
+- entrance
+- ordinary passages
+- turning points
+- quotations
+- reflection
+- final/boundary state
+
+Stage 2
+Same review.
+The provided screenshots are examples only.
+
+Stage 3
+Same review.
+Check interaction with existing archival imagery.
+
+Stage 4
+Same review.
+This stage may have limited imagery, so it is especially important that
+the editorial layout does not collapse to the left.
+
+Stage 5
+Same review.
+Check that documentary images and the atlas do not create excessive
+visual competition.
+
+No stage may be skipped merely because the reusable renderer changed.
+
+# 23. RESPONSIVE SYSTEM
+
+DESKTOP — 1440 / 1920
+Use the available horizontal canvas.
+Avoid accidental empty halves.
+Maintain comfortable reading width.
+
+TABLET — around 768
+Reduce the column contrast.
+Possible:
+- 55/45
+- stacked secondary section
+- selective centered states
+Preserve hierarchy.
+Do not squeeze two narrow text columns just to maintain desktop layout.
+
+MOBILE — 375–390
+Collapse into intentional reading order.
+Example:
+
+section marker
+↓
+main idea
+↓
+supporting context
+↓
+figure where available
+↓
+evidence/source
+↓
+reflection / next
+
+No horizontal scrolling.
+No tiny side columns.
+No desktop empty-space simulation.
+
+# 24. ACCESSIBILITY
+
+Preserve:
+
+- semantic reading order
+- keyboard navigation
+- visible focus
+- 200% text zoom
+- reduced motion
+- source accessibility
+- image alt behavior
+- screen-reader order
+
+CSS visual reordering must not create a nonsensical DOM reading sequence.
+
+If using grid areas:
+ensure DOM order remains logical.
+
+# 25. PERFORMANCE
+
+This should primarily be a layout/composition change.
+
+Do NOT introduce:
+
+- Three.js
+- animation frameworks
+- layout libraries
+- runtime dependencies
+
+unless an existing architecture genuinely requires one.
+
+Prefer existing CSS / TypeScript architecture.
+
+# 26. MOTION
+
+Do not add motion just because the page has more whitespace.
+
+Current motion budget remains.
+
+Allowed where useful:
+- subtle section reveal
+- transition line
+- existing editorial reveal
+
+No:
+- parallax overload
+- scroll-jacking
+- automatic horizontal movement
+- decorative particles
+
+The composition must work perfectly with animation disabled.
+
+# 27. IMPLEMENTATION STRATEGY
+
+Before coding:
+audit the current stage renderer.
+
+Identify:
+- which component renders passages;
+- turning points;
+- reflection;
+- quotations;
+- boundaries;
+- figures;
+- source/context data.
+
+Then propose the smallest reusable composition system.
+
+Prefer something conceptually similar to:
+
+editorial-center
+editorial-split
+editorial-turn
+editorial-reflection
+editorial-boundary
+
+Names may differ.
+
+Do NOT create per-stage duplicated components.
+
+Do NOT create hard-coded positional CSS for every individual screen.
+
+# 28. CONTENT-AWARE FALLBACK
+
+The composition system must gracefully respond to available material.
+
+For example:
+
+main narrative + meaningful supporting content
+→ SPLIT
+
+main narrative only
+→ CENTER
+
+before/after data
+→ TURNING POINT / REFLECTION SPREAD
+
+verified image + narrative
+→ IMAGE-LED SPLIT
+
+boundary state
+→ FULL-WIDTH BOUNDARY
+
+No empty shell should be rendered.
+
+# 29. PRESERVE THE STAGE 2 ENTRANCE QUALITY BAR
+
+The current Stage 2 entrance shown in the provided screenshot is the visual
+quality target:
+
+- strong left/right balance
+- meaningful use of space
+- clear hierarchy
+- restrained palette
+- BẢN KHẮC has visual authority
+- academic content still dominates meaning
+
+Do NOT copy the exact entrance layout everywhere.
+
+Instead carry the same QUALITY into body sections.
+
+# 30. BEFORE / AFTER VISUAL AUDIT
+
+Create representative screenshots before and after.
+
+At minimum include:
+
+- one normal passage with no image
+- one turning point
+- one reflection
+- one stage boundary
+- one state with a historical image
+- one state with a blocked figure
+
+Across multiple stages.
+
+Do not show only the best state.
+
+# 31. MEASURE THE REAL PROBLEM
+
+Do not invent a fake "balance score".
+
+Use observable layout facts.
+
+For representative desktop states record:
+
+- main content width
+- secondary content width
+- max reading width
+- whether >35% of canvas is structurally empty
+- line-length range where practical
+- whether layout is centered / split / full-width
+
+This is a structural audit,
+not a claim that learners prefer the new layout.
+
+# 32. TESTS
+
+Preserve all existing tests.
+
+Add/update only meaningful regression checks.
+
+Useful checks may include:
+
+- no horizontal overflow
+- no hidden content
+- all semantic stage states render
+- blocked figure does not create an empty image container
+- mobile layout order is preserved
+- 200% zoom remains usable
+
+Avoid brittle pixel-perfect tests.
+
+# 33. VALIDATION
+
+Run the actual project equivalents of:
+
+npm run typecheck
+npm run lint
+npm run test
+npm run build
+npm run e2e
+npm run build:offline
+npm run check:offline
+
+Also run current:
+- UX audit
+- contrast audit
+- 200% zoom checks
+- horizontal-overflow checks
+- density checks
+- reduced-motion checks
+
+Do not fabricate results.
+
+# 34. MANUAL CHECK — REQUIRED
+
+Inspect real rendered states at:
+
+- 1920px
+- 1440px
+- 768px
+- 390px
+
+For ALL FIVE stages.
+
+Specifically search for:
+
+- blank right halves
+- text stuck to left edge
+- excessively narrow reading column
+- excessively wide lines
+- repetitive split layouts
+- broken blocked-image states
+- reflection sections that still look like ordinary paragraphs
+- turning points lacking visual transition
+- stage-end states that still feel like a document page
+
+Fix genuine layout defects found.
+
+# 35. UI-UX-PRO-MAX FINAL REVIEW
+
+Run ui-ux-pro-max again after implementation.
+
+Review:
+- editorial rhythm
+- visual balance
+- documentary feeling
+- content hierarchy
+- whitespace
+- stage consistency
+- responsive behavior
+- cognitive density
+
+Do not reopen unrelated components unless the new layout exposes a real bug.
+
+# 36. FINAL REPORT
+
+Create:
+
+STAGE_BODY_EDITORIAL_REBALANCE_REPORT.md
+
+Include:
+
+1. Problem observed
+Explain the recurring left-heavy pattern across all five stages.
+
+2. Existing architecture audited
+
+3. Reusable compositions implemented
+
+4. All-five-stage coverage
+For Stage 1–5,
+state which semantic layouts occur.
+
+5. Before/after representative screenshots
+
+6. Image-present vs image-absent behavior
+
+7. Desktop / tablet / mobile behavior
+
+8. Accessibility
+
+9. Files changed
+
+10. Tests actually run
+
+11. Remaining visual weaknesses
+
+Do not claim:
+- improved learning
+- higher engagement
+- better retention
+- user preference
+
+unless real user evidence exists.
+
+# 37. PROMPT LOG
+
+Record this complete prompt in the required Prompt Log.
+
+Do not overwrite previous Prompt Logs.
+
+# 38. NON-GOALS
+
+This sprint is NOT for:
+- source migration
+- new historical research
+- more archive-image research
+- new spatial nodes
+- changing BẢN KHẮC
+- rewriting academic content
+- modifying verification conclusions
+- redesigning navigation
+- rebuilding the entire visual identity
+
+Keep scope tight.
+
+# 39. COMPLETION CONDITION
+
+Do NOT finish after fixing Stage 2.
+
+The task is complete only when:
+
+1. Stage 1 body reviewed and rebalanced.
+2. Stage 2 body reviewed and rebalanced.
+3. Stage 3 body reviewed and rebalanced.
+4. Stage 4 body reviewed and rebalanced.
+5. Stage 5 body reviewed and rebalanced.
+6. The reusable layout system works with and without verified imagery.
+7. No major desktop story state has accidental unused right-half space.
+8. Mobile remains intentionally single-flow.
+9. Stage entrances remain visually intact.
+10. Full validation passes.
+
+FINAL DESIGN PRINCIPLE
+
+KEEP THE BEAUTIFUL STAGE OPENINGS.
+FIX THE BODY OF ALL FIVE STAGES.
+DO NOT CHANGE THE CONTENT.
+DO NOT FILL SPACE WITH DECORATION.
+DO NOT DEPEND ON HAVING MORE IMAGES.
+TURN EXISTING MEANING INTO COMPOSITION.
+
+LESS DOCUMENT PAGE.
+MORE EDITORIAL JOURNEY.
